@@ -1,0 +1,14 @@
+digraph G {
+Decl [ shape=record, label = "\n\nDecl|{name|access|decl_flags|extern_c_linkage}"];
+a_1 [label="$\\frac{\\gamma}{2x^2+y^3}$"];
+a_1 -> a_2 -> a_3 -> a_1
+node [texmode="math"];
+a_1 -> b_1 -> b_2 -> a_3;
+node [texmode="verbatim"]
+b_4 [label="\\feta"] 
+b_5 [label="\frac"]
+a_3 -> b_4;
+c5 -> b_4;
+a_1 -> Decl;
+
+}

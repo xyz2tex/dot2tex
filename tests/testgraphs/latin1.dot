@@ -1,0 +1,6 @@
+digraph G {
+	graph [charset="Latin1"];
+	a -> b;
+	a [label="זרו"];
+	b [label="üש"];
+}

@@ -1,0 +1,13 @@
+/* Test line joining and multiline stuff*/
+digraph G {
+	a [label="partA"+"partB"];
+	b [label="Line1\
+line2\
+line3"];
+	d [label="Test",
+		color=red,
+		style=filled];
+e [shape = record,label="\n\nDecl|{name|access|decl_flags|extern_c_linkage}"];
+f [label="Line1\lLine2\rLine3\nLine4",width=2];
+	a -> b -> c -> d -> e -> f;
+}

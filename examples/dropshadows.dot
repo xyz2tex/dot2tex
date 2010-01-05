@@ -1,0 +1,28 @@
+/*
+
+:Title: Node drop shadows
+:Tags: TikZ
+
+
+The ``tikz`` output format is highly customizable thanks to TikZ' powerful
+style options. In this example drop shadows have been added to all the nodes.
+
+**Note**: This example requires PGF 2.00 or later. Download the PDF to fully see
+the drop shadow effect. The bitmap rendering does not render transparency well. 
+
+
+Generated with::
+
+ $ dot2tex -ftikz --prog neato -s --crop dropshadows.dot > dropshadows.tex
+ 
+
+*/
+graph G {
+    d2tdocpreamble = "\usetikzlibrary{shadows}";
+    node [shape=circle,style="fill=red!20,circular drop shadow"];
+    "Node A" -- {"Node B"; "Node C"};
+    "Node B" -- {"Node E"; "Node G"};
+    "Node C" -- "Node D";
+    "Node D" -- {"Node F"; "Node H"};
+    "Node E" -- {"Node F"; "Node H"; "Node G"};
+}

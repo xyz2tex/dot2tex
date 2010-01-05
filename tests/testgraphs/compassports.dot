@@ -1,0 +1,18 @@
+/* Test compass points */
+digraph g {
+	graph [rankdir=LR];
+	node [shape=rectangle];
+	a [label="node A"];
+	b [label="node B"];
+	a:n ->  b:n;
+	a:ne ->  b:ne;
+	a:e ->  b:e;
+	a:se -> b:se;
+	a:s -> b:s;
+	a:sw -> b:sw;
+	a:w -> b:w;
+	a:nw -> b:nw;
+	a:center -> b:center;
+	a:dummy -> c:dummy;
+	
+}

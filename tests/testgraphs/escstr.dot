@@ -1,0 +1,10 @@
+digraph testG {
+	d2tdocpreamble="\usepackage[T1]{fontenc}\usepackage{lmodern}"; 
+	a [label="\N"];
+	b [label="\G"];
+	a -> b [label="\E"];
+	subgraph clusterA {
+		c -> f [label="\T connect \H"];
+	}
+	a -> c;
+}

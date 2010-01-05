@@ -1,0 +1,11 @@
+/* Test invisible edges and nodes */
+digraph G {
+a -> {
+node[style="invis"]
+b c d;
+}
+f [style="invisible"];
+a -> e [style="invisible"];
+a -> g [style="invis"];
+a -> f;
+}

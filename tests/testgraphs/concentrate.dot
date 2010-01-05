@@ -1,0 +1,9 @@
+/* Test concentrate option */
+digraph g {
+graph [rankdir=LR, concentrate=1];
+trans1 -> trans2;
+trans2 -> trans3;
+trans1 -> state1;
+trans2 -> state1;
+trans3 -> state1;
+}

@@ -1,0 +1,8 @@
+graph G {
+	node [shape=circle, texmode=math, fixedsize=True, width="0.4", style="filled, shadow=true", color="blue"];
+	edge [style="linecolor=green, showpoints=true,dotstyle=triangle"];
+	a_1-- a_2 -- a_3 -- a_1;
+	node [shape=box, style="shadow=true", label=""];
+	edge [style="linecolor=red, shadow=true"];
+	b_1 -- b_2 -- a_2;
+}

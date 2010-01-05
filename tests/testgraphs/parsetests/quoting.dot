@@ -1,0 +1,7 @@
+/* Test that different quoting variants are parsed correctly */
+digraph G {
+	"a" -> "b";
+	"aa\\" -> b;
+	"aa\\" -> c [label="test"];
+	"\"aa\"" -> c [label="test"];
+}

@@ -1,0 +1,10 @@
+/* Test subgraphs */
+digraph G {
+	a -> {
+		c; d; e;
+	}
+	subgraph clusterA {
+		f;g;h;
+	} -> a;
+	{i; j; k} -> {s;t;m};
+}

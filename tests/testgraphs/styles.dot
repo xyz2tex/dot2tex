@@ -1,0 +1,9 @@
+graph G {
+	graph [splines=false]
+	node [shape=circle, texmode=math, fixedsize=True, width="0.4", style="ball color = green", label=""];
+	edge [style="snake=zigzag, green"];
+	a_1-- a_2 -- a_3 -- a_1;
+	node [style="ball color = red", label=""];
+	edge [style="snake=snake, blue", color=red];
+	b_1 -- b_2 -- a_2;
+}

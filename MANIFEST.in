@@ -1,0 +1,20 @@
+include doc/*.txt
+include doc/usage.pdf
+include doc/usage.html
+include doc/img/*.png
+include doc/docgraphs/*.dot
+include changelog.txt LICENSE
+include examples/*.dot
+include examples/*dtti.tex
+include tests/testgraphs/*.dot
+prune tests/testgraphs/*/*.dot
+include tests/testgraphs/parsetests/*.dot
+include tests/test_comparedotparsing.py
+include tests/test_multirender.py
+include tests/test_buildexamples.py
+include tests/test_dot2tex.py
+prune examples/*dot2tex-fig*
+include examples/gvcols.tex
+prune doc/.svn
+prune doc/img/.svn
+prune doc/docgraphs/.svn

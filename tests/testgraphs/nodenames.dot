@@ -1,0 +1,11 @@
+/* Test various tikz-unfriendly node names */
+
+digraph G {
+	"" -> {a b c};
+	{e f g} -> " ";
+	"a,b" -> c;
+	"a.b" -> c;
+	"a:b" -> c;
+	"\\a:b" -> c;
+	a [label="\\a"];
+}

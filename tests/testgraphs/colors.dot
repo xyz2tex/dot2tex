@@ -1,0 +1,17 @@
+/* Test stroke and fill coloring */
+digraph G {
+
+a [color=red];
+b [style="filled", fillcolor=blue];
+c [style="filled", color=yellow];
+d [style=filled];
+b [style="filled", fillcolor=pink, color=green];
+f [style="filled", fillcolor="0.051 0.718 0.627",color="#40e0d0"];
+g [color="#ffff00"];
+a -> {b c d e f g};
+i -> b [color=red];
+i -> d [color="#ffff00"];
+i -> d [color="0.051 0.718 0.627"];
+
+
+}

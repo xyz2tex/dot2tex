@@ -1,0 +1,11 @@
+/* Test multilineattributes and concatination */
+digraph G {
+	a [label="This is\
+a multiline\
+text", color=red
+style=filled];
+	b [label="partA"+"partB"+"partC"];
+	b [label="partA" + "partB"+
+	"partC"];	
+	a -> b -> c;
+}
