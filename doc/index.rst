@@ -15,6 +15,9 @@ Contents:
 .. toctree::
    :maxdepth: 2
    
+   installation_guide
+
+    
 
 Acknowledgements
 ================
