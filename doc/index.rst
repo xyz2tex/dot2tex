@@ -16,6 +16,7 @@ Contents:
    :maxdepth: 2
    
    installation_guide
+   module_guide
 
     
 
