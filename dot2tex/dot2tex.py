@@ -235,7 +235,7 @@ def parse_dot_data(dotdata):
     del(parser)
     log.debug('Output from dotparser:\n'+fsock.getvalue())
     fsock.close()
-    sys.stdout = sys.__stdout__
+    sys.stdout = saveout
     log.debug('Parsed graph:\n%s',str(graph))
     return graph
 
