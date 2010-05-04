@@ -4,3 +4,9 @@
 .. _PSTricks: http://tug.org/PSTricks/main.cgi/
 .. _PGF/TikZ: http://www.ctan.org/tex-archive/help/Catalogue/entries/pgf.html
 .. _MIT: http://www.opensource.org/licenses/mit-license.php
+.. _Python: http://www.python.org
+.. _pyparsing: http://pyparsing.wikispaces.com/
+.. _pydot: http://dkbza.org/pydot.html
+.. _preview: http://www.ctan.org/tex-archive/help/Catalogue/entries/preview.html
+.. _preview-latex: http://www.gnu.org/software/auctex/preview-latex.html
+.. _AUCTeX: http://www.gnu.org/software/auctex/
