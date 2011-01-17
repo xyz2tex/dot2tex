@@ -132,7 +132,7 @@ def escape_texchars(string):
 
 def tikzify(s):
     if s.strip():
-        return mreplace(s,r'\,:.','-+_*')
+        return mreplace(s,r'\,:.()','-+_*{}')
     else:
         return "d2tnn%i" % (len(s)+1)
 

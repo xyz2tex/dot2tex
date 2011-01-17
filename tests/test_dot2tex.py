@@ -105,8 +105,16 @@ class BuggyGraphTests(unittest.TestCase):
         source = dot2tex.dot2tex(testgraph, debug=True, autosize=True,
                                  figonly=True, format='tikz')
         self.failUnless('$1$' in source)
-
-
+    
+    #http://code.google.com/p/dot2tex/issues/detail?id=16
+    def test_name_with_parantheses(self):
+        testgraph = """
+        digraph { { "F(K)/R-1"}}
+        """
+        source = dot2tex.dot2tex(testgraph, debug=True,
+                                 figonly=True, format='tikz')
+        self.failUnless(r'\node (F{K}/R-1)' in source)
+    
 
 if __name__ == '__main__':
     unittest.main()
