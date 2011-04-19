@@ -9,6 +9,9 @@ Dot2TeX change log
 The last digit in the version number denotes bug-fix releases.
 
 2.8.x:
+    ! Fixed several bugs in the parsing of ID numerals. The bug caused labels
+      like label="1.2.3.4" to be interpreted as label=1.2 [issue 17].
+      Thanks to Vsevolod for reporting this.
     ! stdout is now properly restored after parsing dot data. Thanks to Nicolas Thiery 
       for the patch.
     ! Parantheses in tikz node names are now replaced with {}. Parantheses are not valid

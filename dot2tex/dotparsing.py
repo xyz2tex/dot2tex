@@ -32,7 +32,7 @@ from pyparsing import  (Literal, CaselessLiteral, Word, Upcase, OneOrMore, ZeroO
 dot_keywords = ['graph', 'subgraph', 'digraph', 'node', 'edge', 'strict']
 
 id_re_alpha_nums = re.compile('^[_a-zA-Z][a-zA-Z0-9_]*$')
-id_re_num = re.compile('^[0-9.]+$')
+id_re_num = re.compile('^-?(\.[0-9]+|[0-9]+(\.[0-9]*)?)$')
 id_re_with_port = re.compile('^.*:([^"]+|[^"]*\"[^"]*\"[^"]*)$')
 id_re_dbl_quoted = re.compile('^\".*\"$', re.S)
 id_re_html = re.compile('^<<.*>>$', re.S)

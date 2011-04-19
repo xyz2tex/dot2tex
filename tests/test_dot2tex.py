@@ -115,6 +115,27 @@ class BuggyGraphTests(unittest.TestCase):
                                  figonly=True, format='tikz')
         self.failUnless(r'\node (F{K}/R-1)' in source)
     
+class NeedsQuotesTests(unittest.TestCase):
+    # http://code.google.com/p/dot2tex/issues/detail?id=17    
+    def test_numeral(self):
+        from dot2tex import dotparsing
+        self.failUnless(dotparsing.needs_quotes('1.2.3.4') == True)
+        self.failUnless(dotparsing.needs_quotes('1.2') == False)
+        self.failUnless(dotparsing.needs_quotes('-1.2') == False)
+        self.failUnless(dotparsing.needs_quotes('-1') == False)
+        self.failUnless(dotparsing.needs_quotes('--1') == True)
+        self.failUnless(dotparsing.needs_quotes('.12') == False)
+        self.failUnless(dotparsing.needs_quotes('-.1') == False)
+    
+    # http://code.google.com/p/dot2tex/issues/detail?id=17    
+    def test_not_numeral_in_label(self):
+        testgraph = """
+        digraph { a[label="1.2.3.4"] ; b }
+        """
+        source = dot2tex.dot2tex(testgraph, debug=True,
+                                 figonly=True, format='tikz', autosize=True)
+        self.failUnless(r'{1.2.3.4}' in source)
+    
 
 if __name__ == '__main__':
     unittest.main()
