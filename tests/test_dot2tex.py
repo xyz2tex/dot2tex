@@ -136,6 +136,32 @@ class NeedsQuotesTests(unittest.TestCase):
                                  figonly=True, format='tikz', autosize=True)
         self.failUnless(r'{1.2.3.4}' in source)
     
+class MultipleStatements(unittest.TestCase):
+    # http://code.google.com/p/dot2tex/issues/detail?id=19
+    def test_semicolon(self):
+        testgraph1 = """
+        digraph example {
+          a -> b
+          a -> c
+          {rank=same; b;c}
+        }"""
+        testgraph2 = """
+        digraph example {
+          a -> b;
+          a -> c;
+          {rank=same; b;c}
+        }"""
+        source1 = dot2tex.dot2tex(testgraph1, 
+                                 figonly=True, format='tikz', autosize=True)
+        source2 = dot2tex.dot2tex(testgraph2, 
+                                 figonly=True, format='tikz', autosize=True)
+        #print source1
+        #print source2
+        self.failUnless(source1==source2)
+        
+
+        
+    
 
 if __name__ == '__main__':
     unittest.main()
