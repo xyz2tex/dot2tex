@@ -2563,7 +2563,10 @@ class PositionsDotConv(Dot2PGFConv):
         for node in self.nodes:
             pos = getattr(node, 'pos', None)
             if pos:
-                positions[node.name] = map(int, pos.split(','))
+                try:
+                    positions[node.name] = map(int, pos.split(','))
+                except ValueError:
+                    positions[node.name] = map(float, pos.split(','))
         return positions
 
 dimext = r"""

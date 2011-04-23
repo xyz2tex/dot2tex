@@ -159,7 +159,14 @@ class MultipleStatements(unittest.TestCase):
         #print source2
         self.failUnless(source1==source2)
         
-
+class TestPositionsOutputFormat(unittest.TestCase):
+    
+    # http://code.google.com/p/dot2tex/issues/detail?id=20
+    def test_floating_point_coordinates(self):
+        positions = dot2tex.dot2tex(testgraph, format='positions', prog='neato')
+        self.failUnless(type(positions)==dict)
+        self.failUnless(type(positions['a_3'][0])==float)
+        
         
     
 

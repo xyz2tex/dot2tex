@@ -9,6 +9,8 @@ Dot2TeX change log
 The last digit in the version number denotes bug-fix releases.
 
 2.8.x:
+    ! Fixed [issue 20]. format=positions no longer failes if node coordinates
+      are floats. Thanks to Nicolas Thiery for reporting this bug.
     ! Fixed several bugs in the parsing of ID numerals. The bug caused labels
       like label="1.2.3.4" to be interpreted as label=1.2 [issue 17].
       Thanks to Vsevolod for reporting this.
