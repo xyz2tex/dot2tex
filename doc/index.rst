@@ -19,9 +19,10 @@ Contents:
 
 .. toctree::
    :maxdepth: 2
+   :numbered:
    
    installation_guide
-   gettingstarted_guid
+   gettingstarted_guide
    usage_guide
    customization_guide
    tipsandtricks
