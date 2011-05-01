@@ -168,7 +168,26 @@ class TestPositionsOutputFormat(unittest.TestCase):
         self.failUnless(type(positions['a_3'][0])==float)
         
         
+
+
+class ErrorHandlingTest(unittest.TestCase):
     
+    def test_parse_error(self):
+        graph = "graph {a-b]"
+        parser = dot2tex.dotparsing.DotDataParser()
+        self.assertRaises(dot2tex.ParseException, parser.parse_dot_data, graph)
+        
+    def test_module_parse_error(self):
+        graph = "graph {a-b]"
+        #dot2tex.dot2tex(graph, debug=True, figonly=True)
+        #logdata = dot2tex.get_logstream()
+        #print logdata.getvalue()
+        self.assertRaises(dot2tex.ParseException, dot2tex.dot2tex, graph)
+        
+    def test_no_input_file(self):
+        graph = r"\input{dymmy.dot}"
+        self.assertRaises(IOError, dot2tex.dot2tex, graph)
+
 
 if __name__ == '__main__':
     unittest.main()

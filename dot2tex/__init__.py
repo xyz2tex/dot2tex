@@ -34,6 +34,7 @@ __license__ = 'MIT'
 
 
 import dot2tex as d2t
+from pyparsing import ParseException
 
 def get_logstream():
     return d2t.logstream

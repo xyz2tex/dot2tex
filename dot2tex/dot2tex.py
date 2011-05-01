@@ -182,6 +182,7 @@ def getboolattr(item, key, default):
         return False
 
 def create_xdot(dotdata,prog='dot'):
+    """Run a graph throug Graphviz and return an xdot-version of the graph"""
     # The following code is from the pydot module written by Ero Carrera
     progs = dotparsing.find_graphviz()
     
@@ -214,7 +215,12 @@ def create_xdot(dotdata,prog='dot'):
     try:
         error_data = stderr.read()
         if error_data:
-            log.debug('Graphviz STDERR %s', error_data)
+            if 'Error:' in error_data:
+                log.error("Graphviz returned with the following message: %s", error_data)
+            else:
+                # Graphviz raises a lot of warnings about too small labels,
+                # we therefore log them using log.debug to "hide" them 
+                log.debug('Graphviz STDERR %s', error_data)
     finally:
         stderr.close()
     
@@ -226,16 +232,13 @@ def parse_dot_data(dotdata):
 
     Redirects error messages to the log.
     """
-    saveout = sys.stdout
-    fsock = StringIO()
-    sys.stdout = fsock
-    #graph = pydot.graph_from_dot_data(dotdata)
     parser = dotparsing.DotDataParser()
-    graph = parser.parse_dot_data(dotdata)
-    del(parser)
-    log.debug('Output from dotparser:\n'+fsock.getvalue())
-    fsock.close()
-    sys.stdout = saveout
+    try:
+        graph = parser.parse_dot_data(dotdata)
+    except dotparsing.ParseException:
+        raise
+    finally:
+        del(parser)
     log.debug('Parsed graph:\n%s',str(graph))
     return graph
 
@@ -743,52 +746,33 @@ class DotConvBase(object):
     def convert(self, dotdata):
         # parse data processed by dot.
         log.debug('Start conversion')
-        try:
-            try:
-                maingraph = parse_dot_data(dotdata)
-            except:
-                log.info('Failed first attempt to parse graph')
-                if not self.dopreproc:
-                    log.info('Could not parse input dotdata directly. '
-                             'Trying to create xdot data.')
-                    try:
-                        tmpdata = create_xdot(dotdata,self.options.get('prog','dot'))
-                        log.debug('xdotdata:\n'+tmpdata)
-                        maingraph = parse_dot_data(tmpdata)
-                        log.debug('dotparsing graph:\n'+str(maingraph))
-                    except:
-                        raise
+        maingraph = parse_dot_data(dotdata)
+        
+        if not self.dopreproc and not hasattr(maingraph,'xdotversion'):
+            # Older versions of Graphviz does not include the xdotversion
+            # attribute
+            if not (dotdata.find('_draw_') > 0 or dotdata.find('_ldraw_') > 0):
+                # need to convert to xdot format
+                # Warning. Pydot will not include custom attributes
+                log.info('Trying to create xdotdata')
 
-            if not self.dopreproc and not hasattr(maingraph,'xdotversion'):
-                # Older versions of Graphviz does not include the xdotversion
-                # attribute
-                if not (dotdata.find('_draw_') > 0 or dotdata.find('_ldraw_') > 0):
-                    # need to convert to xdot format
-                    # Warning. Pydot will not include custom attributes
-                    log.debug('Trying to create xdotdata')
+                tmpdata = create_xdot(dotdata,self.options.get('prog','dot'))
+                log.debug('xdotdata:\n'+str(tmpdata))
+                if tmpdata == None or not tmpdata.strip():
+                    log.error('Failed to create xdotdata. Is Graphviz installed?')
+                    sys.exit(1)
+                maingraph = parse_dot_data(tmpdata)
+                log.debug('dotparsing graph:\n'+str(maingraph))
+            else:
+                # old version
+                pass
 
-                    tmpdata = create_xdot(dotdata,self.options.get('prog','dot'))
-                    log.debug('xdotdata:\n'+str(tmpdata))
-                    if tmpdata == None or not tmpdata.strip():
-                        log.error('Failed to create xdotdata. Is Graphviz installed?')
-                        sys.exit(1)
-                    maingraph = parse_dot_data(tmpdata)
-                    log.debug('dotparsing graph:\n'+str(maingraph))
-                else:
-                    # old version
-                    pass
-
-            self.maingraph = maingraph
-            self.pencolor = ""
-            self.fillcolor = ""
-            self.linewidth = 1
-            # Detect graph type
-            self.directedgraph = maingraph.directed
-
-        except:
-            log.error(helpmsg)
-            raise
-            sys.exit(1)
+        self.maingraph = maingraph
+        self.pencolor = ""
+        self.fillcolor = ""
+        self.linewidth = 1
+        # Detect graph type
+        self.directedgraph = maingraph.directed
 
         if self.dopreproc:
             return self.do_preview_preproc()
@@ -2764,13 +2748,7 @@ def print_version_info():
     print "Dot2tex version % s" % __version__
 
 def load_dot_file(filename):
-
-    try:
-        dotdata = open(filename,'rU').readlines()
-    except:
-        log.error("Could not open input file %s" % filename)
-        sys.exit(1)
-
+    dotdata = open(filename,'rU').readlines()
     log.info('Data read from %s' % filename)
     return dotdata
 
@@ -2810,7 +2788,7 @@ def main(run_as_module=False,dotdata=None,options=None):
         nodebug = False
     else:
         nodebug = True
-
+        
     log.info('------- Start of run -------')
     log.info("Dot2tex version % s" % __version__)
     log.info("System information:\n"
@@ -2830,7 +2808,15 @@ def main(run_as_module=False,dotdata=None,options=None):
             log.info('Data read from standard input')
             dotdata = sys.stdin.readlines()
         elif len(args) == 1:
-            dotdata = load_dot_file(args[0])
+            try:
+                log.debug('Attemtping to read data from %s', args[0])
+                dotdata = load_dot_file(args[0])
+            except:
+                if options.debug:
+                    log.exception('Failed to load file %s', args[0])
+                else:
+                    log.error('Failed to load file %s', args[0])
+                sys.exit(1)
     else:
         # Make sure dotdata is compatitle with the readlines data
         dotdata = dotdata.splitlines(True)
@@ -2842,7 +2828,18 @@ def main(run_as_module=False,dotdata=None,options=None):
     if m:
         filename = m.group(1)
         log.info('Found \\input{%s}',filename)
-        dotdata = load_dot_file(filename)
+        try:
+            dotdata = load_dot_file(filename)
+        except:
+            if options.debug:
+                log.exception('Failed to load \\input{%s}', filename)
+            else:
+                log.error('Failed to load \\input{%s}', filename)
+            if run_as_module:
+                raise
+            else:
+                sys.exit(1)
+            
 
     # I'm not quite sure why this is necessary, but some files
     # produces data with line endings that confuses pydot/pyparser.
@@ -2933,7 +2930,7 @@ def main(run_as_module=False,dotdata=None,options=None):
         if options.autosize:
             conv.dopreproc = False
             s = conv.convert(s)
-            log.debug('Output:\n%s', s)
+            log.debug('Output after preprocessing:\n%s', s)
         if options.outputfile:
             f = open(options.outputfile, 'w')
             f.write(s)
@@ -2941,12 +2938,23 @@ def main(run_as_module=False,dotdata=None,options=None):
         else:
             if not run_as_module:
                 print s
+    except dotparsing.ParseException, err:
+        errmsg = "Parse error:\n%s\n" % err.line+" "*(err.column-1) + "^\n"+str(err)
+        log.error(errmsg)
+        if options.debug:
+            log.exception('Failed to parse graph')
+        if run_as_module:
+            raise
+        else:
+            log.error(helpmsg)
     except SystemExit:
         if run_as_module:
             raise
-    except Exception:
+    except:
         #log.error("Could not convert the xdot input.")
         log.exception('Failed to process input')
+        if run_as_module:
+            raise
 
     log.info('------- End of run -------')
     if run_as_module:
