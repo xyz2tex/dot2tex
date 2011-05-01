@@ -51,15 +51,6 @@ warnings.filterwarnings('ignore', category=DeprecationWarning, message=r'os\.pop
 
 # intitalize logging module
 log = logging.getLogger("dot2tex")
-console = logging.StreamHandler()
-console.setLevel(logging.WARNING)
-# set a format which is simpler for console use
-formatter = logging.Formatter('%(levelname)-8s %(message)s')
-# tell the handler to use this format
-console.setFormatter(formatter)
-log.addHandler(console)
-logstream = None
-loghandler = None
 
 DEFAULT_TEXTENCODING = 'utf8'
 DEFAULT_OUTPUT_FORMAT = 'pgf'
@@ -757,10 +748,10 @@ class DotConvBase(object):
                 log.info('Trying to create xdotdata')
 
                 tmpdata = create_xdot(dotdata,self.options.get('prog','dot'))
-                log.debug('xdotdata:\n'+str(tmpdata))
                 if tmpdata == None or not tmpdata.strip():
                     log.error('Failed to create xdotdata. Is Graphviz installed?')
                     sys.exit(1)
+                log.debug('xdotdata:\n'+str(tmpdata))
                 maingraph = parse_dot_data(tmpdata)
                 log.debug('dotparsing graph:\n'+str(maingraph))
             else:
@@ -2760,10 +2751,17 @@ def main(run_as_module=False,dotdata=None,options=None):
 
     """
     import platform
-    global logstream
-    global loghandler
+    global log
     if not run_as_module:
         options, args,parser = process_cmd_line()
+        # configure console logger
+        console = logging.StreamHandler()
+        console.setLevel(logging.WARNING)
+        # set a format which is simpler for console use
+        formatter = logging.Formatter('%(levelname)-8s %(message)s')
+        # tell the handler to use this format
+        console.setFormatter(formatter)
+        log.addHandler(console)
     if options.runtests:
         log.warning('running tests')
         _runtests()
@@ -2772,18 +2770,12 @@ def main(run_as_module=False,dotdata=None,options=None):
     if options.debug:
         # initalize log handler
         if run_as_module:
-            if loghandler:
-                #loghandler.flush()
-                log.removeHandler(loghandler)
-
-            hdlr = logging.StreamHandler(StringIO(""))
-            loghandler = hdlr
-            logstream = hdlr.stream
+            pass
         else:
             hdlr = logging.FileHandler('dot2tex.log')
-        log.addHandler(hdlr)
-        formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s %(message)s')
-        hdlr.setFormatter(formatter)
+            log.addHandler(hdlr)
+            formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s %(message)s')
+            hdlr.setFormatter(formatter)
         log.setLevel(logging.DEBUG)
         nodebug = False
     else:
@@ -2801,7 +2793,6 @@ def main(run_as_module=False,dotdata=None,options=None):
     log.info('Program started in %s' % os.getcwd())
     if not run_as_module:
         if options.printversion:
-            #print options.hest
             print_version_info()
             sys.exit(0)
         if len(args) == 0:
@@ -2900,10 +2891,11 @@ def main(run_as_module=False,dotdata=None,options=None):
         (options, args) = parser.parse_args(extraoptions[0].split(),options)
         if options.debug and nodebug:
             # initalize log handler
-            hdlr = logging.FileHandler('dot2tex.log')
-            log.addHandler(hdlr)
-            formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s %(message)s')
-            hdlr.setFormatter(formatter)
+            if not run_as_module:
+                hdlr = logging.FileHandler('dot2tex.log')
+                log.addHandler(hdlr)
+                formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s %(message)s')
+                hdlr.setFormatter(formatter)
             log.setLevel(logging.DEBUG)
             nodebug = False
 

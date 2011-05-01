@@ -35,9 +35,18 @@ __license__ = 'MIT'
 
 import dot2tex as d2t
 from pyparsing import ParseException
+import logging
+
+
+class _NullHandler(logging.Handler):
+    def emit(self, record):
+        pass
+
+_h = _NullHandler()
+logging.getLogger("dot2tex").addHandler(_h)
 
 def get_logstream():
-    return d2t.logstream
+    return None
 
 
 def dot2tex(dotsource,**kwargs):

@@ -3,6 +3,7 @@ import unittest
 
 import dot2tex
 
+
 testgraph = """
 digraph G {
     a_1-> a_2 -> a_3 -> a_1;
