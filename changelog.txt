@@ -8,6 +8,12 @@ Dot2TeX change log
 
 The last digit in the version number denotes bug-fix releases.
 
+2.9.x:
+    * Cleaned up internal error handling.
+    * When dot2tex fails to parse a graph, dot2tex will now raise an exception
+      and quit. In previous versions dot2tex attempted to run the graph through
+      Graphviz first.
+
 2.8.x:
     ! Fixed [issue 20]. format=positions no longer failes if node coordinates
       are floats. Thanks to Nicolas Thiery for reporting this bug.
