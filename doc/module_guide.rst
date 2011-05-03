@@ -1,3 +1,5 @@
+.. _using-dot2tex-as-a-module:
+
 Using dot2tex as a module
 =========================
 
@@ -31,7 +33,7 @@ It takes the following input arguments:
 
 The function returns the resulting LaTeX code as a string.
 
-The supported options are the same as the command line options_ (long version). Here are a few examples:
+The supported options are the same as the :ref:`command line options <command-line-options>` (long version). Here are a few examples:
 
 .. sourcecode:: python
 
@@ -51,6 +53,7 @@ To specify a template you can use the ``template`` option like this:
     texcode = dot2tex.dot2tex(graph, template = mytemplate)
 
 
+.. _module-debugging:
 
 Debugging
 ---------

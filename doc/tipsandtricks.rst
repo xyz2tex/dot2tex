@@ -69,6 +69,8 @@ each time, use ``d2toptions`` like this:
 
 
 
+.. _use-tikz-format:
+
 Use the tikz output format for maximum flexibility
 --------------------------------------------------
 
