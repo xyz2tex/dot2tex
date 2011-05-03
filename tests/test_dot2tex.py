@@ -3,6 +3,7 @@ import unittest
 
 import dot2tex
 
+
 testgraph = """
 digraph G {
     a_1-> a_2 -> a_3 -> a_1;
@@ -136,6 +137,58 @@ class NeedsQuotesTests(unittest.TestCase):
                                  figonly=True, format='tikz', autosize=True)
         self.failUnless(r'{1.2.3.4}' in source)
     
+class MultipleStatements(unittest.TestCase):
+    # http://code.google.com/p/dot2tex/issues/detail?id=19
+    def test_semicolon(self):
+        testgraph1 = """
+        digraph example {
+          a -> b
+          a -> c
+          {rank=same; b;c}
+        }"""
+        testgraph2 = """
+        digraph example {
+          a -> b;
+          a -> c;
+          {rank=same; b;c}
+        }"""
+        source1 = dot2tex.dot2tex(testgraph1, 
+                                 figonly=True, format='tikz', autosize=True)
+        source2 = dot2tex.dot2tex(testgraph2, 
+                                 figonly=True, format='tikz', autosize=True)
+        #print source1
+        #print source2
+        self.failUnless(source1==source2)
+        
+class TestPositionsOutputFormat(unittest.TestCase):
+    
+    # http://code.google.com/p/dot2tex/issues/detail?id=20
+    def test_floating_point_coordinates(self):
+        positions = dot2tex.dot2tex(testgraph, format='positions', prog='neato')
+        self.failUnless(type(positions)==dict)
+        self.failUnless(type(positions['a_3'][0])==float)
+        
+        
+
+
+class ErrorHandlingTest(unittest.TestCase):
+    
+    def test_parse_error(self):
+        graph = "graph {a-b]"
+        parser = dot2tex.dotparsing.DotDataParser()
+        self.assertRaises(dot2tex.ParseException, parser.parse_dot_data, graph)
+        
+    def test_module_parse_error(self):
+        graph = "graph {a-b]"
+        #dot2tex.dot2tex(graph, debug=True, figonly=True)
+        #logdata = dot2tex.get_logstream()
+        #print logdata.getvalue()
+        self.assertRaises(dot2tex.ParseException, dot2tex.dot2tex, graph)
+        
+    def test_no_input_file(self):
+        graph = r"\input{dymmy.dot}"
+        self.assertRaises(IOError, dot2tex.dot2tex, graph)
+
 
 if __name__ == '__main__':
     unittest.main()

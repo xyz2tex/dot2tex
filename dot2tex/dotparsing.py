@@ -617,10 +617,12 @@ class DotDataParser(object):
             return self.graph
 
         except ParseException, err:
-            print err.line
-            print " "*(err.column-1) + "^"
-            print err
-            return None
+            #print err.line
+            #print " "*(err.column-1) + "^"
+            #print err
+            #return None
+            raise
+            
 
     def parse_dot_data_debug(self,data):
         """Parse dot data"""

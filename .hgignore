@@ -24,3 +24,5 @@ _*
 *.table
 *.gnuplot
 Thumbs.db
+tests/tmp/*
+tests/exrender/*
