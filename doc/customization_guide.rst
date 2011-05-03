@@ -304,6 +304,7 @@ Named colors are supported, but you have to ensure that the colors are defined i
 
 For convenience, a color definition file ``gcols.tex`` is distributed with dot2tex. You can find it in the ``examples`` directory. This file defines most of Graphviz's named colors as lower case. Include this file in the preamble if you need it.
 
+.. _templates:
 
 Templates
 =========

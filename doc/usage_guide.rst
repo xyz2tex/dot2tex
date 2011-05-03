@@ -89,7 +89,7 @@ The following options are available:
     Duplicate the xdot output. Uses the drawing information embedded in the xdot output to draw nodes and edges.
 
 --template filename
-    Use template from file. See the `templates`_ section for more details.
+    Use template from file. See the :ref:`templates` section for more details.
 
 -V, --version
     Print version information and exit.
