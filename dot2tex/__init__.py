@@ -29,11 +29,13 @@ Copyright (c) 2006-2009, Kjell Magne Fauske
 # IN THE SOFTWARE.
 
 __author__ = 'Kjell Magne Fauske'
-__version__ = '2.8.7dev'
 __license__ = 'MIT'
 
 
 import dot2tex as d2t
+
+__version__ = d2t.__version__
+
 from pyparsing import ParseException
 import logging
 

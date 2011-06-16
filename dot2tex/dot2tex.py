@@ -29,7 +29,7 @@ Copyright (c) 2006-2009, Kjell Magne Fauske
 # IN THE SOFTWARE.
 
 __author__ = 'Kjell Magne Fauske'
-__version__ = '2.8.7dev'
+__version__ = '2.9.0dev'
 __license__ = 'MIT'
 
 
