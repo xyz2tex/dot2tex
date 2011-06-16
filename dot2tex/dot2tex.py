@@ -1040,7 +1040,8 @@ class DotConvBase(object):
 
             usednodes[name] = node
         for edge in dotparsing.flatten(self.maingraph.alledges):
-            if not edge.attr.get('label'): continue
+            if not edge.attr.get('label') and \
+               not edge.attr.get('texlbl'): continue
             # Ensure that the edge name is unique.
             name = edge.src.name + edge.dst.name +str(counter)
             label = self.get_label(edge)
