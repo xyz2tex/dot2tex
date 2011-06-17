@@ -33,13 +33,6 @@ class InterfaceTest(unittest.TestCase):
         self.failUnless('a_1' in positions.keys())
         self.failUnless(len(positions.keys())==3)
         self.failUnless(len(positions['a_1'])==2)
-                                      
-    def test_debug(self):
-        """Is StringIO logging working?"""
-        source = dot2tex.dot2tex(testgraph,debug=True)
-        self.failUnless(dot2tex.get_logstream().getvalue().strip())
-
-
 
 class UnicodeTest(unittest.TestCase):
     def test_russian(self):
