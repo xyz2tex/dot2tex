@@ -157,10 +157,21 @@ class TestPositionsOutputFormat(unittest.TestCase):
     
     # http://code.google.com/p/dot2tex/issues/detail?id=20
     def test_floating_point_coordinates(self):
-        positions = dot2tex.dot2tex(testgraph, format='positions', prog='neato')
+        testxdotgraph = """
+        digraph G {
+            node [label="\N"];
+            graph [bb="0,0,127.21,49.639",
+                    _draw_="c 9 -#ffffffff C 9 -#ffffffff P 4 0 -1 0 50 128 50 128 -1 ",
+                    xdotversion="1.2"];
+            a [pos="28,30.139", width="0.75", height="0.51389", _draw_="c 9 -#000000ff e 28 30 27 18 ", _ldraw_="F 14.000000 11 -Times-Roman c 9 -#000000ff T 28 25 0 9 1 -a "];
+            b [pos="99.21,19.5", width="0.75", height="0.51389", _draw_="c 9 -#000000ff e 99 20 27 18 ", _ldraw_="F 14.000000 11 -Times-Roman c 9 -#000000ff T 99 15 0 9 1 -b "];
+            a -> b [pos="e,72.434,23.5 54.516,26.177 57.076,25.795 59.704,25.402 62.341,25.008", _draw_="c 9 -#000000ff B 4 55 26 57 26 60 25 62 25 ", _hdraw_="S 5 -solid c 9 -#000000ff C 9 -#000000ff P 3 63 28 72 24 62 22 "];
+        }
+        """
+        positions = dot2tex.dot2tex(testxdotgraph, format='positions')
         self.failUnless(type(positions)==dict)
-        self.failUnless(type(positions['a_3'][0])==float)
-        
+        self.failUnless(type(positions['a'][0])==float)
+        self.failUnless(type(positions['b'][0])==float)
         
 
 
