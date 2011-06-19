@@ -9,6 +9,7 @@ Dot2TeX change log
 The last digit in the version number denotes bug-fix releases.
 
 2.9.x:
+    + Added the --progoptions option for passing options to the graph layout program [issue 13].
     * Documentation is now built using Sphinx
     * Cleaned up internal error handling.
     * When dot2tex fails to parse a graph, dot2tex will now raise an exception

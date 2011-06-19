@@ -206,6 +206,26 @@ class EdgeLabelsTests(unittest.TestCase):
         code = dot2tex.dot2tex(graph)
         self.failUnless("TestLabel" not in code)
 
+class GraphvizInterfaceTests(unittest.TestCase):
+    
+    def test_prog_options(self):
+        from dot2tex.dot2tex import create_xdot
+        xdot_data = create_xdot(testgraph)
+        xdot_data2 = create_xdot(testgraph)
+        self.failUnlessEqual(xdot_data, xdot_data2)
+        xdot_data2 = create_xdot(testgraph, options='-y')
+        self.failIfEqual(xdot_data, xdot_data2, 'No options were passed to dot')
+    
+        
+    def test_invalid_program(self):
+        """Invoking create_xdot with an invalid prog parameter should raise an exception"""
+        from dot2tex.dot2tex import create_xdot
+        try:
+            xdot_data = create_xdot(testgraph, prog="dummy")
+            self.fail()
+        except:
+            raise
+        
 
 if __name__ == '__main__':
     unittest.main()

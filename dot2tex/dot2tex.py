@@ -172,7 +172,7 @@ def getboolattr(item, key, default):
     else:
         return False
 
-def create_xdot(dotdata,prog='dot'):
+def create_xdot(dotdata, prog='dot', options=''):
     """Run a graph throug Graphviz and return an xdot-version of the graph"""
     # The following code is from the pydot module written by Ero Carrera
     progs = dotparsing.find_graphviz()
@@ -183,7 +183,7 @@ def create_xdot(dotdata,prog='dot'):
         log.error('Could not locate Graphviz binaries')
         return None
     if not progs.has_key(prog):
-        log.warning('Invalid prog=%s',prog)
+        log.error('Invalid prog=%s',prog)
         # Program not found ?!?!
         return None
 
@@ -194,7 +194,7 @@ def create_xdot(dotdata,prog='dot'):
     f.close()
     format = 'xdot'
     progpath = '"%s"' % progs[prog].strip()
-    cmd = progpath+' -T'+format+' '+tmp_name
+    cmd = progpath+' -T'+format+' '+options+' '+tmp_name
     log.debug('Creating xdot data with: %s',cmd)
     stdin, stdout, stderr = os.popen3(cmd,'t')
     stdin.close()
@@ -747,7 +747,8 @@ class DotConvBase(object):
                 # Warning. Pydot will not include custom attributes
                 log.info('Trying to create xdotdata')
 
-                tmpdata = create_xdot(dotdata,self.options.get('prog','dot'))
+                tmpdata = create_xdot(dotdata,self.options.get('prog','dot'),
+                                      options=self.options.get('progoptions',''))
                 if tmpdata == None or not tmpdata.strip():
                     log.error('Failed to create xdotdata. Is Graphviz installed?')
                     sys.exit(1)
@@ -2713,7 +2714,9 @@ def create_options_parser():
 
     parser.add_option("--prog", action="store", dest="prog", default='dot',
                   choices = ('dot','neato','circo','fdp','twopi'),
-                  help="Use v to process the graph", metavar="v"),
+                  help="Use v to process the graph", metavar="v")
+    parser.add_option("--progoptions", action="store", dest="progoptions",
+                      default="", help="Pass options to graph layout engine", metavar="OPTIONS")
     parser.add_option('--autosize',dest='autosize',
                   help="Preprocess graph and then run Graphviz", action="store_true",default=False)
 
