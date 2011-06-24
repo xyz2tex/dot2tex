@@ -9,6 +9,8 @@ Dot2TeX change log
 The last digit in the version number denotes bug-fix releases.
 
 2.9.x:
+    ! Fixed issue 14. Parsing of dimension data from the TeX-log should is now
+      more robust and the --autosize option should now work in Cygwin. 
     + Added the --progoptions option for passing options to the graph layout program [issue 13].
     * Documentation is now built using Sphinx
     * Cleaned up internal error handling.

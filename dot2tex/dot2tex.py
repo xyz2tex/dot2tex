@@ -2547,7 +2547,7 @@ class PositionsDotConv(Dot2PGFConv):
         return positions
 
 dimext = r"""
-^\!\s Preview:\s Snippet\s
+^.*? Preview:\s Snippet\s
 (?P<number>\d*)\s ended.
 \((?P<ht>\d*)\+(?P<dp>\d*)x(?P<wd>\d*)\)"""
 
