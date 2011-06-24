@@ -2052,6 +2052,7 @@ class Dot2TikZConv(Dot2PGFConv):
                 'hexagon' : 'regular polygon, regular polygon sides=5',
                 'septagon' : 'regular polygon, regular polygon sides=7',
                 'octagon' : 'regular polygon, regular polygon sides=8',
+                'point' : 'circle, fill',
                 }
 
     compassmap = {'n': 'north','ne':'north east','e':'east',
@@ -2142,13 +2143,14 @@ class Dot2TikZConv(Dot2PGFConv):
             s += "\\begin{scope}[%s]\n" % nodeoptions
         for node in self.nodes:
             self.currentnode = node
+            # detect node type
+            dotshape = getattr(node,'shape','ellipse')
+            shape = None
 
             if node.attr.get('style') in ['invis','invisible']:
                 shape="coordinate"
-            else:
-                # detect node type
-                shape = getattr(node,'shape','ellipse')
-                shape = self.shapemap.get(shape, shape)
+            else:    
+                shape = self.shapemap.get(dotshape, shape)
             if shape == None:
                 shape='ellipse'
 
@@ -2156,8 +2158,11 @@ class Dot2TikZConv(Dot2PGFConv):
             if not pos:
                 continue
             x,y = pos.split(',')
-            label = self.get_label(node)
-
+            if dotshape <> 'point':
+                label = self.get_label(node)
+            else:
+                label = ''
+            
             pos = "%sbp,%sbp" % (x,y)
             style = node.attr.get('style') or "";
             if node.attr.get('lblstyle'):

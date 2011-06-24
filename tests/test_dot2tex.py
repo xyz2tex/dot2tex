@@ -344,6 +344,23 @@ Here is how much of TeX's memory you used:
         texdimdata = dimext_re.findall(logdata)
         self.failIf(len(texdimdata) == 0)
         
+class TikZTemplateTests(unittest.TestCase):
+    def test_point_shape(self):
+        """Nodes with the point shape should not have labels"""
+        testgraph = """
+        digraph G {
+            {
+                node[shape=point]
+                a-> b-> c -> a;
+            }
+            e -> a;
+            a [label="dummy"]
+        }
+        """
+        code = dot2tex.dot2tex(testgraph, format="tikz")
+        self.failIf("dummy" in code)
+        
+        
 if __name__ == '__main__':
     unittest.main()
     #import unicodedata
