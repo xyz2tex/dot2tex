@@ -2,7 +2,7 @@
 import unittest
 
 import dot2tex
-
+import re
 
 testgraph = """
 digraph G {
@@ -225,8 +225,125 @@ class GraphvizInterfaceTests(unittest.TestCase):
             self.fail()
         except:
             raise
-        
 
+class AutosizeTests(unittest.TestCase):
+    def test__dim_extraction(self):
+        """Failed to extract dimension data from logfile"""
+        from dot2tex.dot2tex import dimext
+        logdata = """
+ABD: EveryShipout initializing macros
+Preview: Fontsize 10pt
+! Preview: Snippet 1 started.
+<-><->
+      
+l.18 \begin{preview}
+                    %
+Not a real error.
+
+! Preview: Snippet 1 ended.(817330+0x1077278).
+<-><->
+      
+l.20 \end{preview}
+                  %
+Not a real error.
+
+[1]
+! Preview: Snippet 2 started.
+<-><->
+      
+l.21 \begin{preview}
+                    %
+Not a real error.
+
+! Preview: Snippet 2 ended.(817330+0x1077278).
+<-><->
+      
+l.23 \end{preview}
+                  %
+Not a real error.
+
+[2]
+! Preview: Snippet 3 started.
+<-><->
+      
+l.24 \begin{preview}
+                    %
+Not a real error.
+
+! Preview: Snippet 3 ended.(817330+0x1077278).
+<-><->
+      
+l.26 \end{preview}
+                  %
+Not a real error.
+
+[3] ) 
+Here is how much of TeX's memory you used:
+"""
+        dimext_re = re.compile(dimext,re.MULTILINE|re.VERBOSE)
+        texdimdata = dimext_re.findall(logdata)
+        self.failIf(len(texdimdata) == 0)
+        
+    def test__dim_extraction_cygwin(self):
+        """Failed to extract dimension data from logfile generated under Cygwin"""
+        # issue [14] http://code.google.com/p/dot2tex/issues/detail?id=14
+        from dot2tex.dot2tex import dimext
+        logdata = """
+Preview: Fontsize 10pt
+/tmp/dot2texS8qrUI/dot2tex.tex:18: Preview: Snippet 1 started.
+<-><->
+      
+l.18 \begin{preview}
+                    %
+Not a real error.
+
+/tmp/dot2texS8qrUI/dot2tex.tex:20: Preview: Snippet 1 ended.(817330+0x1077278).
+
+<-><->
+      
+l.20 \end{preview}
+                  %
+Not a real error.
+
+[1]
+/tmp/dot2texS8qrUI/dot2tex.tex:21: Preview: Snippet 2 started.
+<-><->
+      
+l.21 \begin{preview}
+                    %
+Not a real error.
+
+/tmp/dot2texS8qrUI/dot2tex.tex:23: Preview: Snippet 2 ended.(817330+0x1077278).
+
+<-><->
+      
+l.23 \end{preview}
+                  %
+Not a real error.
+
+[2]
+/tmp/dot2texS8qrUI/dot2tex.tex:24: Preview: Snippet 3 started.
+<-><->
+      
+l.24 \begin{preview}
+                    %
+Not a real error.
+
+/tmp/dot2texS8qrUI/dot2tex.tex:26: Preview: Snippet 3 ended.(817330+0x1077278).
+
+<-><->
+      
+l.26 \end{preview}
+                  %
+Not a real error.
+
+[3] ) 
+Here is how much of TeX's memory you used:
+"""
+        dimext_re = re.compile(dimext,re.MULTILINE|re.VERBOSE)
+        texdimdata = dimext_re.findall(logdata)
+        self.failIf(len(texdimdata) == 0)
+        
 if __name__ == '__main__':
     unittest.main()
     #import unicodedata
