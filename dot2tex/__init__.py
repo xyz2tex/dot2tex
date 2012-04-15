@@ -31,7 +31,6 @@ Copyright (c) 2006-2009, Kjell Magne Fauske
 __author__ = 'Kjell Magne Fauske'
 __license__ = 'MIT'
 
-
 import dot2tex as d2t
 
 __version__ = d2t.__version__
@@ -51,14 +50,14 @@ def get_logstream():
     return None
 
 
-def dot2tex(dotsource,**kwargs):
+def dot2tex(dotsource, **kwargs):
     """Process dotsource and return LaTeX code
 
     Conversion options can be specified as keyword options. Example:
         dot2tex(data,format='tikz',crop=True)
 
     """
-    return d2t.convert_graph(dotsource,**kwargs)
+    return d2t.convert_graph(dotsource, **kwargs)
 
 
 testgraph = """

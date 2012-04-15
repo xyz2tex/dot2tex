@@ -123,9 +123,10 @@ def escape_texchars(string):
 
 def tikzify(s):
     if s.strip():
-        return mreplace(s,r'\,:.()','-+_*{}')
+        return mreplace(s, r'\,:.()', '-+_*{}')
     else:
-        return "d2tnn%i" % (len(s)+1)
+        return "d2tnn%i" % (len(s) + 1)
+
 
 def nsplit(seq, n=2):
     """Split a sequence into pieces of length n
@@ -143,13 +144,15 @@ def nsplit(seq, n=2):
     >>> nsplit('aabbcc',n=4)
     [('a', 'a', 'b', 'b')]
     """
-    return [xy for xy in izip(*[iter(seq)]*n)]
+    return [xy for xy in izip(*[iter(seq)] * n)]
+
 
 def chunks(s, cl):
     """Split a string or sequence into pieces of length cl and return an iterator
     """
     for i in xrange(0, len(s), cl):
-        yield s[i:i+cl]
+        yield s[i:i + cl]
+
 
 def replace_tags(template, tags, tagsreplace):
     """Replace occurences of tags with tagreplace
@@ -166,43 +169,45 @@ def replace_tags(template, tags, tagsreplace):
         s = s.replace(tag, replacestr)
     return s
 
+
 def getboolattr(item, key, default):
-    if str(getattr(item,key,'')).lower() == 'true':
+    if str(getattr(item, key, '')).lower() == 'true':
         return True
     else:
         return False
+
 
 def create_xdot(dotdata, prog='dot', options=''):
     """Run a graph throug Graphviz and return an xdot-version of the graph"""
     # The following code is from the pydot module written by Ero Carrera
     progs = dotparsing.find_graphviz()
-    
+
 
     #prog = 'dot'
     if progs is None:
         log.error('Could not locate Graphviz binaries')
         return None
     if not progs.has_key(prog):
-        log.error('Invalid prog=%s',prog)
+        log.error('Invalid prog=%s', prog)
         # Program not found ?!?!
         return None
 
     tmp_fd, tmp_name = tempfile.mkstemp()
     os.close(tmp_fd)
-    f = open(tmp_name,'w')
+    f = open(tmp_name, 'w')
     f.write(dotdata)
     f.close()
     format = 'xdot'
     progpath = '"%s"' % progs[prog].strip()
-    cmd = progpath+' -T'+format+' '+options+' '+tmp_name
-    log.debug('Creating xdot data with: %s',cmd)
-    stdin, stdout, stderr = os.popen3(cmd,'t')
+    cmd = progpath + ' -T' + format + ' ' + options + ' ' + tmp_name
+    log.debug('Creating xdot data with: %s', cmd)
+    stdin, stdout, stderr = os.popen3(cmd, 't')
     stdin.close()
     try:
         data = stdout.read()
     finally:
         stdout.close()
-        
+
     try:
         error_data = stderr.read()
         if error_data:
@@ -214,9 +219,10 @@ def create_xdot(dotdata, prog='dot', options=''):
                 log.debug('Graphviz STDERR %s', error_data)
     finally:
         stderr.close()
-    
+
     os.unlink(tmp_name)
     return data
+
 
 def parse_dot_data(dotdata):
     """Wrapper for pydot.graph_from_dot_data
@@ -230,20 +236,21 @@ def parse_dot_data(dotdata):
         raise
     finally:
         del(parser)
-    log.debug('Parsed graph:\n%s',str(graph))
+    log.debug('Parsed graph:\n%s', str(graph))
     return graph
+
 
 def parse_drawstring(drawstring):
     """Parse drawstring and returns a list of draw operations"""
     # The draw string parser is a bit clumsy and slow
-    def doeE(c,s):
+    def doeE(c, s):
         # E x0 y0 w h  Filled ellipse ((x-x0)/w)^2 + ((y-y0)/h)^2 = 1
         # e x0 y0 w h  Unfilled ellipse ((x-x0)/w)^2 + ((y-y0)/h)^2 = 1
         tokens = s.split()[0:4]
         if not tokens: return None
-        points = map(int,tokens)
-        didx = sum(map(len,tokens))+len(points)+1
-        return didx, (c , points[0], points[1], points[2], points[3])
+        points = map(int, tokens)
+        didx = sum(map(len, tokens)) + len(points) + 1
+        return didx, (c, points[0], points[1], points[2], points[3])
 
     def doPLB(c, s):
         # P n x1 y1 ... xn yn  Filled polygon using the given n points
@@ -253,12 +260,12 @@ def parse_drawstring(drawstring):
         # b n x1 y1 ... xn yn  Filled B-spline using the given n control points
         tokens = s.split()
         n = int(tokens[0])
-        points = map(int,tokens[1:n*2+1])
-        didx = sum(map(len,tokens[1:n*2+1]))+n*2+2
+        points = map(int, tokens[1:n * 2 + 1])
+        didx = sum(map(len, tokens[1:n * 2 + 1])) + n * 2 + 2
         npoints = nsplit(points, 2)
         return didx, (c, npoints)
 
-    def doCS(c,s):
+    def doCS(c, s):
         # C n -c1c2...cn  Set fill color.
         # c n -c1c2...cn  Set pen color.
         # Graphviz uses the following color formats:
@@ -268,24 +275,24 @@ def parse_drawstring(drawstring):
         #   string  color name
         tokens = s.split()
         n = int(tokens[0])
-        tmp = len(tokens[0])+3
-        d = s[tmp:tmp+n]
-        didx = len(d)+tmp+1
+        tmp = len(tokens[0]) + 3
+        d = s[tmp:tmp + n]
+        didx = len(d) + tmp + 1
         return didx, (c, d)
 
-    def doFont(c,s):
+    def doFont(c, s):
         # F s n -c1c2...cn
         # Set font. The font size is s points. The font name consists of
         # the n characters following '-'.
         tokens = s.split()
         size = tokens[0]
         n = int(tokens[1])
-        tmp = len(size)+len(tokens[1])+4
-        d = s[tmp:tmp+n]
-        didx = len(d)+tmp
+        tmp = len(size) + len(tokens[1]) + 4
+        d = s[tmp:tmp + n]
+        didx = len(d) + tmp
         return didx, (c, size, d)
 
-    def doText(c,s):
+    def doText(c, s):
         # T x y j w n -c1c2...cn
         # Text drawn using the baseline point (x,y). The text consists of the
         # n characters following '-'. The text should be left-aligned
@@ -294,45 +301,44 @@ def parse_drawstring(drawstring):
         tokens = s.split()
         x, y, j, w = tokens[0:4]
         n = int(tokens[4])
-        tmp = sum(map(len,tokens[0:5]))+7
-        text = s[tmp:tmp+n]
-        didx = len(text)+tmp
+        tmp = sum(map(len, tokens[0:5])) + 7
+        text = s[tmp:tmp + n]
+        didx = len(text) + tmp
         return didx, [c, x, y, j, w, text]
 
     cmdlist = []
     stat = {}
     idx = 0
     s = drawstring.strip()
-    while idx < len(s)-1:
+    while idx < len(s) - 1:
         didx = 1
         c = s[idx]
-        stat[c] = stat.get(c,0)+1
+        stat[c] = stat.get(c, 0) + 1
         try:
-            if c in ('e','E'):
-                didx, cmd = doeE(c,s[idx+1:])
+            if c in ('e', 'E'):
+                didx, cmd = doeE(c, s[idx + 1:])
                 cmdlist.append(cmd)
-            elif c in ('p','P','L','b','B'):
-                didx, cmd = doPLB(c, s[idx+1:])
+            elif c in ('p', 'P', 'L', 'b', 'B'):
+                didx, cmd = doPLB(c, s[idx + 1:])
                 cmdlist.append(cmd)
-            elif c in ('c','C','S'):
-                didx, cmd = doCS(c, s[idx+1:])
+            elif c in ('c', 'C', 'S'):
+                didx, cmd = doCS(c, s[idx + 1:])
                 cmdlist.append(cmd)
             elif c == 'F':
-                didx, cmd = doFont(c, s[idx+1:])
+                didx, cmd = doFont(c, s[idx + 1:])
                 cmdlist.append(cmd)
             elif c == 'T':
-                didx, cmd = doText(c, s[idx+1:])
+                didx, cmd = doText(c, s[idx + 1:])
                 cmdlist.append(cmd)
 
         except:
             pass
 
         idx += didx
-    return cmdlist,stat
+    return cmdlist, stat
 
 
-
-def get_graphlist(gg, l = []):
+def get_graphlist(gg, l=[]):
     """Traverse a graph with subgraphs and return them as a list"""
     if not l:
         outer = True
@@ -341,12 +347,14 @@ def get_graphlist(gg, l = []):
     l.append(gg)
     if gg.get_subgraphs():
         for g in gg.get_subgraphs():
-            get_graphlist(g,l)
+            get_graphlist(g, l)
     if outer: return l
+
 
 class EndOfGraphElement(object):
     def __init__(self):
         pass
+
 
 def get_all_graph_elements(graph, l=[]):
     """Return all nodes and edges, including elements in subgraphs"""
@@ -358,7 +366,7 @@ def get_all_graph_elements(graph, l=[]):
     for element in graph.allitems:
         if isinstance(element, dotparsing.DotSubGraph):
             l.append(element)
-            get_all_graph_elements(element,l)
+            get_all_graph_elements(element, l)
         else:
             l.append(element)
 
@@ -370,23 +378,24 @@ def get_all_graph_elements(graph, l=[]):
 
 class DotConvBase(object):
     """Dot2TeX converter base"""
-    def __init__(self, options = {}):
+
+    def __init__(self, options={}):
         self.color = ""
         self.opacity = None
         try:
             self.template
         except AttributeError:
-            self.template = options.get('template','')
-        self.textencoding = options.get('encoding',DEFAULT_TEXTENCODING)
+            self.template = options.get('template', '')
+        self.textencoding = options.get('encoding', DEFAULT_TEXTENCODING)
         self.templatevars = {}
         self.body = ""
-        if options.get('templatefile',''):
+        if options.get('templatefile', ''):
             self.load_template(options['templatefile'])
-        if options.get('template',''):
+        if options.get('template', ''):
             self.template = options['template']
 
         self.options = options
-        if options.get('texpreproc',False) or options.get('autosize',False):
+        if options.get('texpreproc', False) or options.get('autosize', False):
             self.dopreproc = True
         else:
             self.dopreproc = False
@@ -407,19 +416,19 @@ class DotConvBase(object):
     def end_fig(self):
         return ""
 
-    def draw_ellipse(self, drawop, style = None):
+    def draw_ellipse(self, drawop, style=None):
         return ""
 
-    def draw_bezier(self, drawop, style = None):
+    def draw_bezier(self, drawop, style=None):
         return ""
 
-    def draw_polygon(self, drawop, style = None):
+    def draw_polygon(self, drawop, style=None):
         return ""
 
-    def draw_polyline(self, drawop, style = None):
+    def draw_polyline(self, drawop, style=None):
         return ""
 
-    def draw_text(self, drawop, style = None):
+    def draw_text(self, drawop, style=None):
         return ""
 
     def output_node_comment(self, node):
@@ -445,11 +454,14 @@ class DotConvBase(object):
 
     def start_node(self, node):
         return ""
-    def end_node(self,node):
+
+    def end_node(self, node):
         return ""
+
     def start_graph(self, graph):
         return ""
-    def end_graph(self,graph):
+
+    def end_graph(self, graph):
         return ""
 
     def start_edge(self):
@@ -461,7 +473,7 @@ class DotConvBase(object):
     def filter_styles(self, style):
         return style
 
-    def convert_color(self, drawopcolor,pgf=False):
+    def convert_color(self, drawopcolor, pgf=False):
         """Convert color to a format usable by LaTeX and XColor"""
         # Graphviz uses the following color formats:
         #   "#%2x%2x%2x"    Red-Green-Blue (RGB)
@@ -471,21 +483,21 @@ class DotConvBase(object):
 
         # Is the format RBG(A)?
         if drawopcolor.startswith('#'):
-            t = list(chunks(drawopcolor[1:],2))
+            t = list(chunks(drawopcolor[1:], 2))
             # parallell lines not yet supported
             if len(t) > 6:
                 t = t[0:3]
-            rgb = [(round((int(n,16)/255.0),2)) for n in t]
+            rgb = [(round((int(n, 16) / 255.0), 2)) for n in t]
             if pgf:
                 colstr = "{rgb}{%s,%s,%s}" % tuple(rgb[0:3])
                 opacity = "1"
-                if len(rgb)==4:
+                if len(rgb) == 4:
                     opacity = rgb[3]
                 return (colstr, opacity)
             else:
                 return "[rgb]{%s,%s,%s}" % tuple(rgb[0:3])
 
-        elif (len(drawopcolor.split(' '))==3) or (len(drawopcolor.split(','))==3):
+        elif (len(drawopcolor.split(' ')) == 3) or (len(drawopcolor.split(',')) == 3):
             # are the values space or comma separated?
             hsb = drawopcolor.split(',')
             if not len(hsb) == 3:
@@ -495,11 +507,10 @@ class DotConvBase(object):
             else:
                 return "[hsb]{%s,%s,%s}" % tuple(hsb)
         else:
-            drawopcolor = drawopcolor.replace('grey','gray')
-            drawopcolor = drawopcolor.replace('_','')
-            drawopcolor = drawopcolor.replace(' ','')
+            drawopcolor = drawopcolor.replace('grey', 'gray')
+            drawopcolor = drawopcolor.replace('_', '')
+            drawopcolor = drawopcolor.replace(' ', '')
             return drawopcolor
-
 
 
     def do_drawstring(self, drawstring, drawobj):
@@ -507,33 +518,33 @@ class DotConvBase(object):
 
         Just a wrapper around do_draw_op.
         """
-        drawoperations,stat = parse_drawstring(drawstring)
-        return self.do_draw_op(drawoperations, drawobj,stat)
+        drawoperations, stat = parse_drawstring(drawstring)
+        return self.do_draw_op(drawoperations, drawobj, stat)
 
-    def do_draw_op(self, drawoperations, drawobj,stat):
+    def do_draw_op(self, drawoperations, drawobj, stat):
         """Excecute the operations in drawoperations"""
         s = ""
         for drawop in drawoperations:
             op = drawop[0]
-            style = getattr(drawobj, 'style',None)
+            style = getattr(drawobj, 'style', None)
             # styles are not passed to the draw operations in the
             # duplicate mode
             if style and not self.options.get('duplicate', False):
                 # map Graphviz styles to backend styles
                 style = self.filter_styles(style)
-                styles = [self.styles.get(key.strip(),key.strip()) \
-                            for key in style.split(',') if key]
+                styles = [self.styles.get(key.strip(), key.strip())\
+                          for key in style.split(',') if key]
                 style = ','.join(styles)
             else:
                 style = None
 
-            if op in ['e','E']:
+            if op in ['e', 'E']:
                 s += self.draw_ellipse(drawop, style)
-            elif op in ['p','P']:
+            elif op in ['p', 'P']:
                 s += self.draw_polygon(drawop, style)
             elif op == 'L':
                 s += self.draw_polyline(drawop, style)
-            elif op in ['C','c']:
+            elif op in ['C', 'c']:
                 s += self.set_color(drawop)
             elif op == 'S':
                 s += self.set_style(drawop)
@@ -546,17 +557,17 @@ class DotConvBase(object):
                 # Todo: Use text from node|edge.label or name
                 # Todo: What about multiline labels?
                 text = drawop[5]
-##                label = getattr(drawobj,'label','\N')
-##                multiline = False
-##                if label:
-##                    if label.find(r'\n') >= 0:
-##                        multiline = True
-##                        #print label
-##                else:
-##                    label = "\N"
-##                if not multiline and label <> '\N':
-##                    text =  drawobj.label
-                texmode = self.options.get('texmode','verbatim')
+                ##                label = getattr(drawobj,'label','\N')
+                ##                multiline = False
+                ##                if label:
+                ##                    if label.find(r'\n') >= 0:
+                ##                        multiline = True
+                ##                        #print label
+                ##                else:
+                ##                    label = "\N"
+                ##                if not multiline and label <> '\N':
+                ##                    text =  drawobj.label
+                texmode = self.options.get('texmode', 'verbatim')
                 if drawobj.attr.get('texmode', ''):
                     texmode = drawobj.attr['texmode']
                 if drawobj.attr.get('texlbl', ''):
@@ -571,53 +582,52 @@ class DotConvBase(object):
                     text = "$%s$" % text
 
                 drawop[5] = text
-                if self.options.get('alignstr',''):
+                if self.options.get('alignstr', ''):
                     drawop.append(self.options.get('alignstr'))
-                if stat['T'] == 1 and \
-                    self.options.get('valignmode','center')=='center':
+                if stat['T'] == 1 and\
+                   self.options.get('valignmode', 'center') == 'center':
                     # do this for single line only
                     # Todo: Make this optional
-                    pos = drawobj.attr.get('lp',None) or \
-                          drawobj.attr.get('pos',None)
+                    pos = drawobj.attr.get('lp', None) or\
+                          drawobj.attr.get('pos', None)
                     # force centered alignment
                     drawop[3] = '0'
                     if pos:
                         coord = pos.split(',')
-                        if len(coord)==2:
+                        if len(coord) == 2:
                             drawop[1] = coord[0]
                             drawop[2] = coord[1]
                         pass
-                lblstyle = drawobj.attr.get('lblstyle',None)
-                exstyle = drawobj.attr.get('exstyle','')
+                lblstyle = drawobj.attr.get('lblstyle', None)
+                exstyle = drawobj.attr.get('exstyle', '')
                 if exstyle:
                     if lblstyle:
-                        lblstyle += ',' +exstyle
+                        lblstyle += ',' + exstyle
                     else:
                         lblstyle = exstyle
-                s += self.draw_text(drawop,lblstyle)
+                s += self.draw_text(drawop, lblstyle)
         return s
 
     def do_nodes(self):
         s = ""
         for node in self.nodes:
             self.currentnode = node
-            dstring = node.attr.get('_draw_',"")
-            lstring = node.attr.get('_ldraw_',"")
+            dstring = node.attr.get('_draw_', "")
+            lstring = node.attr.get('_ldraw_', "")
 
-
-            drawstring = dstring+" "+lstring
+            drawstring = dstring + " " + lstring
 
             if not drawstring.strip(): continue
             # detect node type
-            shape = node.attr.get('shape','')
+            shape = node.attr.get('shape', '')
             if not shape:
                 shape = 'ellipse' # default
-            # extract size information
-            x,y = node.attr.get('pos','').split(',')
+                # extract size information
+            x, y = node.attr.get('pos', '').split(',')
 
             # width and height are in inches. Convert to bp units
-            w = float(node.attr['width'])*in2bp
-            h = float(node.attr['height'])*in2bp
+            w = float(node.attr['width']) * in2bp
+            h = float(node.attr['height']) * in2bp
 
             s += self.output_node_comment(node)
             s += self.start_node(node)
@@ -627,18 +637,18 @@ class DotConvBase(object):
         self.body += s
 
     def get_edge_points(self, edge):
-        # edge BNF
-        #   <edge>   :: <spline> (';' <spline>)*
-        #   <spline> :: <endp>? <startp>? <point> <triple>+
-        #   <point>  :: <x> ',' <y>
-        #   <triple> :: <point> <point> <point>
-        #   <endp>   :: "e" "," <x> "," <y>
-##        spline ( ';' spline )*
-##where spline  =   (endp)? (startp)? point (triple)+
-##and triple    =   point point point
-##and endp  =   "e,%d,%d"
-##and startp    =   "s,%d,%d"
-##If a spline has points p1 p2 p3 ... pn, (n = 1 (mod 3)), the points correspond to the control points of a B-spline from p1 to pn. If startp is given, it touches one node of the edge, and the arrowhead goes from p1 to startp. If startp is not given, p1 touches a node. Similarly for pn and endp.
+    # edge BNF
+    #   <edge>   :: <spline> (';' <spline>)*
+    #   <spline> :: <endp>? <startp>? <point> <triple>+
+    #   <point>  :: <x> ',' <y>
+    #   <triple> :: <point> <point> <point>
+    #   <endp>   :: "e" "," <x> "," <y>
+    ##        spline ( ';' spline )*
+    ##where spline  =   (endp)? (startp)? point (triple)+
+    ##and triple    =   point point point
+    ##and endp  =   "e,%d,%d"
+    ##and startp    =   "s,%d,%d"
+    ##If a spline has points p1 p2 p3 ... pn, (n = 1 (mod 3)), the points correspond to the control points of a B-spline from p1 to pn. If startp is given, it touches one node of the edge, and the arrowhead goes from p1 to startp. If startp is not given, p1 touches a node. Similarly for pn and endp.
         pos = edge.attr.get('pos')
         if pos:
             segments = pos.split(';')
@@ -653,9 +663,9 @@ class DotConvBase(object):
             i = 0
             if points[i].startswith('s'):
                 p = points[0].split(',')
-                tmp = "%s,%s" % (p[1],p[2])
+                tmp = "%s,%s" % (p[1], p[2])
                 if points[1].startswith('e'):
-                    points[2] =tmp
+                    points[2] = tmp
                 else:
                     points[1] = tmp
                 del points[0]
@@ -664,82 +674,82 @@ class DotConvBase(object):
             if points[0].startswith('e'):
                 p = points[0].split(',')
                 points.pop()
-                points.append("%s,%s" % (p[1],p[2]))
+                points.append("%s,%s" % (p[1], p[2]))
                 del points[0]
                 arrowstyle = '->'
                 i += 1
-            if i>1: arrowstyle = '<->'
-            segret.append((arrowstyle,points))
+            if i > 1: arrowstyle = '<->'
+            segret.append((arrowstyle, points))
 
         return segret
 
     def do_edges(self):
         s = ""
-        s += self.set_color(('cC',"black"))
+        s += self.set_color(('cC', "black"))
         for edge in self.edges:
-            dstring = edge.attr.get('_draw_',"")
-            lstring = edge.attr.get('_ldraw_',"")
-            hstring = edge.attr.get('_hdraw_',"")
-            tstring = edge.attr.get('_tdraw_',"")
-            tlstring = edge.attr.get('_tldraw_',"")
-            hlstring = edge.attr.get('_hldraw_',"")
+            dstring = edge.attr.get('_draw_', "")
+            lstring = edge.attr.get('_ldraw_', "")
+            hstring = edge.attr.get('_hdraw_', "")
+            tstring = edge.attr.get('_tdraw_', "")
+            tlstring = edge.attr.get('_tldraw_', "")
+            hlstring = edge.attr.get('_hldraw_', "")
 
             # Note that the order of the draw strings should be the same
             # as in the xdot output.
-            drawstring = dstring + " " + hstring + " " + tstring \
-                            + " " + lstring + " " + tlstring + " " + hlstring
-            drawop,stat = parse_drawstring(drawstring);
+            drawstring = dstring + " " + hstring + " " + tstring\
+                         + " " + lstring + " " + tlstring + " " + hlstring
+            drawop, stat = parse_drawstring(drawstring);
             if not drawstring.strip():
                 continue
             s += self.output_edge_comment(edge)
             if self.options.get('duplicate', False):
                 s += self.start_edge()
-                s += self.do_draw_op(drawop, edge,stat)
+                s += self.do_draw_op(drawop, edge, stat)
                 s += self.end_edge()
             else:
                 s += self.draw_edge(edge)
-                s += self.do_drawstring(lstring+" "+tlstring+" "+hlstring, edge)
+                s += self.do_drawstring(lstring + " " + tlstring + " " + hlstring, edge)
         self.body += s
 
     def do_graph(self):
-        dstring = self.graph.attr.get('_draw_',"")
-        lstring = self.graph.attr.get('_ldraw_',"")
+        dstring = self.graph.attr.get('_draw_', "")
+        lstring = self.graph.attr.get('_ldraw_', "")
         # print lstring
         # Avoid filling background of graphs with white
-        if dstring.startswith('c 5 -white C 5 -white') \
-            and not self.graph.attr.get('style'):
+        if dstring.startswith('c 5 -white C 5 -white')\
+        and not self.graph.attr.get('style'):
             dstring = ''
-        if getattr(self.graph,'_draw_',None):
+        if getattr(self.graph, '_draw_', None):
             # bug
             dstring = "c 5 -black " + dstring #self.graph._draw_
             pass
-        drawstring = dstring+" "+lstring
+        drawstring = dstring + " " + lstring
         if drawstring.strip():
             s = self.start_graph(self.graph)
             g = self.do_drawstring(drawstring, self.graph)
             e = self.end_graph(self.graph)
             if g.strip():
-                self.body += s +g + e
+                self.body += s + g + e
 
     def set_options(self):
         # process options
         # Warning! If graph attribute is true and command line option is false,
         # the graph attribute will be used. Command line option should have
         # precedence.
-        self.options['alignstr'] = self.options.get('alignstr','') \
-            or getattr(self.maingraph,'d2talignstr','')
+        self.options['alignstr'] = self.options.get('alignstr', '')\
+        or getattr(self.maingraph, 'd2talignstr', '')
 
         # Todo: bad!
-        self.options['valignmode'] = getattr(self.maingraph,'d2tvalignmode','')\
-            or self.options.get('valignmode','center')
+        self.options['valignmode'] = getattr(self.maingraph, 'd2tvalignmode', '')\
+        or self.options.get('valignmode', 'center')
 
 
     def convert(self, dotdata):
         # parse data processed by dot.
         log.debug('Start conversion')
         maingraph = parse_dot_data(dotdata)
-        
-        if not self.dopreproc and not hasattr(maingraph,'xdotversion'):
+
+        if not self.dopreproc and not hasattr(maingraph, 'xdotversion'):
             # Older versions of Graphviz does not include the xdotversion
             # attribute
             if not (dotdata.find('_draw_') > 0 or dotdata.find('_ldraw_') > 0):
@@ -747,14 +757,14 @@ class DotConvBase(object):
                 # Warning. Pydot will not include custom attributes
                 log.info('Trying to create xdotdata')
 
-                tmpdata = create_xdot(dotdata,self.options.get('prog','dot'),
-                                      options=self.options.get('progoptions',''))
+                tmpdata = create_xdot(dotdata, self.options.get('prog', 'dot'),
+                    options=self.options.get('progoptions', ''))
                 if tmpdata == None or not tmpdata.strip():
                     log.error('Failed to create xdotdata. Is Graphviz installed?')
                     sys.exit(1)
-                log.debug('xdotdata:\n'+str(tmpdata))
+                log.debug('xdotdata:\n' + str(tmpdata))
                 maingraph = parse_dot_data(tmpdata)
-                log.debug('dotparsing graph:\n'+str(maingraph))
+                log.debug('dotparsing graph:\n' + str(maingraph))
             else:
                 # old version
                 pass
@@ -771,7 +781,7 @@ class DotConvBase(object):
 
         # Romove annoying square
         # Todo: Remove squares from subgraphs. See pgram.dot
-        dstring = self.maingraph.attr.get('_draw_',"")
+        dstring = self.maingraph.attr.get('_draw_', "")
         if dstring:
             self.maingraph.attr['_draw_'] = ""
 
@@ -792,28 +802,28 @@ class DotConvBase(object):
             self.graph = graph
             self.do_graph()
 
-##        if not self.options.get('flattengraph',False):
-##            for graph in graphlist:
-##                self.graph = graph
-##                self.nodes = clean_dot_nodes(graph)
-##                self.edges = graph.edge_list
-##                if not self.options.get('switchdraworder',False):
-##                    self.do_edges() # tmp
-##                    self.do_nodes()
-##                else:
-##                    self.do_nodes()
-##                    self.do_edges()
-##        else:
+        ##        if not self.options.get('flattengraph',False):
+        ##            for graph in graphlist:
+        ##                self.graph = graph
+        ##                self.nodes = clean_dot_nodes(graph)
+        ##                self.edges = graph.edge_list
+        ##                if not self.options.get('switchdraworder',False):
+        ##                    self.do_edges() # tmp
+        ##                    self.do_nodes()
+        ##                else:
+        ##                    self.do_nodes()
+        ##                    self.do_edges()
+        ##        else:
         if True:
-##            nodelist = []
-##            edgelist = []
-##            for graph in graphlist:
-##                self.graph = graph
-##                nodelist.extend(clean_dot_nodes(graph))
-##                edgelist.extend(graph.edge_list)
+        ##            nodelist = []
+        ##            edgelist = []
+        ##            for graph in graphlist:
+        ##                self.graph = graph
+        ##                nodelist.extend(clean_dot_nodes(graph))
+        ##                edgelist.extend(graph.edge_list)
             self.nodes = list(maingraph.allnodes)
             self.edges = list(maingraph.alledges)
-            if not self.options.get('switchdraworder',False):
+            if not self.options.get('switchdraworder', False):
                 self.do_edges() # tmp
                 self.do_nodes()
             else:
@@ -825,47 +835,46 @@ class DotConvBase(object):
 
     def clean_template(self, template):
         """Remove preprocsection or outputsection"""
-        if not self.dopreproc and self.options.get('codeonly',False):
+        if not self.dopreproc and self.options.get('codeonly', False):
             r = re.compile('<<startcodeonlysection>>(.*?)<<endcodeonlysection>>',
-                    re.DOTALL | re.MULTILINE)
+                re.DOTALL | re.MULTILINE)
             m = r.search(template)
             if m:
                 return m.group(1).strip()
-        if not self.dopreproc and self.options.get('figonly',False):
+        if not self.dopreproc and self.options.get('figonly', False):
             r = re.compile('<<start_figonlysection>>(.*?)<<end_figonlysection>>',
-                    re.DOTALL | re.MULTILINE)
+                re.DOTALL | re.MULTILINE)
             m = r.search(template)
             if m:
                 return m.group(1)
             r = re.compile('<<startfigonlysection>>(.*?)<<endfigonlysection>>',
-                    re.DOTALL | re.MULTILINE)
+                re.DOTALL | re.MULTILINE)
             m = r.search(template)
             if m:
                 return m.group(1)
 
-
         if self.dopreproc:
             r = re.compile('<<startoutputsection>>.*?<<endoutputsection>>',
-                    re.DOTALL | re.MULTILINE)
+                re.DOTALL | re.MULTILINE)
         else:
             r = re.compile('<<startpreprocsection>>.*?<<endpreprocsection>>',
-                    re.DOTALL | re.MULTILINE)
-        # remove codeonly and figonly section
+                re.DOTALL | re.MULTILINE)
+            # remove codeonly and figonly section
         r2 = re.compile('<<start_figonlysection>>.*?<<end_figonlysection>>',
-                    re.DOTALL | re.MULTILINE)
-        tmp = r2.sub('',template)
+            re.DOTALL | re.MULTILINE)
+        tmp = r2.sub('', template)
         r2 = re.compile('<<startcodeonlysection>>.*?<<endcodeonlysection>>',
-                    re.DOTALL | re.MULTILINE)
-        tmp = r2.sub('',tmp)
-        return r.sub('',tmp)
+            re.DOTALL | re.MULTILINE)
+        tmp = r2.sub('', tmp)
+        return r.sub('', tmp)
 
     def init_template_vars(self):
         vars = {}
         # get bounding box
-        bbstr = self.maingraph.attr.get('bb','')
+        bbstr = self.maingraph.attr.get('bb', '')
         if bbstr:
             bb = bbstr.split(',')
-            vars['<<bbox>>'] = "(%sbp,%sbp)(%sbp,%sbp)\n" % (bb[0],bb[1],bb[2],bb[3])
+            vars['<<bbox>>'] = "(%sbp,%sbp)(%sbp,%sbp)\n" % (bb[0], bb[1], bb[2], bb[3])
             vars['<<bbox.x0>>'] = bb[0]
             vars['<<bbox.y0>>'] = bb[1]
             vars['<<bbox.x1>>'] = bb[2]
@@ -873,21 +882,21 @@ class DotConvBase(object):
         vars['<<figcode>>'] = self.body.strip()
         vars['<<drawcommands>>'] = self.body.strip()
         vars['<<textencoding>>'] = self.textencoding
-        docpreamble = self.options.get('docpreamble','') \
-            or getattr(self.maingraph, 'd2tdocpreamble','')
-##        if docpreamble:
-##            docpreamble = docpreamble.replace('\\n','\n')
+        docpreamble = self.options.get('docpreamble', '')\
+        or getattr(self.maingraph, 'd2tdocpreamble', '')
+        ##        if docpreamble:
+        ##            docpreamble = docpreamble.replace('\\n','\n')
         vars['<<docpreamble>>'] = docpreamble
-        vars['<<figpreamble>>'] = self.options.get('figpreamble','') \
-            or getattr(self.maingraph, 'd2tfigpreamble','%')
-        vars['<<figpostamble>>'] = self.options.get('figpostamble','') \
-            or getattr(self.maingraph, 'd2tfigpostamble','')
-        vars['<<graphstyle>>'] = self.options.get('graphstyle','') \
-            or getattr(self.maingraph, 'd2tgraphstyle','')
-        vars['<<margin>>'] = self.options.get('margin','0pt')
+        vars['<<figpreamble>>'] = self.options.get('figpreamble', '')\
+        or getattr(self.maingraph, 'd2tfigpreamble', '%')
+        vars['<<figpostamble>>'] = self.options.get('figpostamble', '')\
+        or getattr(self.maingraph, 'd2tfigpostamble', '')
+        vars['<<graphstyle>>'] = self.options.get('graphstyle', '')\
+        or getattr(self.maingraph, 'd2tgraphstyle', '')
+        vars['<<margin>>'] = self.options.get('margin', '0pt')
         vars['<<startpreprocsection>>'] = vars['<<endpreprocsection>>'] = ''
         vars['<<startoutputsection>>'] = vars['<<endoutputsection>>'] = ''
-        if self.options.get('gvcols',False):
+        if self.options.get('gvcols', False):
             vars['<<gvcols>>'] = "\input{gvcols.tex}"
         else:
             vars['<<gvcols>>'] = ""
@@ -896,34 +905,33 @@ class DotConvBase(object):
     def output(self):
         self.init_template_vars()
         template = self.clean_template(self.template)
-        code = replace_tags(template ,self.templatevars.keys(),
-                           self.templatevars)
+        code = replace_tags(template, self.templatevars.keys(),
+            self.templatevars)
         #code = self.template.replace('<<figcode>>', self.body)
         return code
 
     def get_label(self, drawobj):
         text = ""
-        texmode = self.options.get('texmode','verbatim')
-        if getattr(drawobj,'texmode', ''):
+        texmode = self.options.get('texmode', 'verbatim')
+        if getattr(drawobj, 'texmode', ''):
             texmode = drawobj.texmode
-        text = getattr(drawobj,'label',None)
+        text = getattr(drawobj, 'label', None)
 
         #log.warning('text %s %s',text,str(drawobj))
 
         if text == None or text.strip() == '\N':
-
             if not isinstance(drawobj, dotparsing.DotEdge):
-                text = getattr(drawobj,'name',None) or \
-                    getattr(drawobj,'graph_name','')
-                text = text.replace("\\\\","\\")
+                text = getattr(drawobj, 'name', None) or\
+                       getattr(drawobj, 'graph_name', '')
+                text = text.replace("\\\\", "\\")
             else:
                 text = ''
         elif text.strip() == '\N':
-            text =  ''
+            text = ''
         else:
-            text = text.replace("\\\\","\\")
+            text = text.replace("\\\\", "\\")
 
-        if getattr(drawobj,'texlbl', ''):
+        if getattr(drawobj, 'texlbl', ''):
             # the texlbl overrides everything
             text = drawobj.texlbl
         elif texmode == 'verbatim':
@@ -939,15 +947,15 @@ class DotConvBase(object):
     # temp
     def get_labeld(self, drawobj):
         text = ""
-        texmode = self.options.get('texmode','verbatim')
+        texmode = self.options.get('texmode', 'verbatim')
         if drawobj.get('texmode', ''):
             texmode = drawobj["texmode"]
-        text = drawobj.get('label',None)
+        text = drawobj.get('label', None)
         if text == None or text.strip() == '\N':
-            text = drawobj.get('name',None) or \
-                drawobj.get('graph_name','')
+            text = drawobj.get('name', None) or\
+                   drawobj.get('graph_name', '')
         else:
-            text = text.replace("\\\\","\\")
+            text = text.replace("\\\\", "\\")
 
         if drawobj.get('texlbl', ''):
             # the texlbl overrides everything
@@ -962,18 +970,18 @@ class DotConvBase(object):
         return text
 
     def get_node_preproc_code(self, node):
-        return node.attr.get('texlbl','')
+        return node.attr.get('texlbl', '')
 
-    def get_edge_preproc_code(self,edge):
-        return edge.attr.get('texlbl','')
+    def get_edge_preproc_code(self, edge):
+        return edge.attr.get('texlbl', '')
 
-    def get_graph_preproc_code(self,graph):
-        return graph.attr.get('texlbl','')
+    def get_graph_preproc_code(self, graph):
+        return graph.attr.get('texlbl', '')
 
 
     def get_margins(self, element):
         """Return element margins"""
-        margins = element.attr.get('margin',None)
+        margins = element.attr.get('margin', None)
 
         if margins:
             margins = margins.split(',')
@@ -984,7 +992,7 @@ class DotConvBase(object):
                 ymargin = float(margins[1])
         else:
             # use default values
-            if isinstance(element,dotparsing.DotEdge):
+            if isinstance(element, dotparsing.DotEdge):
                 xmargin = DEFAULT_EDGELABEL_XMARGIN
                 ymargin = DEFAULT_EDGELABEL_YMARGIN
             else:
@@ -998,8 +1006,8 @@ class DotConvBase(object):
         #setDotAttr(self.maingraph)
         self.init_template_vars()
         template = self.clean_template(self.template)
-        template = replace_tags(template ,self.templatevars.keys(),
-                           self.templatevars)
+        template = replace_tags(template, self.templatevars.keys(),
+            self.templatevars)
         pp = TeXDimProc(template, self.options)
         processednodes = {}
         processededges = {}
@@ -1011,50 +1019,49 @@ class DotConvBase(object):
         # iterate over every element in the graph
         counter = 0
 
-##            elif isinstance(element, dotparsing.DotSubGraph):
-##                if not getattr(element,'label',None) and \
-##                    not getattr(element,'texlbl',None): continue
-##                name = element.graph_name
-##                label = self.get_label(element)
-##                element.texlbl = label
-##                processedgraphs[name]=element
-##
-##            else:
-##                pass
-##            counter += 1
+        ##            elif isinstance(element, dotparsing.DotSubGraph):
+        ##                if not getattr(element,'label',None) and \
+        ##                    not getattr(element,'texlbl',None): continue
+        ##                name = element.graph_name
+        ##                label = self.get_label(element)
+        ##                element.texlbl = label
+        ##                processedgraphs[name]=element
+        ##
+        ##            else:
+        ##                pass
+        ##            counter += 1
 
         for node in self.maingraph.allnodes:
             name = node.name
-            if node.attr.get('fixedsize','') == 'true' \
-                or node.attr.get('style','') in ['invis','invisible']:
-                    continue
-            if node.attr.get('shape','') == 'record':
-                log.warning('Record nodes not supported in preprocessing mode: %s',name)
+            if node.attr.get('fixedsize', '') == 'true'\
+            or node.attr.get('style', '') in ['invis', 'invisible']:
+                continue
+            if node.attr.get('shape', '') == 'record':
+                log.warning('Record nodes not supported in preprocessing mode: %s', name)
                 continue
             texlbl = self.get_label(node)
 
             if texlbl:
                 node.attr['texlbl'] = texlbl
                 code = self.get_node_preproc_code(node)
-                pp.add_snippet(name,code)
-
+                pp.add_snippet(name, code)
 
             usednodes[name] = node
         for edge in dotparsing.flatten(self.maingraph.alledges):
-            if not edge.attr.get('label') and \
+            if not edge.attr.get('label') and\
                not edge.attr.get('texlbl'): continue
             # Ensure that the edge name is unique.
-            name = edge.src.name + edge.dst.name +str(counter)
+            name = edge.src.name + edge.dst.name + str(counter)
             label = self.get_label(edge)
             edge.attr['texlbl'] = label
             code = self.get_edge_preproc_code(edge)
-            pp.add_snippet(name,code)
+            pp.add_snippet(name, code)
             usededges[name] = edge
             counter += 1
 
         for graph in self.maingraph.allgraphs:
-            if not graph.attr.get('label',None) and \
-               not graph.attr.get('texlbl',None): continue
+            if not graph.attr.get('label', None) and\
+               not graph.attr.get('texlbl', None): continue
             # Make sure that the name is unique
             name = graph.name + str(counter)
 
@@ -1062,7 +1069,7 @@ class DotConvBase(object):
             label = self.get_label(graph)
             graph.attr['texlbl'] = label
             code = self.get_graph_preproc_code(graph)
-            pp.add_snippet(name,code)
+            pp.add_snippet(name, code)
             usedgraphs[name] = graph
 
         ok = pp.process()
@@ -1076,85 +1083,81 @@ To see what happened, run dot2tex with the --debug option.
             log.error(errormsg)
             sys.exit(1)
 
-        for name,item in usednodes.items():
-            if not item.attr.get('texlbl'):continue
+        for name, item in usednodes.items():
+            if not item.attr.get('texlbl'): continue
             node = item
-            hp,dp,wt = pp.texdims[name]
-            if self.options.get('rawdim',False):
+            hp, dp, wt = pp.texdims[name]
+            if self.options.get('rawdim', False):
                 # use dimesions from preview.sty directly
                 node.attr['width'] = wt
-                node.attr['height'] = hp+dp
+                node.attr['height'] = hp + dp
                 node.attr['label'] = " "
-                node.attr['fixedsize']='true'
+                node.attr['fixedsize'] = 'true'
                 self.maingraph.allitems.append(node)
                 continue
 
             xmargin, ymargin = self.get_margins(node)
             #print xmargin, ymargin
-            ht = hp+dp
+            ht = hp + dp
             minwidth = float(item.attr.get('width') or DEFAULT_NODE_WIDTH)
             minheight = float(item.attr.get('height') or DEFAULT_NODE_HEIGHT)
-            if self.options.get('nominsize',False):
-                width = wt+2*xmargin
-                height = ht+2*ymargin
+            if self.options.get('nominsize', False):
+                width = wt + 2 * xmargin
+                height = ht + 2 * ymargin
             else:
-                if (wt+2*xmargin) < minwidth:
+                if (wt + 2 * xmargin) < minwidth:
                     width = minwidth
                     #log.warning("%s %s %s %s %s",minwidth,wt,width,name,tmp)
                     pass
                 else:
-                    width = wt+2*xmargin
+                    width = wt + 2 * xmargin
                 height = ht
-                if ((hp+dp)+2*ymargin) < minheight:
+                if ((hp + dp) + 2 * ymargin) < minheight:
                     height = minheight
                 else:
-                    height = ht+ 2*ymargin
-            # Treat shapes with equal widht and height differently
+                    height = ht + 2 * ymargin
+                # Treat shapes with equal widht and height differently
             # Warning! Rectangles will not alway fit inside a circle
             #          Should use the diagonal.
-            if item.attr.get('shape','') in ['circle','Msquare','doublecircle','Mcircle']:
+            if item.attr.get('shape', '') in ['circle', 'Msquare', 'doublecircle', 'Mcircle']:
                 #log.warning('%s %s', name, item['shape'])
-                if  wt< height and width < height:
+                if  wt < height and width < height:
                     width = height
                 else:
-                    height=width
+                    height = width
                     pass
 
             node.attr['width'] = width
             node.attr['height'] = height
             node.attr['label'] = " "
 
-            node.attr['fixedsize']='true'
+            node.attr['fixedsize'] = 'true'
             self.maingraph.allitems.append(node)
 
-        for name,item in usededges.items():
-
+        for name, item in usededges.items():
             edge = item
-            hp,dp,wt = pp.texdims[name]
+            hp, dp, wt = pp.texdims[name]
             xmargin, ymargin = self.get_margins(edge)
             labelcode = '<<<table border="0" cellborder="0" cellpadding="0">'\
                         '<tr><td fixedsize="true" width="%s" height="%s">a</td>'\
                         '</tr></table>>>'
-            edge.attr['label']=labelcode % ((wt + 2*xmargin)*72, (hp+dp+2*ymargin)*72)
+            edge.attr['label'] = labelcode % ((wt + 2 * xmargin) * 72, (hp + dp + 2 * ymargin) * 72)
             #self.maingraph.allitems.append(edge)
-        for name,item in usedgraphs.items():
+        for name, item in usedgraphs.items():
             graph = item
-            hp,dp,wt = pp.texdims[name]
+            hp, dp, wt = pp.texdims[name]
             xmargin, ymargin = self.get_margins(graph)
             labelcode = '<<<table border="0" cellborder="0" cellpadding="0">'\
                         '<tr><td fixedsize="true" width="%s" height="%s">a</td>'\
                         '</tr></table>>>'
-            graph.attr['label']=labelcode % ((wt + 2*xmargin)*72, (hp+dp+2*ymargin)*72)
-
+            graph.attr['label'] = labelcode % ((wt + 2 * xmargin) * 72, (hp + dp + 2 * ymargin) * 72)
 
         self.maingraph.attr['d2toutputformat'] = self.options.get('format',
-                                             DEFAULT_OUTPUT_FORMAT)
+            DEFAULT_OUTPUT_FORMAT)
         graphcode = str(self.maingraph)
-        graphcode = graphcode.replace('<<<','<<')
-        graphcode = graphcode.replace('>>>','>>')
+        graphcode = graphcode.replace('<<<', '<<')
+        graphcode = graphcode.replace('>>>', '>>')
         return graphcode
-
-
 
 
 PSTRICKS_TEMPLATE = r"""\documentclass{article}
@@ -1208,17 +1211,18 @@ PSTRICKS_TEMPLATE = r"""\documentclass{article}
 
 class Dot2PSTricksConv(DotConvBase):
     """PSTricks converter backend"""
-    def __init__(self, options = {}):
+
+    def __init__(self, options={}):
         DotConvBase.__init__(self, options)
         if not self.template:
             self.template = PSTRICKS_TEMPLATE
         self.styles = dict(
-            dotted = "linestyle=dotted",
-            dashed = "linestyle=dashed",
-            bold   = "linewidth=2pt",
-            solid = "",
-            filled = "",
-          )
+            dotted="linestyle=dotted",
+            dashed="linestyle=dashed",
+            bold="linewidth=2pt",
+            solid="",
+            filled="",
+        )
 
     def do_graphtmp(self):
         self.pencolor = "";
@@ -1233,9 +1237,9 @@ class Dot2PSTricksConv(DotConvBase):
         bbstr = self.maingraph.bb
         if bbstr:
             bb = bbstr.split(',')
-        #fillcolor=black,
-        s = "\\begin{pspicture}[linewidth=1bp](%sbp,%sbp)(%sbp,%sbp)\n" % \
-                (bb[0],bb[1],bb[2],bb[3])
+            #fillcolor=black,
+        s = "\\begin{pspicture}[linewidth=1bp](%sbp,%sbp)(%sbp,%sbp)\n" %\
+            (bb[0], bb[1], bb[2], bb[3])
         # Set line style to mitre
         s += "  \pstVerb{2 setlinejoin} % set line join style to 'mitre'\n"
         #return s
@@ -1245,81 +1249,78 @@ class Dot2PSTricksConv(DotConvBase):
         #return '\end{pspicture}\n'
         return ""
 
-    def draw_ellipse(self, drawop, style = None):
-        op, x,y,w,h = drawop
+    def draw_ellipse(self, drawop, style=None):
+        op, x, y, w, h = drawop
         s = ""
         #s =  "  %% Node: %s\n" % node.name
         if op == 'E':
             if style:
-                style = style.replace('filled','')
+                style = style.replace('filled', '')
             stylestr = 'fillstyle=solid'
         else:
             stylestr = ""
 
         if style:
             if stylestr:
-                stylestr += ','+ style
+                stylestr += ',' + style
             else:
                 stylestr = style
 
-        s += "  \psellipse[%s](%sbp,%sbp)(%sbp,%sbp)\n" % (stylestr,x,y, \
-                # w+self.linewidth,h+self.linewidth)
-                w,h)
-
+        s += "  \psellipse[%s](%sbp,%sbp)(%sbp,%sbp)\n" % (stylestr, x, y,\
+                                                           # w+self.linewidth,h+self.linewidth)
+                                                           w, h)
 
         return s
 
-    def draw_polygon(self, drawop, style = None):
+    def draw_polygon(self, drawop, style=None):
         op, points = drawop
-        pp = ['(%sbp,%sbp)' % (p[0],p[1]) for p in points]
+        pp = ['(%sbp,%sbp)' % (p[0], p[1]) for p in points]
         stylestr = ""
         if op == 'P':
             if style:
-                style = style.replace('filled','')
+                style = style.replace('filled', '')
             stylestr = "fillstyle=solid"
         if style:
             if stylestr:
-                stylestr += ','+ style
+                stylestr += ',' + style
             else:
                 stylestr = style
 
         s = "  \pspolygon[%s]%s\n" % (stylestr, "".join(pp))
         return s
 
-    def draw_polyline(self, drawop, style = None):
+    def draw_polyline(self, drawop, style=None):
         op, points = drawop
-        pp = ['(%sbp,%sbp)' % (p[0],p[1]) for p in points]
+        pp = ['(%sbp,%sbp)' % (p[0], p[1]) for p in points]
         s = "  \psline%s\n" % "".join(pp)
         return s
 
-    def draw_bezier(self, drawop, style = None):
+    def draw_bezier(self, drawop, style=None):
         op, points = drawop
-        pp= []
+        pp = []
         for point in points:
-            pp.append("(%sbp,%sbp)" % (point[0],point[1]))
+            pp.append("(%sbp,%sbp)" % (point[0], point[1]))
 
         #points = ['(%sbp, %sbp)' % (p[0],p[1]) for p in points]
         arrowstyle = ""
         return "  \psbezier{%s}%s\n" % (arrowstyle, "".join(pp))
 
 
-
     def draw_text(self, drawop, style=None):
-
-        if len(drawop)==7:
+        if len(drawop) == 7:
             c, x, y, align, w, text, valign = drawop
         else:
             c, x, y, align, w, text = drawop
-            valign=""
-        if align == "-1" :
+            valign = ""
+        if align == "-1":
             alignstr = 'l' # left aligned
         elif align == "1":
             alignstr = 'r' # right aligned
         else:
             alignstr = ""  # centered (default)
         if alignstr or valign:
-            alignstr = '['+alignstr+valign+']'
-        s = "  \\rput%s(%sbp,%sbp){%s}\n" % (alignstr, x,y,text)
+            alignstr = '[' + alignstr + valign + ']'
+        s = "  \\rput%s(%sbp,%sbp){%s}\n" % (alignstr, x, y, text)
         return s
 
     def set_color(self, drawop):
@@ -1348,12 +1349,12 @@ class Dot2PSTricksConv(DotConvBase):
                 self.pencolor = self.fillcolor = color;
                 s = "  \psset{linecolor=%s}\n" % (color);
         else:
-            log.warning('Unhandled color: %s',drawop)
+            log.warning('Unhandled color: %s', drawop)
         return s
 
     def set_style(self, drawop):
         c, style = drawop
-        psstyle = self.styles.get(style,"")
+        psstyle = self.styles.get(style, "")
         if psstyle:
             return "  \psset{%s}\n" % psstyle
         else:
@@ -1373,7 +1374,7 @@ class Dot2PSTricksConv(DotConvBase):
         self.color = ""
         return "{%\n"
 
-    def end_node(self,node):
+    def end_node(self, node):
         return "}%\n"
 
     def start_edge(self):
@@ -1390,74 +1391,74 @@ class Dot2PSTricksConv(DotConvBase):
         self.color = ""
         return "{\n"
 
-    def end_graph(self,node):
+    def end_graph(self, node):
         return "}\n"
 
 
-##    def draw_ellipseNode(self, x,y,w,h,node):
-##        s =  "  %% Node: %s\n" % node.name
-##        s += "  \psellipse(%sbp,%sbp)(%sbp,%sbp)\n" % (x,y, \
-##                 w/2+self.linewidth,h/2+self.linewidth)
-##        # label
-##        if node.label:
-##            label = node.label
-##        else:
-##            label = node.name
-##        s += "  \\rput(%sbp,%sbp){$%s$}\n" % (x,y,label)
-##
-##        return s
-##
+    ##    def draw_ellipseNode(self, x,y,w,h,node):
+    ##        s =  "  %% Node: %s\n" % node.name
+    ##        s += "  \psellipse(%sbp,%sbp)(%sbp,%sbp)\n" % (x,y, \
+    ##                 w/2+self.linewidth,h/2+self.linewidth)
+    ##        # label
+    ##        if node.label:
+    ##            label = node.label
+    ##        else:
+    ##            label = node.name
+    ##        s += "  \\rput(%sbp,%sbp){$%s$}\n" % (x,y,label)
+    ##
+    ##        return s
+    ##
 
 
     def draw_edge(self, edge):
         s = ""
-        if edge.attr.get('style','') in ['invis','invisible']:
+        if edge.attr.get('style', '') in ['invis', 'invisible']:
             return ""
         edges = self.get_edge_points(edge)
         for arrowstyle, points in edges:
-            if arrowstyle == '--': arrowstyle=''
-            color = getattr(edge,'color','')
+            if arrowstyle == '--': arrowstyle = ''
+            color = getattr(edge, 'color', '')
             if self.color <> color:
                 if color:
-                    s += self.set_color(('c',color))
+                    s += self.set_color(('c', color))
                 else:
                     # reset to default color
-                    s += self.set_color(('c','black'))
-            pp= []
+                    s += self.set_color(('c', 'black'))
+            pp = []
             for point in points:
                 p = point.split(',')
-                pp.append("(%sbp,%sbp)" % (p[0],p[1]))
+                pp.append("(%sbp,%sbp)" % (p[0], p[1]))
 
-            edgestyle = edge.attr.get('style','')
+            edgestyle = edge.attr.get('style', '')
             styles = []
             if arrowstyle:
                 styles.append('arrows=%s' % arrowstyle)
             if edgestyle:
-                edgestyles = [self.styles.get(key.strip(),key.strip()) \
-                    for key in edgestyle.split(',') if key]
+                edgestyles = [self.styles.get(key.strip(), key.strip())\
+                              for key in edgestyle.split(',') if key]
                 styles.extend(edgestyles)
             if styles:
                 stylestr = ",".join(styles)
             else:
                 stylestr = ""
-            if not self.options.get('straightedges',False):
-                s += "  \psbezier[%s]%s\n" % (stylestr,"".join(pp))
+            if not self.options.get('straightedges', False):
+                s += "  \psbezier[%s]%s\n" % (stylestr, "".join(pp))
             else:
-                s += "  \psline[%s]%s%s\n" % (stylestr,  pp[0], pp[-1])
-            #s += "  \psbezier[%s]{%s}%s\n" % (stylestr, arrowstyle,"".join(pp))
-    ##        if edge.label:
-    ##            x,y = edge.lp.split(',')
-    ##            #s += "\\rput(%s,%s){%s}\n" % (x,y,edge.label)
+                s += "  \psline[%s]%s%s\n" % (stylestr, pp[0], pp[-1])
+                #s += "  \psbezier[%s]{%s}%s\n" % (stylestr, arrowstyle,"".join(pp))
+                ##        if edge.label:
+                ##            x,y = edge.lp.split(',')
+                ##            #s += "\\rput(%s,%s){%s}\n" % (x,y,edge.label)
         return s
 
     def init_template_vars(self):
         DotConvBase.init_template_vars(self)
         # Put a ',' before <<graphstyle>>
-        graphstyle = self.templatevars.get('<<graphstyle>>','')
+        graphstyle = self.templatevars.get('<<graphstyle>>', '')
         if graphstyle:
             graphstyle = graphstyle.strip()
             if not graphstyle.startswith(','):
-                graphstyle = ','+graphstyle
+                graphstyle = ',' + graphstyle
                 self.templatevars['<<graphstyle>>'] = graphstyle
 
 
@@ -1566,6 +1567,7 @@ PGF118_TEMPLATE = r"""\documentclass{article}
 
 class Dot2PGFConv(DotConvBase):
     """PGF/TikZ converter backend"""
+
     def __init__(self, options={}):
         DotConvBase.__init__(self, options)
         if not self.template:
@@ -1574,22 +1576,22 @@ class Dot2PGFConv(DotConvBase):
             else:
                 self.template = PGF_TEMPLATE
         self.styles = dict(dashed='dashed', dotted='dotted',
-                            bold='very thick', filled='fill', invis="",
-                            rounded='rounded corners', )
+            bold='very thick', filled='fill', invis="",
+            rounded='rounded corners', )
         self.dashstyles = dict(
-            dashed = '\pgfsetdash{{3pt}{3pt}}{0pt}',
+            dashed='\pgfsetdash{{3pt}{3pt}}{0pt}',
             dotted='\pgfsetdash{{\pgflinewidth}{2pt}}{0pt}',
-            bold = '\pgfsetlinewidth{1.2pt}')
+            bold='\pgfsetlinewidth{1.2pt}')
 
     def start_fig(self):
         # get bounding box
         # get bounding box
         s = ""
-##        bbstr = self.maingraph.bb
-##        if bbstr:
-##            bb = bbstr.split(',')
-##            s += "%%(%sbp,%sbp)(%sbp,%sbp)\n" % \
-##                (bb[0],bb[1],bb[2],bb[3])
+        ##        bbstr = self.maingraph.bb
+        ##        if bbstr:
+        ##            bb = bbstr.split(',')
+        ##            s += "%%(%sbp,%sbp)(%sbp,%sbp)\n" % \
+        ##                (bb[0],bb[1],bb[2],bb[3])
 
         return s
 
@@ -1604,7 +1606,7 @@ class Dot2PGFConv(DotConvBase):
         self.color = ""
         return "\\begin{scope}\n"
 
-    def end_node(self,node):
+    def end_node(self, node):
         return "\\end{scope}\n"
 
     def start_edge(self):
@@ -1624,7 +1626,7 @@ class Dot2PGFConv(DotConvBase):
         self.color = ""
         return "\\begin{scope}\n"
 
-    def end_graph(self,graph):
+    def end_graph(self, graph):
         return "\\end{scope}\n"
         #return "\\end{scope}"
 
@@ -1636,7 +1638,7 @@ class Dot2PGFConv(DotConvBase):
         #self.color = ""
         res = self.convert_color(color, True)
         opacity = None
-        if len(res)==2:
+        if len(res) == 2:
             ccolor, opacity = res
         else:
             ccolor = res
@@ -1646,8 +1648,8 @@ class Dot2PGFConv(DotConvBase):
             #self.fillcolor = color
             if self.color <> color:
                 self.color = color
-                self.pencolor=color
-                self.fillcolor=color
+                self.pencolor = color
+                self.fillcolor = color
                 if ccolor.startswith('{'):
                     # rgb or hsb
                     s += "  \definecolor{newcol}%s;\n" % ccolor
@@ -1687,7 +1689,7 @@ class Dot2PGFConv(DotConvBase):
 
     def set_style(self, drawop):
         c, style = drawop
-        pgfstyle = self.dashstyles.get(style,"")
+        pgfstyle = self.dashstyles.get(style, "")
         if pgfstyle:
             return "  %s\n" % pgfstyle
         else:
@@ -1697,13 +1699,13 @@ class Dot2PGFConv(DotConvBase):
         fstyles = []
         for item in style.split(','):
             keyval = item.strip()
-            if keyval.find('setlinewidth') < 0 and not keyval=='filled':
+            if keyval.find('setlinewidth') < 0 and not keyval == 'filled':
                 fstyles.append(keyval)
         return ', '.join(fstyles)
 
 
-    def draw_ellipse(self, drawop, style = None):
-        op, x,y,w,h = drawop
+    def draw_ellipse(self, drawop, style=None):
+        op, x, y, w, h = drawop
         s = ""
         #s =  "  %% Node: %s\n" % node.name
         if op == 'E':
@@ -1719,14 +1721,14 @@ class Dot2PGFConv(DotConvBase):
             stylestr = " [%s]" % style
         else:
             stylestr = ''
-        s += "  \%s%s (%sbp,%sbp) ellipse (%sbp and %sbp);\n" % (cmd, stylestr, x,y, \
-                # w+self.linewidth,h+self.linewidth)
-                w,h)
+        s += "  \%s%s (%sbp,%sbp) ellipse (%sbp and %sbp);\n" % (cmd, stylestr, x, y,\
+                                                                 # w+self.linewidth,h+self.linewidth)
+                                                                 w, h)
         return s
 
-    def draw_polygon(self, drawop, style = None):
+    def draw_polygon(self, drawop, style=None):
         op, points = drawop
-        pp = ['(%sbp,%sbp)' % (p[0],p[1]) for p in points]
+        pp = ['(%sbp,%sbp)' % (p[0], p[1]) for p in points]
         cmd = "draw"
         if op == 'P':
             cmd = "filldraw"
@@ -1738,28 +1740,28 @@ class Dot2PGFConv(DotConvBase):
         s = "  \%s%s %s -- cycle;\n" % (cmd, stylestr, " -- ".join(pp))
         return s
 
-    def draw_polyline(self, drawop, style = None):
+    def draw_polyline(self, drawop, style=None):
         op, points = drawop
-        pp = ['(%sbp,%sbp)' % (p[0],p[1]) for p in points]
+        pp = ['(%sbp,%sbp)' % (p[0], p[1]) for p in points]
         ##if style:
-##            stylestr = " [%s]" % style
-##        else:
-##            stylestr = ''
+        ##            stylestr = " [%s]" % style
+        ##        else:
+        ##            stylestr = ''
         stylestr = ''
-        return "  \draw%s %s;\n" %(stylestr, " -- ".join(pp))
+        return "  \draw%s %s;\n" % (stylestr, " -- ".join(pp))
 
 
-    def draw_text(self, drawop, style = None):
+    def draw_text(self, drawop, style=None):
         # The coordinates given by drawop are not the same as the node
         # coordinates! This may give som odd results if graphviz' and
         # LaTeX' fonts are very different.
-        if len(drawop)==7:
+        if len(drawop) == 7:
             c, x, y, align, w, text, valign = drawop
         else:
             c, x, y, align, w, text = drawop
-            valign=""
+            valign = ""
         styles = []
-        if align == "-1" :
+        if align == "-1":
             alignstr = 'right' # left aligned
         elif align == "1":
             alignstr = 'left' # right aligned
@@ -1767,37 +1769,37 @@ class Dot2PGFConv(DotConvBase):
             alignstr = ""  # centered (default)
         styles.append(alignstr)
         styles.append(style)
-##        if alignstr:
-##            alignstr = "[" + alignstr+", anchor=mid" + "]"
-##        else:
-##            alignstr = "[anchor=mid]"
+        ##        if alignstr:
+        ##            alignstr = "[" + alignstr+", anchor=mid" + "]"
+        ##        else:
+        ##            alignstr = "[anchor=mid]"
         lblstyle = ",".join([i for i in styles if i])
         if lblstyle:
-            lblstyle = '['+lblstyle+']'
-        s = "  \draw (%sbp,%sbp) node%s {%s};\n" % (x,y,lblstyle,text)
+            lblstyle = '[' + lblstyle + ']'
+        s = "  \draw (%sbp,%sbp) node%s {%s};\n" % (x, y, lblstyle, text)
         return s
 
-    def draw_bezier(self, drawop, style = None):
+    def draw_bezier(self, drawop, style=None):
         s = ""
         c, points = drawop
         arrowstyle = '--'
 
-        pp= []
+        pp = []
         for point in points:
-            pp.append("(%sbp,%sbp)" % (point[0],point[1]))
+            pp.append("(%sbp,%sbp)" % (point[0], point[1]))
 
         #points = ['(%sbp, %sbp)' % (p[0],p[1]) for p in points]
         #quadp = nsplit(pp, 4)
         pstrs = ["%s .. controls %s and %s " % p for p in nsplit(pp, 3)]
         ##if style:
-##            stylestr = " [%s]" % style
-##        else:
-##            stylestr = ''
+        ##            stylestr = " [%s]" % style
+        ##        else:
+        ##            stylestr = ''
         stylestr = ''
-##        if arrowstyle == '--':
-##            style = ''
-##        else:
-##            style = '[%s]' % arrowstyle
+        ##        if arrowstyle == '--':
+        ##            style = ''
+        ##        else:
+        ##            style = '[%s]' % arrowstyle
 
         s += "  \draw%s %s .. %s;\n" % (stylestr, " .. ".join(pstrs), pp[-1])
 
@@ -1806,63 +1808,63 @@ class Dot2PGFConv(DotConvBase):
 
     def do_edges(self):
         s = ""
-        s += self.set_color(('cC',"black"))
+        s += self.set_color(('cC', "black"))
         for edge in self.edges:
-            dstring = getattr(edge,'_draw_',"")
-            lstring = getattr(edge,'_ldraw_',"")
-            hstring = getattr(edge,'_hdraw_',"")
-            tstring = getattr(edge,'_tdraw_',"")
-            tlstring = getattr(edge,'_tldraw_',"")
-            hlstring = getattr(edge,'_hldraw_',"")
+            dstring = getattr(edge, '_draw_', "")
+            lstring = getattr(edge, '_ldraw_', "")
+            hstring = getattr(edge, '_hdraw_', "")
+            tstring = getattr(edge, '_tdraw_', "")
+            tlstring = getattr(edge, '_tldraw_', "")
+            hlstring = getattr(edge, '_hldraw_', "")
 
             # Note that the order of the draw strings should be the same
             # as in the xdot output.
-            drawstring = dstring + " " + hstring + " " + tstring \
-                            + " " + lstring + " " + tlstring + " " + hlstring
-            drawop,stat = parse_drawstring(drawstring);
+            drawstring = dstring + " " + hstring + " " + tstring\
+                         + " " + lstring + " " + tlstring + " " + hlstring
+            drawop, stat = parse_drawstring(drawstring);
             if not drawstring.strip():
                 continue
             s += self.output_edge_comment(edge)
             if self.options.get('duplicate', False):
                 s += self.start_edge()
-                s += self.do_draw_op(drawop, edge,stat)
+                s += self.do_draw_op(drawop, edge, stat)
                 s += self.end_edge()
             else:
-                topath = getattr(edge,'topath',None)
+                topath = getattr(edge, 'topath', None)
                 s += self.draw_edge(edge)
-                if not self.options.get('tikzedgelabels',False) and not topath:
-                    s += self.do_drawstring(lstring+" "+tlstring+" "+hlstring, edge)
+                if not self.options.get('tikzedgelabels', False) and not topath:
+                    s += self.do_drawstring(lstring + " " + tlstring + " " + hlstring, edge)
                 else:
-                    s += self.do_drawstring(tlstring+" "+hlstring, edge)
-                #s += self.draw_edge(edge)
-                #s += self.do_drawstring(lstring+" "+tlstring+" "+hlstring, edge)
+                    s += self.do_drawstring(tlstring + " " + hlstring, edge)
+                    #s += self.draw_edge(edge)
+                    #s += self.do_drawstring(lstring+" "+tlstring+" "+hlstring, edge)
         self.body += s
 
 
     def draw_edge(self, edge):
         s = ""
-        if edge.attr.get('style','') in ['invis','invisible']:
+        if edge.attr.get('style', '') in ['invis', 'invisible']:
             return ""
         edges = self.get_edge_points(edge)
         for arrowstyle, points in edges:
         #arrowstyle, points = self.get_edge_points(edge)
             # PGF uses the fill style when drawing some arrowheads. We have to
             # ensure that the fill color is the same as the pen color.
-            color = getattr(edge,'color','')
+            color = getattr(edge, 'color', '')
 
             if self.color <> color:
                 if color:
-                    s += self.set_color(('cC',color))
+                    s += self.set_color(('cC', color))
                 else:
                     # reset to default color
-                    s += self.set_color(('cC','black'))
+                    s += self.set_color(('cC', 'black'))
 
-            pp= []
+            pp = []
             for point in points:
                 p = point.split(',')
-                pp.append("(%sbp,%sbp)" % (p[0],p[1]))
+                pp.append("(%sbp,%sbp)" % (p[0], p[1]))
 
-            edgestyle = edge.attr.get('style','')
+            edgestyle = edge.attr.get('style', '')
 
             styles = []
             if arrowstyle <> '--':
@@ -1870,76 +1872,72 @@ class Dot2PGFConv(DotConvBase):
                 styles = [arrowstyle]
 
             if edgestyle:
-                edgestyles = [self.styles.get(key.strip(),key.strip()) for key in edgestyle.split(',') if key]
+                edgestyles = [self.styles.get(key.strip(), key.strip()) for key in edgestyle.split(',') if key]
                 styles.extend(edgestyles)
 
             stylestr = ",".join(styles)
-            topath = getattr(edge,'topath',None)
+            topath = getattr(edge, 'topath', None)
 
             pstrs = ["%s .. controls %s and %s " % p for p in nsplit(pp, 3)]
             extra = ""
-            if self.options.get('tikzedgelabels',False) or topath:
+            if self.options.get('tikzedgelabels', False) or topath:
                 edgelabel = self.get_label(edge)
                 #log.warning('label: %s', edgelabel)
-                lblstyle = getattr(edge,'lblstyle','')
+                lblstyle = getattr(edge, 'lblstyle', '')
                 if lblstyle:
-                    lblstyle = '['+lblstyle+']'
+                    lblstyle = '[' + lblstyle + ']'
                 else:
                     lblstyle = ''
                 if edgelabel:
-                    extra = " node%s {%s}" % (lblstyle,edgelabel)
+                    extra = " node%s {%s}" % (lblstyle, edgelabel)
             src = pp[0]
             dst = pp[-1]
             if topath:
-                    s += "  \draw [%s] %s to[%s]%s %s;\n" % (stylestr, src,
-                                                                 topath, extra,dst)
-            elif not self.options.get('straightedges',False):
+                s += "  \draw [%s] %s to[%s]%s %s;\n" % (stylestr, src,
+                                                         topath, extra, dst)
+            elif not self.options.get('straightedges', False):
                 #s += "  \draw [%s] %s .. %s;\n" % (stylestr, " .. ".join(pstrs), pp[-1])
-                s += "  \draw [%s] %s ..%s %s;\n" % (stylestr, " .. ".join(pstrs), extra,pp[-1])
+                s += "  \draw [%s] %s ..%s %s;\n" % (stylestr, " .. ".join(pstrs), extra, pp[-1])
             else:
-                s += "  \draw [%s] %s --%s %s;\n" % (stylestr, pp[0],extra, pp[-1])
+                s += "  \draw [%s] %s --%s %s;\n" % (stylestr, pp[0], extra, pp[-1])
 
         return s
 
     def init_template_vars(self):
         DotConvBase.init_template_vars(self)
-        if self.options.get('crop',False):
-            cropcode = "\usepackage[active,tightpage]{preview}\n" + \
-                "\PreviewEnvironment{tikzpicture}\n" + \
-                "\setlength\PreviewBorder{%s}" % self.options.get('margin','0pt')
+        if self.options.get('crop', False):
+            cropcode = "\usepackage[active,tightpage]{preview}\n" +\
+                       "\PreviewEnvironment{tikzpicture}\n" +\
+                       "\setlength\PreviewBorder{%s}" % self.options.get('margin', '0pt')
         else:
             cropcode = ""
         vars = {}
         vars['<<cropcode>>'] = cropcode
         self.templatevars.update(vars)
 
-    def get_node_preproc_code(self,node):
-        lblstyle = node.attr.get('lblstyle','')
-        text = node.attr.get('texlbl','')
+    def get_node_preproc_code(self, node):
+        lblstyle = node.attr.get('lblstyle', '')
+        text = node.attr.get('texlbl', '')
         if lblstyle:
             return "  \\tikz \\node[%s] {%s};\n" % (lblstyle, text)
         else:
-            return r"\tikz \node {" + text +"};"
+            return r"\tikz \node {" + text + "};"
 
-    def get_edge_preproc_code(self,edge):
-        lblstyle = edge.attr.get('lblstyle','')
-        text = edge.attr.get('texlbl','')
+    def get_edge_preproc_code(self, edge):
+        lblstyle = edge.attr.get('lblstyle', '')
+        text = edge.attr.get('texlbl', '')
         if lblstyle:
             return "  \\tikz \\node[%s] {%s};\n" % (lblstyle, text)
         else:
-            return r"\tikz \node " + "{"+text +"};"
+            return r"\tikz \node " + "{" + text + "};"
 
-    def get_graph_preproc_code(self,graph):
-        lblstyle = graph.attr.get('lblstyle','')
-        text = graph.attr.get('texlbl','')
+    def get_graph_preproc_code(self, graph):
+        lblstyle = graph.attr.get('lblstyle', '')
+        text = graph.attr.get('texlbl', '')
         if lblstyle:
             return "  \\tikz \\node[%s] {%s};\n" % (lblstyle, text)
         else:
-            return r"\tikz \node {" + text +"};"
-
-
-
-
+            return r"\tikz \node {" + text + "};"
 
 
 TIKZ_TEMPLATE = r"""\documentclass{article}
@@ -2041,23 +2039,23 @@ TIKZ118_TEMPLATE = r"""\documentclass{article}
 
 class Dot2TikZConv(Dot2PGFConv):
     """A backend that utilizes the node and edge mechanism of PGF/TikZ"""
-    shapemap = {'doublecircle' : 'circle, double',
-                'box' : 'rectangle',
-                'rect' : 'rectangle',
-                'none' :'draw=none',
-                'plaintext' : 'draw=none',
-                'polygon' : 'regular polygon, regular polygon sides=7',
-                'triangle' : 'regular polygon, regular polygon sides=3',
-                'pentagon' : 'regular polygon, regular polygon sides=5',
-                'hexagon' : 'regular polygon, regular polygon sides=5',
-                'septagon' : 'regular polygon, regular polygon sides=7',
-                'octagon' : 'regular polygon, regular polygon sides=8',
-                'point' : 'circle, fill',
+    shapemap = {'doublecircle': 'circle, double',
+                'box': 'rectangle',
+                'rect': 'rectangle',
+                'none': 'draw=none',
+                'plaintext': 'draw=none',
+                'polygon': 'regular polygon, regular polygon sides=7',
+                'triangle': 'regular polygon, regular polygon sides=3',
+                'pentagon': 'regular polygon, regular polygon sides=5',
+                'hexagon': 'regular polygon, regular polygon sides=5',
+                'septagon': 'regular polygon, regular polygon sides=7',
+                'octagon': 'regular polygon, regular polygon sides=8',
+                'point': 'circle, fill',
                 }
 
-    compassmap = {'n': 'north','ne':'north east','e':'east',
-                  'se':'south east','s':'south','sw':'south west',
-                  'w':'west','nw':'north west','center':'center' }
+    compassmap = {'n': 'north', 'ne': 'north east', 'e': 'east',
+                  'se': 'south east', 's': 'south', 'sw': 'south west',
+                  'w': 'west', 'nw': 'north west', 'center': 'center'}
 
     def __init__(self, options={}):
         # to connect nodes they have to defined. Therefore we have to ensure
@@ -2070,150 +2068,149 @@ class Dot2TikZConv(Dot2PGFConv):
         else:
             self.template = TIKZ_TEMPLATE
         DotConvBase.__init__(self, options)
-        
+
         self.styles = dict(dashed='dashed', dotted='dotted',
-                            bold='very thick', filled='fill', invis="",invisible="",
-                            rounded='rounded corners', )
+            bold='very thick', filled='fill', invis="", invisible="",
+            rounded='rounded corners', )
         self.dashstyles = dict(
-            dashed = '\pgfsetdash{{3pt}{3pt}}{0pt}',
+            dashed='\pgfsetdash{{3pt}{3pt}}{0pt}',
             dotted='\pgfsetdash{{\pgflinewidth}{2pt}}{0pt}',
-            bold = '\pgfsetlinewidth{1.2pt}')
+            bold='\pgfsetlinewidth{1.2pt}')
 
     def set_options(self):
         Dot2PGFConv.set_options(self)
-        self.options['tikzedgelabels'] = self.options.get('tikzedgelabels','') \
-            or getboolattr(self.maingraph,'d2ttikzedgelabels','')
-        self.options['styleonly'] = self.options.get('styleonly','') \
-            or getboolattr(self.maingraph,'d2tstyleonly','')
-        self.options['nodeoptions'] = self.options.get('nodeoptions','') \
-            or getattr(self.maingraph,'d2tnodeoptions','')
-        self.options['edgeoptions'] = self.options.get('edgeoptions','') \
-            or getattr(self.maingraph,'d2tedgeoptions','')
+        self.options['tikzedgelabels'] = self.options.get('tikzedgelabels', '')\
+        or getboolattr(self.maingraph, 'd2ttikzedgelabels', '')
+        self.options['styleonly'] = self.options.get('styleonly', '')\
+        or getboolattr(self.maingraph, 'd2tstyleonly', '')
+        self.options['nodeoptions'] = self.options.get('nodeoptions', '')\
+        or getattr(self.maingraph, 'd2tnodeoptions', '')
+        self.options['edgeoptions'] = self.options.get('edgeoptions', '')\
+        or getattr(self.maingraph, 'd2tedgeoptions', '')
 
     def output_node_comment(self, node):
         # With the node syntax comments are unnecessary
         return ""
 
-    def set_tikzcolor(self,color,colorname):
+    def set_tikzcolor(self, color, colorname):
         res = self.convert_color(color, True)
-        if len(res)==2:
+        if len(res) == 2:
             ccolor, opacity = res
             if not (opacity == '1'):
-                log.warning('Opacity not supported yet: %s',res)
+                log.warning('Opacity not supported yet: %s', res)
         else:
             ccolor = res
         s = ""
         if ccolor.startswith('{'):
             # rgb or hsb
-            s += "  \definecolor{%s}%s;\n" % (colorname,ccolor)
+            s += "  \definecolor{%s}%s;\n" % (colorname, ccolor)
             cname = colorname
         else:
             cname = color
 
-        return s,cname
+        return s, cname
 
 
-    def get_node_preproc_code(self,node):
-        lblstyle = node.attr.get('lblstyle','')
+    def get_node_preproc_code(self, node):
+        lblstyle = node.attr.get('lblstyle', '')
 
-        shape = node.attr.get('shape','ellipse')
+        shape = node.attr.get('shape', 'ellipse')
         shape = self.shapemap.get(shape, shape)
         #s += "%% %s\n" % (shape)
-        label = node.attr.get('texlbl','')
-        style = node.attr.get('style'," ") or " ";
+        label = node.attr.get('texlbl', '')
+        style = node.attr.get('style', " ") or " ";
         if lblstyle:
             if style.strip():
-                style += ','+lblstyle
+                style += ',' + lblstyle
             else:
                 style = lblstyle
 
         sn = ""
         if self.options.get('styleonly'):
-            sn += "\\tikz  \\node (%s) [%s] {%s};\n" % \
-                (style, label)
+            sn += "\\tikz  \\node (%s) [%s] {%s};\n" %\
+                  (style, label)
         else:
-            sn += "\\tikz  \\node [draw,%s,%s] {%s};\n" % \
-                (shape, style, label)
+            sn += "\\tikz  \\node [draw,%s,%s] {%s};\n" %\
+                  (shape, style, label)
         return sn
 
     def do_nodes(self):
         s = ""
-        nodeoptions=  self.options.get('nodeoptions',None)
+        nodeoptions = self.options.get('nodeoptions', None)
         if nodeoptions:
             s += "\\begin{scope}[%s]\n" % nodeoptions
         for node in self.nodes:
             self.currentnode = node
             # detect node type
-            dotshape = getattr(node,'shape','ellipse')
+            dotshape = getattr(node, 'shape', 'ellipse')
             shape = None
 
-            if node.attr.get('style') in ['invis','invisible']:
-                shape="coordinate"
-            else:    
+            if node.attr.get('style') in ['invis', 'invisible']:
+                shape = "coordinate"
+            else:
                 shape = self.shapemap.get(dotshape, shape)
             if shape == None:
-                shape='ellipse'
+                shape = 'ellipse'
 
-            pos = getattr(node,'pos',None)
+            pos = getattr(node, 'pos', None)
             if not pos:
                 continue
-            x,y = pos.split(',')
+            x, y = pos.split(',')
             if dotshape <> 'point':
                 label = self.get_label(node)
             else:
                 label = ''
-            
-            pos = "%sbp,%sbp" % (x,y)
+
+            pos = "%sbp,%sbp" % (x, y)
             style = node.attr.get('style') or "";
             if node.attr.get('lblstyle'):
                 if style:
-                    style += ','+node.attr['lblstyle']
+                    style += ',' + node.attr['lblstyle']
                 else:
                     style = node.attr['lblstyle']
             if node.attr.get('exstyle'):
                 if style:
-                    style += ','+node.attr['exstyle']
+                    style += ',' + node.attr['exstyle']
                 else:
                     style = node.attr['exstyle']
             sn = ""
             sn += self.output_node_comment(node)
             sn += self.start_node(node)
-            if shape=="coordinate":
-                sn += "  \\coordinate (%s) at (%s);\n" % (tikzify(node.name),pos)
+            if shape == "coordinate":
+                sn += "  \\coordinate (%s) at (%s);\n" % (tikzify(node.name), pos)
             elif self.options.get('styleonly'):
-                sn += "  \\node (%s) at (%s) [%s] {%s};\n" % \
-                    (tikzify(node.name), pos, style, label)
+                sn += "  \\node (%s) at (%s) [%s] {%s};\n" %\
+                      (tikzify(node.name), pos, style, label)
             else:
-                color = node.attr.get('color','')
+                color = node.attr.get('color', '')
                 drawstr = 'draw'
                 if style.strip() == 'filled':
-                    fillcolor = node.attr.get('fillcolor') or \
-                            node.attr.get('color') or "gray"
-                    drawstr='fill,draw'
+                    fillcolor = node.attr.get('fillcolor') or\
+                                node.attr.get('color') or "gray"
+                    drawstr = 'fill,draw'
                     style = ''
                     if color:
-                        code, color = self.set_tikzcolor(color,'strokecolor')
+                        code, color = self.set_tikzcolor(color, 'strokecolor')
                         sn += code
-                        code, fillcolor = self.set_tikzcolor(fillcolor,'fillcolor')
+                        code, fillcolor = self.set_tikzcolor(fillcolor, 'fillcolor')
                         sn += code
-                        drawstr = "draw=%s,fill=%s" % (color,fillcolor)
+                        drawstr = "draw=%s,fill=%s" % (color, fillcolor)
                     else:
-                        code, fillcolor = self.set_tikzcolor(fillcolor,'fillcolor')
+                        code, fillcolor = self.set_tikzcolor(fillcolor, 'fillcolor')
                         sn += code
                         drawstr = "draw,fill=%s" % fillcolor
                 elif color:
-                    code, color = self.set_tikzcolor(color,'strokecolor')
+                    code, color = self.set_tikzcolor(color, 'strokecolor')
                     sn += code
-                    drawstr += '='+color
+                    drawstr += '=' + color
 
                 if style.strip():
-                    sn += "  \\node (%s) at (%s) [%s,%s,%s] {%s};\n" % \
-                            (tikzify(node.name), pos, drawstr, shape, style, label)
+                    sn += "  \\node (%s) at (%s) [%s,%s,%s] {%s};\n" %\
+                          (tikzify(node.name), pos, drawstr, shape, style, label)
                 else:
-                    sn += "  \\node (%s) at (%s) [%s,%s] {%s};\n" % \
-                            (tikzify(node.name), pos, drawstr, shape,  label)
+                    sn += "  \\node (%s) at (%s) [%s,%s] {%s};\n" %\
+                          (tikzify(node.name), pos, drawstr, shape, label)
             sn += self.end_node(node)
-
 
             s += sn
         if nodeoptions:
@@ -2222,22 +2219,22 @@ class Dot2TikZConv(Dot2PGFConv):
 
     def do_edges(self):
         s = ""
-        edgeoptions = self.options.get('edgeoptions',None)
+        edgeoptions = self.options.get('edgeoptions', None)
         if edgeoptions:
             s += "\\begin{scope}[%s]\n" % edgeoptions
         for edge in self.edges:
-            dstring = getattr(edge,'_draw_',"")
-            lstring = getattr(edge,'_ldraw_',"")
-            hstring = getattr(edge,'_hdraw_',"")
-            tstring = getattr(edge,'_tdraw_',"")
-            tlstring = getattr(edge,'_tldraw_',"")
-            hlstring = getattr(edge,'_hldraw_',"")
-            topath = getattr(edge,'topath',None)
+            dstring = getattr(edge, '_draw_', "")
+            lstring = getattr(edge, '_ldraw_', "")
+            hstring = getattr(edge, '_hdraw_', "")
+            tstring = getattr(edge, '_tdraw_', "")
+            tlstring = getattr(edge, '_tldraw_', "")
+            hlstring = getattr(edge, '_hldraw_', "")
+            topath = getattr(edge, 'topath', None)
             s += self.draw_edge(edge)
-            if not self.options.get('tikzedgelabels',False) and not topath:
-                s += self.do_drawstring(lstring+" "+tlstring+" "+hlstring, edge)
+            if not self.options.get('tikzedgelabels', False) and not topath:
+                s += self.do_drawstring(lstring + " " + tlstring + " " + hlstring, edge)
             else:
-                s += self.do_drawstring(tlstring+" "+hlstring, edge)
+                s += self.do_drawstring(tlstring + " " + hlstring, edge)
 
         if edgeoptions:
             s += "\\end{scope}\n"
@@ -2245,21 +2242,21 @@ class Dot2TikZConv(Dot2PGFConv):
 
     def draw_edge(self, edge):
         s = ""
-        if edge.attr.get('style','') in ['invis','invisible']:
+        if edge.attr.get('style', '') in ['invis', 'invisible']:
             return ""
         edges = self.get_edge_points(edge)
         if len(edges) > 1:
             log.warning('The tikz output format does not support edge'\
-                'concentrators yet. Expect ugly output or try the pgf or '\
-                'pstricks output formats.')
+                        'concentrators yet. Expect ugly output or try the pgf or '\
+                        'pstricks output formats.')
         for arrowstyle, points in edges:
             # PGF uses the fill style when drawing some arrowheads. We have to
             # ensure that the fill color is the same as the pen color.
-            color = edge.attr.get('color','')
-            pp= []
+            color = edge.attr.get('color', '')
+            pp = []
             for point in points:
                 p = point.split(',')
-                pp.append("(%sbp,%sbp)" % (p[0],p[1]))
+                pp.append("(%sbp,%sbp)" % (p[0], p[1]))
 
             edgestyle = edge.attr.get('style')
             #print edgestyle
@@ -2270,63 +2267,63 @@ class Dot2TikZConv(Dot2PGFConv):
                 styles = [arrowstyle]
 
             if edgestyle:
-                edgestyles = [self.styles.get(key.strip(),key.strip()) \
-                    for key in edgestyle.split(',') if key]
+                edgestyles = [self.styles.get(key.strip(), key.strip())\
+                              for key in edgestyle.split(',') if key]
                 styles.extend(edgestyles)
 
             stylestr = ",".join(styles)
             if color:
-                code,color = self.set_tikzcolor(color,'strokecolor')
+                code, color = self.set_tikzcolor(color, 'strokecolor')
                 s += code;
-                stylestr = color+','+stylestr
+                stylestr = color + ',' + stylestr
             src = tikzify(edge.get_source())
             # check for a port
             if edge.src_port:
-                src_anchor = self.compassmap.get(edge.src_port.split(':')[-1],'')
+                src_anchor = self.compassmap.get(edge.src_port.split(':')[-1], '')
                 if src_anchor:
-                    src = "%s.%s" % (src,src_anchor)
+                    src = "%s.%s" % (src, src_anchor)
             dst = tikzify(edge.get_destination())
             if edge.dst_port:
-                dst_anchor = self.compassmap.get(edge.dst_port.split(':')[-1],'')
+                dst_anchor = self.compassmap.get(edge.dst_port.split(':')[-1], '')
                 if dst_anchor:
-                    dst = "%s.%s" % (dst,dst_anchor)
-            topath = edge.attr.get('topath',None)
+                    dst = "%s.%s" % (dst, dst_anchor)
+            topath = edge.attr.get('topath', None)
 
             pstrs = ["%s .. controls %s and %s " % p for p in nsplit(pp, 3)]
             pstrs[0] = "(%s) ..controls %s and %s " % (src, pp[1], pp[2])
             extra = ""
-            if self.options.get('tikzedgelabels',False) or topath:
+            if self.options.get('tikzedgelabels', False) or topath:
                 edgelabel = self.get_label(edge)
                 #log.warning('label: %s', edgelabel)
-                lblstyle = getattr(edge,'lblstyle','')
-                exstyle = getattr(edge,'exstyle','')
+                lblstyle = getattr(edge, 'lblstyle', '')
+                exstyle = getattr(edge, 'exstyle', '')
                 if exstyle:
                     if lblstyle:
-                        lblstyle += ',' +exstyle
+                        lblstyle += ',' + exstyle
                     else:
                         lblstyle = exstyle
                 if lblstyle:
-                    lblstyle = '['+lblstyle+']'
+                    lblstyle = '[' + lblstyle + ']'
                 else:
                     lblstyle = ''
                 if edgelabel:
-                    extra = " node%s {%s}" % (lblstyle,edgelabel)
+                    extra = " node%s {%s}" % (lblstyle, edgelabel)
 
             if topath:
                 s += "  \draw [%s] (%s) to[%s]%s (%s);\n" % (stylestr, src,
-                                                             topath, extra,dst)
-            elif not self.options.get('straightedges',False):
+                                                             topath, extra, dst)
+            elif not self.options.get('straightedges', False):
                 s += "  \draw [%s] %s ..%s (%s);\n" % (stylestr,
-                    " .. ".join(pstrs), extra,dst)
+                                                       " .. ".join(pstrs), extra, dst)
             else:
-                s += "  \draw [%s] (%s) --%s (%s);\n" % (stylestr, src, extra,dst)
+                s += "  \draw [%s] (%s) --%s (%s);\n" % (stylestr, src, extra, dst)
 
         return s
 
     def start_node(self, node):
         return ""
 
-    def end_node(self,node):
+    def end_node(self, node):
         return ""
 
 
@@ -2418,12 +2415,12 @@ class Dot2PSTricksNConv(Dot2PSTricksConv):
                     psshape = "psovalbox"
                 if shape == "triangle":
                     psshape = "pstribox"
-                # TODO incomplete
+                    # TODO incomplete
 
             width = getattr(node, 'width', '1')
             height = getattr(node, 'height', '1')
             psbox = getattr(node, 'psbox', 'false')
-            
+
             color = getattr(node, 'color', '')
             fillcolor = getattr(node, 'fillcolor', '')
 
@@ -2435,13 +2432,13 @@ class Dot2PSTricksNConv(Dot2PSTricksConv):
             style = getattr(node, 'style', '')
             if len(style) > 0:
                 if style == "dotted":
-                    psshadeoption="linestyle=dotted," + psshadeoption
+                    psshadeoption = "linestyle=dotted," + psshadeoption
                 if style == "dashed":
-                    psshadeoption="linestyle=dashed," + psshadeoption
+                    psshadeoption = "linestyle=dashed," + psshadeoption
                 if style == "solid":
-                    psshadeoption="linestyle=solid," + psshadeoption
+                    psshadeoption = "linestyle=solid," + psshadeoption
                 if style == "bold":
-                    psshadeoption="linewidth=2pt," + psshadeoption
+                    psshadeoption = "linewidth=2pt," + psshadeoption
 
             pos = getattr(node, 'pos', None)
             if not pos:
@@ -2450,16 +2447,16 @@ class Dot2PSTricksNConv(Dot2PSTricksConv):
             label = self.get_label(node)
             pos = "%sbp,%sbp" % (x, y)
             # TODO style 
-            
+
             sn = ""
             sn += self.output_node_comment(node)
             sn += self.start_node(node)
             if psbox == "false":
-                sn += "\\rput(%s){\\rnode{%s}{\\%s[%s]{%s}}}\n" % \
-                    (pos, tikzify(node.name), psshape, psshadeoption, label)
+                sn += "\\rput(%s){\\rnode{%s}{\\%s[%s]{%s}}}\n" %\
+                      (pos, tikzify(node.name), psshape, psshadeoption, label)
             else:
-                sn += "\\rput(%s){\\rnode{%s}{\\%s[%s]{\parbox[c][%sin][c]{%sin}{\centering %s}}}}\n" % \
-                    (pos, tikzify(node.name), psshape, psshadeoption, height, width, label)
+                sn += "\\rput(%s){\\rnode{%s}{\\%s[%s]{\parbox[c][%sin][c]{%sin}{\centering %s}}}}\n" %\
+                      (pos, tikzify(node.name), psshape, psshadeoption, height, width, label)
             sn += self.end_node(node)
             s += sn
         self.body += s
@@ -2474,10 +2471,9 @@ class Dot2PSTricksNConv(Dot2PSTricksConv):
         s = ""
         edges = self.get_edge_points(edge)
         for arrowstyle, points in edges:
-
             styles = []
             psarrow = getattr(edge, 'psarrow', '')
-            
+
             if len(psarrow) == 0:
                 stylestr = '-'
             else:
@@ -2497,21 +2493,20 @@ class Dot2PSTricksNConv(Dot2PSTricksConv):
             style = getattr(edge, 'style', '')
             if len(style) > 0:
                 if style == "dotted":
-                    psedgeoption="linestyle=dotted," + psedgeoption
+                    psedgeoption = "linestyle=dotted," + psedgeoption
                 if style == "dashed":
-                    psedgeoption="linestyle=dashed," + psedgeoption
+                    psedgeoption = "linestyle=dashed," + psedgeoption
                 if style == "solid":
-                    psedgeoption="linestyle=solid," + psedgeoption
+                    psedgeoption = "linestyle=solid," + psedgeoption
                 if style == "bold":
-                    psedgeoption="linewidth=2pt," + psedgeoption
-
+                    psedgeoption = "linewidth=2pt," + psedgeoption
 
             pslabel = getattr(edge, 'pslabel', 'ncput')
             pslabeloption = getattr(edge, 'pslabeloption', '')
             label = getattr(edge, 'label', '')
             headlabel = getattr(edge, 'headlabel', '')
             taillabel = getattr(edge, 'taillabel', '')
-            
+
             src = tikzify(edge.get_source())
             dst = tikzify(edge.get_destination())
             s = "\\%s[%s]{%s}{%s}{%s}\n" % (psedge, psedgeoption, stylestr, src, dst)
@@ -2532,7 +2527,6 @@ class Dot2PSTricksNConv(Dot2PSTricksConv):
         return ""
 
 
-
 # ------------------ mgn ------------------
 
 class PositionsDotConv(Dot2PGFConv):
@@ -2540,6 +2534,7 @@ class PositionsDotConv(Dot2PGFConv):
     
     Returns a dictionary with node name as key and a (x, y) tuple as value.
     """
+
     def output(self):
         positions = {}
         for node in self.nodes:
@@ -2567,14 +2562,15 @@ class TeXDimProc:
     # Parse log file
     # Update graph with with and height parameters
     # Clean up
-    def __init__(self,template,options):
+    def __init__(self, template, options):
         self.template = template
-        self.snippets_code=[]
-        self.snippets_id=[]
+        self.snippets_code = []
+        self.snippets_id = []
         self.options = options
-        self.dimext_re = re.compile(dimext,re.MULTILINE|re.VERBOSE)
+        self.dimext_re = re.compile(dimext, re.MULTILINE | re.VERBOSE)
         pass
-    def add_snippet(self,id, code):
+
+    def add_snippet(self, id, code):
         """A a snippet of code to be processed"""
         self.snippets_id.append(id)
         self.snippets_code.append(code)
@@ -2586,24 +2582,25 @@ class TeXDimProc:
         Returns False if preprocessing fails
         """
         import shutil
+
         if len(self.snippets_code) == 0:
             log.warning('No labels to preprocess')
             return True
         self.tempdir = tempfile.mkdtemp(prefix='dot2tex')
         log.debug('Creating temporary directroy %s' % self.tempdir)
-        self.tempfilename = os.path.join(self.tempdir,'dot2tex.tex')
+        self.tempfilename = os.path.join(self.tempdir, 'dot2tex.tex')
         log.debug('Creating temporary file %s' % self.tempfilename)
-        f = open(self.tempfilename,'w')
+        f = open(self.tempfilename, 'w')
         s = ""
         for n in self.snippets_code:
             s += "\\begin{preview}%\n"
-            s += n.strip()+"%\n"
+            s += n.strip() + "%\n"
             s += "\end{preview}%\n"
 
-        f.write(self.template.replace('<<preproccode>>',s))
+        f.write(self.template.replace('<<preproccode>>', s))
         #f.flush()
         f.close()
-        s = open(self.tempfilename,'r').read()
+        s = open(self.tempfilename, 'r').read()
         log.debug('Code written to %s\n' % self.tempfilename + s)
         self.parse_log_file()
         shutil.rmtree(self.tempdir)
@@ -2612,42 +2609,42 @@ class TeXDimProc:
             return True
         else:
             return False
-        # cleanup
+            # cleanup
 
     def parse_log_file(self):
-        logfilename = os.path.splitext(self.tempfilename)[0]+'.log'
+        logfilename = os.path.splitext(self.tempfilename)[0] + '.log'
         tmpdir = os.getcwd()
         os.chdir(os.path.split(logfilename)[0])
-        if self.options.get('usepdflatex',False):
+        if self.options.get('usepdflatex', False):
             command = 'pdflatex -interaction=nonstopmode %s' % self.tempfilename
         else:
             command = 'latex -interaction=nonstopmode %s' % self.tempfilename
         log.debug('Running command: %s' % command)
         sres = os.popen(command)
-        resdata =  sres.read()
+        resdata = sres.read()
         #log.debug('resdata: %s' % resdata)
         errcode = sres.close()
         log.debug('errcode: %s' % errcode)
-        f = open(logfilename,'r')
+        f = open(logfilename, 'r')
         logdata = f.read()
-        log.debug('Logfile from LaTeX run: \n'+logdata)
+        log.debug('Logfile from LaTeX run: \n' + logdata)
         f.close()
         os.chdir(tmpdir)
 
         texdimdata = self.dimext_re.findall(logdata)
-        log.debug('Texdimdata: '+ str(texdimdata))
-        if len(texdimdata)== 0:
+        log.debug('Texdimdata: ' + str(texdimdata))
+        if len(texdimdata) == 0:
             log.error('No dimension data could be extracted from dot2tex.tex.')
             self.texdims = None
             return
 
-        c = 1/(100.0*7227)
-        c = 1.0/4736286
+        c = 1 / (100.0 * 7227)
+        c = 1.0 / 4736286
         self.texdims = {}
-        self.texdimlist = [(float(i[1])*c,float(i[2])*c,float(i[3])*c) for i in texdimdata]
+        self.texdimlist = [(float(i[1]) * c, float(i[2]) * c, float(i[3]) * c) for i in texdimdata]
         #for i in range(len(self.snippets_id)):
         #    self.texdims[self.snippets_id[i]] = self.texdimlist[i]
-        self.texdims = dict(zip(self.snippets_id,self.texdimlist))
+        self.texdims = dict(zip(self.snippets_id, self.texdimlist))
 
 
 def create_options_parser():
@@ -2655,79 +2652,79 @@ def create_options_parser():
     usage = "Usage: %prog [options] <files>"
     parser = OptionParser(usage)
     parser.add_option("-f", "--format",
-                  action="store", dest="format",
-                  choices=('pstricks', 'pgf', 'pst', 'tikz', 'psn'),
-                  help="Set output format to 'v' (pstrics, pgf) ", metavar="v")
-    parser.add_option('-t','--texmode', dest='texmode', default = 'verbatim',
-                  choices = ('math','verbatim', 'raw'),
-                  help = "Set text mode (verbatim, math, raw).")
-    parser.add_option('-d', '--duplicate', dest = 'duplicate', action='store_true',
-                        default=False, help='Try to duplicate Graphviz graphics')
-    parser.add_option('-s', '--straightedges', dest = 'straightedges', action='store_true',
-                        default=False, help='Force straight edges')
-    parser.add_option('--template', dest = 'templatefile', action = 'store',
-                  metavar = "FILE")
-    parser.add_option('-o','--output', dest = 'outputfile', action = 'store',
-                  metavar = "FILE", default='',help="Write output to FILE")
-    parser.add_option('-e','--encoding', dest = 'encoding', action = 'store',
-                  choices = ('utf8','latin1'), default=DEFAULT_TEXTENCODING,
-                  help="Set text encoding to utf8 or latin1")
-    parser.add_option('-V','--version', dest = 'printversion', action='store_true',
-                  help="Print version information and exit", default=False),
-    parser.add_option('-w','--switchdraworder', dest = 'switchdraworder',
-                  action="store_true", help = "Switch draw order", default=False),
-    parser.add_option('-p','-c','--preview', '--crop', dest = 'crop', action = 'store_true',
-                  help="Use preview.sty to crop graph", default=False),
-    parser.add_option('--margin', dest = 'margin', action = 'store',
-                  help="Set preview margin", default="0pt"),
-    parser.add_option('--docpreamble', dest = 'docpreamble', action = 'store',
-                  help="Insert TeX code in document preamble", metavar="TEXCODE"),
-    parser.add_option('--figpreamble', dest = 'figpreamble', action = 'store',
-                  help="Insert TeX code in figure preamble", metavar="TEXCODE"),
-    parser.add_option('--figpostamble', dest = 'figpostamble', action = 'store',
-                  help="Insert TeX code in figure postamble", metavar="TEXCODE"),
-    parser.add_option('--graphstyle', dest = 'graphstyle', action = 'store',
-                  help="Insert graph style", metavar="STYLE"),
-    parser.add_option('--gvcols', dest='gvcols', action ="store_true",
-                  default=False, help="Include gvcols.tex"),
-    parser.add_option('--figonly', dest='figonly', action ="store_true",
-                  help="Output graph with no preamble", default=False)
-    parser.add_option('--codeonly', dest='codeonly', action ="store_true",
-                  help="Output only drawing commands", default=False)
-    parser.add_option('--styleonly', dest='styleonly', action ="store_true",
-                  help="Use style parameter only", default=False)
-    parser.add_option('--debug',dest='debug', action="store_true",
-                  help="Show additional debugging information", default=False)
+        action="store", dest="format",
+        choices=('pstricks', 'pgf', 'pst', 'tikz', 'psn'),
+        help="Set output format to 'v' (pstrics, pgf) ", metavar="v")
+    parser.add_option('-t', '--texmode', dest='texmode', default='verbatim',
+        choices=('math', 'verbatim', 'raw'),
+        help="Set text mode (verbatim, math, raw).")
+    parser.add_option('-d', '--duplicate', dest='duplicate', action='store_true',
+        default=False, help='Try to duplicate Graphviz graphics')
+    parser.add_option('-s', '--straightedges', dest='straightedges', action='store_true',
+        default=False, help='Force straight edges')
+    parser.add_option('--template', dest='templatefile', action='store',
+        metavar="FILE")
+    parser.add_option('-o', '--output', dest='outputfile', action='store',
+        metavar="FILE", default='', help="Write output to FILE")
+    parser.add_option('-e', '--encoding', dest='encoding', action='store',
+        choices=('utf8', 'latin1'), default=DEFAULT_TEXTENCODING,
+        help="Set text encoding to utf8 or latin1")
+    parser.add_option('-V', '--version', dest='printversion', action='store_true',
+        help="Print version information and exit", default=False),
+    parser.add_option('-w', '--switchdraworder', dest='switchdraworder',
+        action="store_true", help="Switch draw order", default=False),
+    parser.add_option('-p', '-c', '--preview', '--crop', dest='crop', action='store_true',
+        help="Use preview.sty to crop graph", default=False),
+    parser.add_option('--margin', dest='margin', action='store',
+        help="Set preview margin", default="0pt"),
+    parser.add_option('--docpreamble', dest='docpreamble', action='store',
+        help="Insert TeX code in document preamble", metavar="TEXCODE"),
+    parser.add_option('--figpreamble', dest='figpreamble', action='store',
+        help="Insert TeX code in figure preamble", metavar="TEXCODE"),
+    parser.add_option('--figpostamble', dest='figpostamble', action='store',
+        help="Insert TeX code in figure postamble", metavar="TEXCODE"),
+    parser.add_option('--graphstyle', dest='graphstyle', action='store',
+        help="Insert graph style", metavar="STYLE"),
+    parser.add_option('--gvcols', dest='gvcols', action="store_true",
+        default=False, help="Include gvcols.tex"),
+    parser.add_option('--figonly', dest='figonly', action="store_true",
+        help="Output graph with no preamble", default=False)
+    parser.add_option('--codeonly', dest='codeonly', action="store_true",
+        help="Output only drawing commands", default=False)
+    parser.add_option('--styleonly', dest='styleonly', action="store_true",
+        help="Use style parameter only", default=False)
+    parser.add_option('--debug', dest='debug', action="store_true",
+        help="Show additional debugging information", default=False)
     parser.add_option('--preproc', dest='texpreproc', action="store_true",
-                  help = 'Preprocess graph through TeX', default=False)
-    parser.add_option('--alignstr',dest='alignstr',action='store')
-    parser.add_option('--valignmode', dest='valignmode', default = 'center',
-                  choices = ('center','dot'),
-                  help = "Set vertical alginment mode  (center, dot).")
-    parser.add_option('--nominsize', dest='nominsize', action ="store_true",
-                  help="No minimum node sizes", default=False)
-    parser.add_option('--usepdflatex', dest='usepdflatex', action ="store_true",
-                  help="Use PDFLaTeX for preprocessing", default=False)
-    parser.add_option('--tikzedgelabels', dest='tikzedgelabels', action ="store_true",
-                  help="Let TikZ place edge labels", default=False)
-    parser.add_option('--nodeoptions', dest = 'nodeoptions', action = 'store',
-                  help="Set options for nodes", metavar="OPTIONS"),
-    parser.add_option('--edgeoptions', dest = 'edgeoptions', action = 'store',
-                  help="Set options for edges", metavar="OPTIONS"),
-    parser.add_option('--runtests',dest='runtests',
-                  help="Run testes", action="store_true",default=False)
+        help='Preprocess graph through TeX', default=False)
+    parser.add_option('--alignstr', dest='alignstr', action='store')
+    parser.add_option('--valignmode', dest='valignmode', default='center',
+        choices=('center', 'dot'),
+        help="Set vertical alginment mode  (center, dot).")
+    parser.add_option('--nominsize', dest='nominsize', action="store_true",
+        help="No minimum node sizes", default=False)
+    parser.add_option('--usepdflatex', dest='usepdflatex', action="store_true",
+        help="Use PDFLaTeX for preprocessing", default=False)
+    parser.add_option('--tikzedgelabels', dest='tikzedgelabels', action="store_true",
+        help="Let TikZ place edge labels", default=False)
+    parser.add_option('--nodeoptions', dest='nodeoptions', action='store',
+        help="Set options for nodes", metavar="OPTIONS"),
+    parser.add_option('--edgeoptions', dest='edgeoptions', action='store',
+        help="Set options for edges", metavar="OPTIONS"),
+    parser.add_option('--runtests', dest='runtests',
+        help="Run testes", action="store_true", default=False)
 
     parser.add_option("--prog", action="store", dest="prog", default='dot',
-                  choices = ('dot','neato','circo','fdp','twopi'),
-                  help="Use v to process the graph", metavar="v")
+        choices=('dot', 'neato', 'circo', 'fdp', 'twopi'),
+        help="Use v to process the graph", metavar="v")
     parser.add_option("--progoptions", action="store", dest="progoptions",
-                      default="", help="Pass options to graph layout engine", metavar="OPTIONS")
-    parser.add_option('--autosize',dest='autosize',
-                  help="Preprocess graph and then run Graphviz", action="store_true",default=False)
+        default="", help="Pass options to graph layout engine", metavar="OPTIONS")
+    parser.add_option('--autosize', dest='autosize',
+        help="Preprocess graph and then run Graphviz", action="store_true", default=False)
 
-    parser.add_option('--cache',dest='cache',action='store_true',default=False)
+    parser.add_option('--cache', dest='cache', action='store_true', default=False)
     parser.add_option('--pgf118', dest='pgf118', action='store_true',
-                      help="Generate code compatible with PGF 1.18",default=False)
+        help="Generate code compatible with PGF 1.18", default=False)
     return parser
 
 
@@ -2737,32 +2734,36 @@ def process_cmd_line():
     parser = create_options_parser()
     (options, args) = parser.parse_args()
 
-    return options,args,parser
+    return options, args, parser
+
 
 def _runtests():
     import doctest
+
     doctest.testmod()
 
 
 def print_version_info():
     print "Dot2tex version % s" % __version__
 
+
 def load_dot_file(filename):
-    dotdata = open(filename,'rU').readlines()
+    dotdata = open(filename, 'rU').readlines()
     log.info('Data read from %s' % filename)
     return dotdata
 
 
 ## Program interface
 
-def main(run_as_module=False,dotdata=None,options=None):
+def main(run_as_module=False, dotdata=None, options=None):
     """Run dot2tex and convert graph
 
     """
     import platform
+
     global log
     if not run_as_module:
-        options, args,parser = process_cmd_line()
+        options, args, parser = process_cmd_line()
         # configure console logger
         console = logging.StreamHandler()
         console.setLevel(logging.WARNING)
@@ -2789,7 +2790,7 @@ def main(run_as_module=False,dotdata=None,options=None):
         nodebug = False
     else:
         nodebug = True
-        
+
     log.info('------- Start of run -------')
     log.info("Dot2tex version % s" % __version__)
     log.info("System information:\n"
@@ -2824,10 +2825,10 @@ def main(run_as_module=False,dotdata=None,options=None):
     s = ""
     # look for a line containing an \input
     m = re.search(r"^\s*\\input\{(?P<filename>.+?)\}\s*$",
-        "".join(dotdata),re.MULTILINE)
+        "".join(dotdata), re.MULTILINE)
     if m:
         filename = m.group(1)
-        log.info('Found \\input{%s}',filename)
+        log.info('Found \\input{%s}', filename)
         try:
             dotdata = load_dot_file(filename)
         except:
@@ -2839,30 +2840,31 @@ def main(run_as_module=False,dotdata=None,options=None):
                 raise
             else:
                 sys.exit(1)
-            
+
 
     # I'm not quite sure why this is necessary, but some files
     # produces data with line endings that confuses pydot/pyparser.
     # Note: Whitespace at end of line is sometimes significant
-    log.debug('Input data:\n'+"".join(dotdata))
+    log.debug('Input data:\n' + "".join(dotdata))
     lines = [line for line in dotdata if line.strip()]
     dotdata = "".join(lines)
 
     if options.cache and not run_as_module:
         import md5, cPickle
+
         if len(args) == 1 and options.outputfile:
             log.info('Caching enabled')
             inputfilename = args[0]
             # calculate hash from command line options and dotdata
             inputhash = md5.new(dotdata + "".join(sys.argv)).hexdigest()
-            log.debug('Hash for %s and command line : %s',inputfilename,inputhash)
+            log.debug('Hash for %s and command line : %s', inputfilename, inputhash)
             # now look for a hash file
-            hashfilename = path.join(path.dirname(inputfilename),'dot2tex.cache')
+            hashfilename = path.join(path.dirname(inputfilename), 'dot2tex.cache')
             key = path.basename(inputfilename)
             hashes = {}
             if path.exists(hashfilename):
-                log.info('Loading hash file %s',hashfilename)
-                f = open(hashfilename,'r')
+                log.info('Loading hash file %s', hashfilename)
+                f = open(hashfilename, 'r')
                 try:
                     hashes = cPickle.load(f)
                 except:
@@ -2874,7 +2876,7 @@ def main(run_as_module=False,dotdata=None,options=None):
             else:
                 log.info('Hash or output file not found. Converting file')
                 hashes[key] = inputhash
-                f = open(hashfilename,'w')
+                f = open(hashfilename, 'w')
                 try:
                     cPickle.dump(hashes, f)
                 except:
@@ -2886,18 +2888,18 @@ def main(run_as_module=False,dotdata=None,options=None):
         pass
 
     # check for output format attribute
-    fmtattr = re.findall(r'd2toutputformat=([a-z]*)',dotdata)
-    extraoptions = re.findall(r'^\s*d2toptions\s*=\s*"(.*?)"\s*;?',dotdata,re.MULTILINE)
+    fmtattr = re.findall(r'd2toutputformat=([a-z]*)', dotdata)
+    extraoptions = re.findall(r'^\s*d2toptions\s*=\s*"(.*?)"\s*;?', dotdata, re.MULTILINE)
     if fmtattr:
-        log.info('Found outputformat attribute: %s',fmtattr[0])
+        log.info('Found outputformat attribute: %s', fmtattr[0])
         gfmt = fmtattr[0]
     else:
         gfmt = None
     if extraoptions:
-        log.debug('Found d2toptions attribute in graph: %s',extraoptions[0])
+        log.debug('Found d2toptions attribute in graph: %s', extraoptions[0])
         if run_as_module:
             parser = create_options_parser()
-        (options, args) = parser.parse_args(extraoptions[0].split(),options)
+        (options, args) = parser.parse_args(extraoptions[0].split(), options)
         if options.debug and nodebug:
             # initalize log handler
             if not run_as_module:
@@ -2907,7 +2909,6 @@ def main(run_as_module=False,dotdata=None,options=None):
                 hdlr.setFormatter(formatter)
             log.setLevel(logging.DEBUG)
             nodebug = False
-
 
     output_format = options.format or gfmt or DEFAULT_OUTPUT_FORMAT
     options.format = output_format
@@ -2926,7 +2927,7 @@ def main(run_as_module=False,dotdata=None,options=None):
         log.error("Unknown output format %s" % options.format)
         sys.exit(1)
     try:
-        s =  conv.convert(dotdata)
+        s = conv.convert(dotdata)
         log.debug('Output:\n%s', s)
         if options.autosize:
             conv.dopreproc = False
@@ -2940,7 +2941,7 @@ def main(run_as_module=False,dotdata=None,options=None):
             if not run_as_module:
                 print s
     except dotparsing.ParseException, err:
-        errmsg = "Parse error:\n%s\n" % err.line+" "*(err.column-1) + "^\n"+str(err)
+        errmsg = "Parse error:\n%s\n" % err.line + " " * (err.column - 1) + "^\n" + str(err)
         log.error(errmsg)
         if options.debug:
             log.exception('Failed to parse graph')
@@ -2961,7 +2962,8 @@ def main(run_as_module=False,dotdata=None,options=None):
     if run_as_module:
         return s
 
-def convert_graph(dotsource,**kwargs):
+
+def convert_graph(dotsource, **kwargs):
     """Process dotsource and return LaTeX code
 
     Conversion options can be specified as keyword options. Example:
@@ -2969,13 +2971,13 @@ def convert_graph(dotsource,**kwargs):
 
     """
     parser = create_options_parser()
-    (options,args) =  parser.parse_args([])
-    if kwargs.get('preproc',None):
+    (options, args) = parser.parse_args([])
+    if kwargs.get('preproc', None):
         kwargs['texpreproc'] = kwargs['preproc']
         del kwargs['preproc']
 
     options.__dict__.update(kwargs)
-    tex = main(True, dotsource,options)
+    tex = main(True, dotsource, options)
     return tex
 
 if __name__ == '__main__':
