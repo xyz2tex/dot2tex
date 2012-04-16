@@ -36,13 +36,9 @@ __license__ = 'MIT'
 from itertools import izip
 from optparse import OptionParser
 import os.path as path
-import optparse
-import sys, tempfile, os, string,re
+import sys, tempfile, os, re
 import logging
-import tempfile
-from StringIO import StringIO
-from random import randint
-import warnings 
+import warnings
 
 import dotparsing
 
@@ -235,7 +231,7 @@ def parse_dot_data(dotdata):
     except dotparsing.ParseException:
         raise
     finally:
-        del(parser)
+        del parser
     log.debug('Parsed graph:\n%s', str(graph))
     return graph
 
@@ -493,7 +489,7 @@ class DotConvBase(object):
                 opacity = "1"
                 if len(rgb) == 4:
                     opacity = rgb[3]
-                return (colstr, opacity)
+                return colstr, opacity
             else:
                 return "[rgb]{%s,%s,%s}" % tuple(rgb[0:3])
 
@@ -698,7 +694,7 @@ class DotConvBase(object):
             # as in the xdot output.
             drawstring = dstring + " " + hstring + " " + tstring\
                          + " " + lstring + " " + tlstring + " " + hlstring
-            drawop, stat = parse_drawstring(drawstring);
+            drawop, stat = parse_drawstring(drawstring)
             if not drawstring.strip():
                 continue
             s += self.output_edge_comment(edge)
@@ -759,7 +755,7 @@ class DotConvBase(object):
 
                 tmpdata = create_xdot(dotdata, self.options.get('prog', 'dot'),
                     options=self.options.get('progoptions', ''))
-                if tmpdata == None or not tmpdata.strip():
+                if tmpdata is None or not tmpdata.strip():
                     log.error('Failed to create xdotdata. Is Graphviz installed?')
                     sys.exit(1)
                 log.debug('xdotdata:\n' + str(tmpdata))
@@ -919,7 +915,7 @@ class DotConvBase(object):
 
         #log.warning('text %s %s',text,str(drawobj))
 
-        if text == None or text.strip() == '\N':
+        if text is None or text.strip() == '\N':
             if not isinstance(drawobj, dotparsing.DotEdge):
                 text = getattr(drawobj, 'name', None) or\
                        getattr(drawobj, 'graph_name', '')
@@ -951,7 +947,7 @@ class DotConvBase(object):
         if drawobj.get('texmode', ''):
             texmode = drawobj["texmode"]
         text = drawobj.get('label', None)
-        if text == None or text.strip() == '\N':
+        if text is None or text.strip() == '\N':
             text = drawobj.get('name', None) or\
                    drawobj.get('graph_name', '')
         else:
@@ -998,7 +994,7 @@ class DotConvBase(object):
             else:
                 xmargin = DEFAULT_LABEL_XMARGIN
                 ymargin = DEFAULT_LABEL_YMARGIN
-        return (xmargin, ymargin)
+        return xmargin, ymargin
 
     # Todo: Add support for head and tail labels!
     # Todo: Support rect nodes if possible.
@@ -1225,7 +1221,7 @@ class Dot2PSTricksConv(DotConvBase):
         )
 
     def do_graphtmp(self):
-        self.pencolor = "";
+        self.pencolor = ""
         self.fillcolor = ""
         self.color = ""
         self.body += '{\n'
@@ -1266,7 +1262,7 @@ class Dot2PSTricksConv(DotConvBase):
             else:
                 stylestr = style
 
-        s += "  \psellipse[%s](%sbp,%sbp)(%sbp,%sbp)\n" % (stylestr, x, y,\
+        s += "  \psellipse[%s](%sbp,%sbp)(%sbp,%sbp)\n" % (stylestr, x, y,
                                                            # w+self.linewidth,h+self.linewidth)
                                                            w, h)
 
@@ -1345,9 +1341,9 @@ class Dot2PSTricksConv(DotConvBase):
             else: return ""
         elif c == 'cC':
             if self.color <> color:
-                self.color = color;
-                self.pencolor = self.fillcolor = color;
-                s = "  \psset{linecolor=%s}\n" % (color);
+                self.color = color
+                self.pencolor = self.fillcolor = color
+                s = "  \psset{linecolor=%s}\n" % color
         else:
             log.warning('Unhandled color: %s', drawop)
         return s
@@ -1369,7 +1365,7 @@ class Dot2PSTricksConv(DotConvBase):
         return ', '.join(fstyles)
 
     def start_node(self, node):
-        self.pencolor = "";
+        self.pencolor = ""
         self.fillcolor = ""
         self.color = ""
         return "{%\n"
@@ -1378,7 +1374,7 @@ class Dot2PSTricksConv(DotConvBase):
         return "}%\n"
 
     def start_edge(self):
-        self.pencolor = "";
+        self.pencolor = ""
         self.fillcolor = ""
         return "{%\n"
 
@@ -1386,7 +1382,7 @@ class Dot2PSTricksConv(DotConvBase):
         return "}%\n"
 
     def start_graph(self, graph):
-        self.pencolor = "";
+        self.pencolor = ""
         self.fillcolor = ""
         self.color = ""
         return "{\n"
@@ -1601,7 +1597,7 @@ class Dot2PGFConv(DotConvBase):
 
     def start_node(self, node):
         # Todo: Should find a more elgant solution
-        self.pencolor = "";
+        self.pencolor = ""
         self.fillcolor = ""
         self.color = ""
         return "\\begin{scope}\n"
@@ -1621,7 +1617,7 @@ class Dot2PGFConv(DotConvBase):
 
     def start_graph(self, graph):
         # Todo: Should find a more elgant solution
-        self.pencolor = "";
+        self.pencolor = ""
         self.fillcolor = ""
         self.color = ""
         return "\\begin{scope}\n"
@@ -1677,7 +1673,7 @@ class Dot2PGFConv(DotConvBase):
                     s += "  \definecolor{fillcol}%s;\n" % ccolor
                     ccolor = 'fillcol'
                 s += "  \pgfsetfillcolor{%s}\n" % ccolor
-                if not opacity == None:
+                if not opacity is None:
                     self.opacity = opacity
                     # Todo: The opacity should probably be set directly when drawing
                     # The \pgfsetfillcopacity cmd affects text as well
@@ -1709,7 +1705,7 @@ class Dot2PGFConv(DotConvBase):
         s = ""
         #s =  "  %% Node: %s\n" % node.name
         if op == 'E':
-            if self.opacity <> None:
+            if self.opacity is not None:
                 # Todo: Need to know the state of the current node
                 cmd = 'filldraw [opacity=%s]' % self.opacity
             else:
@@ -1721,7 +1717,7 @@ class Dot2PGFConv(DotConvBase):
             stylestr = " [%s]" % style
         else:
             stylestr = ''
-        s += "  \%s%s (%sbp,%sbp) ellipse (%sbp and %sbp);\n" % (cmd, stylestr, x, y,\
+        s += "  \%s%s (%sbp,%sbp) ellipse (%sbp and %sbp);\n" % (cmd, stylestr, x, y,
                                                                  # w+self.linewidth,h+self.linewidth)
                                                                  w, h)
         return s
@@ -1821,7 +1817,7 @@ class Dot2PGFConv(DotConvBase):
             # as in the xdot output.
             drawstring = dstring + " " + hstring + " " + tstring\
                          + " " + lstring + " " + tlstring + " " + hlstring
-            drawop, stat = parse_drawstring(drawstring);
+            drawop, stat = parse_drawstring(drawstring)
             if not drawstring.strip():
                 continue
             s += self.output_edge_comment(edge)
@@ -1911,8 +1907,7 @@ class Dot2PGFConv(DotConvBase):
                        "\setlength\PreviewBorder{%s}" % self.options.get('margin', '0pt')
         else:
             cropcode = ""
-        vars = {}
-        vars['<<cropcode>>'] = cropcode
+        vars = {'<<cropcode>>': cropcode}
         self.templatevars.update(vars)
 
     def get_node_preproc_code(self, node):
@@ -2118,7 +2113,7 @@ class Dot2TikZConv(Dot2PGFConv):
         shape = self.shapemap.get(shape, shape)
         #s += "%% %s\n" % (shape)
         label = node.attr.get('texlbl', '')
-        style = node.attr.get('style', " ") or " ";
+        style = node.attr.get('style', " ") or " "
         if lblstyle:
             if style.strip():
                 style += ',' + lblstyle
@@ -2149,7 +2144,7 @@ class Dot2TikZConv(Dot2PGFConv):
                 shape = "coordinate"
             else:
                 shape = self.shapemap.get(dotshape, shape)
-            if shape == None:
+            if shape is None:
                 shape = 'ellipse'
 
             pos = getattr(node, 'pos', None)
@@ -2162,7 +2157,7 @@ class Dot2TikZConv(Dot2PGFConv):
                 label = ''
 
             pos = "%sbp,%sbp" % (x, y)
-            style = node.attr.get('style') or "";
+            style = node.attr.get('style') or ""
             if node.attr.get('lblstyle'):
                 if style:
                     style += ',' + node.attr['lblstyle']
@@ -2246,8 +2241,8 @@ class Dot2TikZConv(Dot2PGFConv):
             return ""
         edges = self.get_edge_points(edge)
         if len(edges) > 1:
-            log.warning('The tikz output format does not support edge'\
-                        'concentrators yet. Expect ugly output or try the pgf or '\
+            log.warning('The tikz output format does not support edge'
+                        'concentrators yet. Expect ugly output or try the pgf or '
                         'pstricks output formats.')
         for arrowstyle, points in edges:
             # PGF uses the fill style when drawing some arrowheads. We have to
@@ -2274,7 +2269,7 @@ class Dot2TikZConv(Dot2PGFConv):
             stylestr = ",".join(styles)
             if color:
                 code, color = self.set_tikzcolor(color, 'strokecolor')
-                s += code;
+                s += code
                 stylestr = color + ',' + stylestr
             src = tikzify(edge.get_source())
             # check for a port

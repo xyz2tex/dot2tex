@@ -297,7 +297,7 @@ class DotDataParser(object):
     # parse actions
     def _proc_node_id(self, toks):
         if len(toks) > 1:
-            return (toks[0], toks[1])
+            return toks[0], toks[1]
         else:
             return toks
 
@@ -314,7 +314,7 @@ class DotDataParser(object):
         return toks
 
     def _proc_attr_assignment(self, toks):
-        return (SET_GRAPH_ATTR, dict(nsplit(toks, 2)))
+        return SET_GRAPH_ATTR, dict(nsplit(toks, 2))
 
     def _proc_node_stmt(self, toks):
         """Return (ADD_NODE, node_name, options)"""
@@ -359,20 +359,20 @@ class DotDataParser(object):
         else:
             gtype, attr = toks
         if gtype == 'node':
-            return (SET_DEF_NODE_ATTR, attr)
+            return SET_DEF_NODE_ATTR, attr
         elif gtype == 'edge':
-            return (SET_DEF_EDGE_ATTR, attr)
+            return SET_DEF_EDGE_ATTR, attr
         elif gtype == 'graph':
-            return (SET_DEF_GRAPH_ATTR, attr)
+            return SET_DEF_GRAPH_ATTR, attr
         else:
-            return ('unknown', toks)
+            return 'unknown', toks
 
     def _proc_subgraph_stmt(self, toks):
         """Returns (ADD_SUBGRAPH, name, elements)"""
-        return ('add_subgraph', toks[1], toks[2].asList())
+        return 'add_subgraph', toks[1], toks[2].asList()
 
     def _main_graph_stmt(self, toks):
-        return (toks[0], toks[1], toks[2], toks[3].asList())
+        return toks[0], toks[1], toks[2], toks[3].asList()
 
     # The dot grammar is based on the dot parser from the pydot project.
     def define_dot_parser(self):
