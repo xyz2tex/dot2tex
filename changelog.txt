@@ -9,6 +9,8 @@ Dot2TeX change log
 The last digit in the version number denotes bug-fix releases.
 
 2.9.x:
+    ! The number of sides in the hexagon tikz shape is now correct. Thanks to Jean Pichon for
+      reporting this.
     + Added support for the point shape when using the TikZ output format [issue 8].
     ! Node labels are no longer shown when the node shape is point and the output
       format is TikZ. 
