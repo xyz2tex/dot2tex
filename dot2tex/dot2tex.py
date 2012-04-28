@@ -2042,7 +2042,7 @@ class Dot2TikZConv(Dot2PGFConv):
                 'polygon': 'regular polygon, regular polygon sides=7',
                 'triangle': 'regular polygon, regular polygon sides=3',
                 'pentagon': 'regular polygon, regular polygon sides=5',
-                'hexagon': 'regular polygon, regular polygon sides=5',
+                'hexagon': 'regular polygon, regular polygon sides=6',
                 'septagon': 'regular polygon, regular polygon sides=7',
                 'octagon': 'regular polygon, regular polygon sides=8',
                 'point': 'circle, fill',
@@ -2649,7 +2649,7 @@ def create_options_parser():
     parser.add_option("-f", "--format",
         action="store", dest="format",
         choices=('pstricks', 'pgf', 'pst', 'tikz', 'psn'),
-        help="Set output format to 'v' (pstrics, pgf) ", metavar="v")
+        help="Set output format to 'v' (pstricks, pgf, pst, tikz, psn) ", metavar="v")
     parser.add_option('-t', '--texmode', dest='texmode', default='verbatim',
         choices=('math', 'verbatim', 'raw'),
         help="Set text mode (verbatim, math, raw).")
