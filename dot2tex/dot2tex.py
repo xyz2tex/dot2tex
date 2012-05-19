@@ -45,7 +45,7 @@ import dotparsing
 # Silence DeprecationWarnings about os.popen3 in Python 2.6
 warnings.filterwarnings('ignore', category=DeprecationWarning, message=r'os\.popen3') 
 
-# intitalize logging module
+# initialize logging module
 log = logging.getLogger("dot2tex")
 
 DEFAULT_TEXTENCODING = 'utf8'
@@ -127,7 +127,7 @@ def tikzify(s):
 def nsplit(seq, n=2):
     """Split a sequence into pieces of length n
 
-    If the lengt of the sequence isn't a multiple of n, the rest is discareded.
+    If the length of the sequence isn't a multiple of n, the rest is discarded.
     Note that nsplit will strings into individual characters.
 
     Examples:
@@ -151,7 +151,7 @@ def chunks(s, cl):
 
 
 def replace_tags(template, tags, tagsreplace):
-    """Replace occurences of tags with tagreplace
+    """Replace occurrences of tags with tagreplace
 
     Example:
     >>> replace_tags('a b c d',('b','d'),{'b':'bbb','d':'ddd'})
@@ -1084,7 +1084,7 @@ To see what happened, run dot2tex with the --debug option.
             node = item
             hp, dp, wt = pp.texdims[name]
             if self.options.get('rawdim', False):
-                # use dimesions from preview.sty directly
+                # use dimensions from preview.sty directly
                 node.attr['width'] = wt
                 node.attr['height'] = hp + dp
                 node.attr['label'] = " "
@@ -2805,7 +2805,7 @@ def main(run_as_module=False, dotdata=None, options=None):
             dotdata = sys.stdin.readlines()
         elif len(args) == 1:
             try:
-                log.debug('Attemtping to read data from %s', args[0])
+                log.debug('Attempting to read data from %s', args[0])
                 dotdata = load_dot_file(args[0])
             except:
                 if options.debug:
