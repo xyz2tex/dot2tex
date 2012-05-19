@@ -363,6 +363,14 @@ class TestBugs(unittest.TestCase):
         """Test for a bug in get_node_preproc_code. Used to raise a TypeError"""
         code = dot2tex.dot2tex(testgraph, format="tikz", preproc=True, styleonly=True)
 
+    def test_head_and_tail_labels(self):
+        """Test for issue 30"""
+        graph = "digraph { a -> b [headlabel=HEADLABEL,taillabel=TAILLABEL,label=LABEL] }"
+        code = dot2tex.dot2tex(graph, format="tikz", autosize=True)
+        self.assertTrue('HEADLABEL' in code)
+        self.assertTrue('LABEL' in code)
+        self.assertTrue('TAILLABEL' in code)
+
         
 if __name__ == '__main__':
     unittest.main()
