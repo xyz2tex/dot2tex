@@ -375,7 +375,7 @@ def get_all_graph_elements(graph, l=[]):
 class DotConvBase(object):
     """Dot2TeX converter base"""
 
-    def __init__(self, options={}):
+    def __init__(self, options=None):
         self.color = ""
         self.opacity = None
         try:
@@ -390,7 +390,7 @@ class DotConvBase(object):
         if options.get('template', ''):
             self.template = options['template']
 
-        self.options = options
+        self.options = options or {}
         if options.get('texpreproc', False) or options.get('autosize', False):
             self.dopreproc = True
         else:
@@ -1208,7 +1208,7 @@ PSTRICKS_TEMPLATE = r"""\documentclass{article}
 class Dot2PSTricksConv(DotConvBase):
     """PSTricks converter backend"""
 
-    def __init__(self, options={}):
+    def __init__(self, options=None):
         DotConvBase.__init__(self, options)
         if not self.template:
             self.template = PSTRICKS_TEMPLATE
@@ -1564,7 +1564,7 @@ PGF118_TEMPLATE = r"""\documentclass{article}
 class Dot2PGFConv(DotConvBase):
     """PGF/TikZ converter backend"""
 
-    def __init__(self, options={}):
+    def __init__(self, options=None):
         DotConvBase.__init__(self, options)
         if not self.template:
             if options.get('pgf118', False):
@@ -2052,9 +2052,10 @@ class Dot2TikZConv(Dot2PGFConv):
                   'se': 'south east', 's': 'south', 'sw': 'south west',
                   'w': 'west', 'nw': 'north west', 'center': 'center'}
 
-    def __init__(self, options={}):
+    def __init__(self, options=None):
         # to connect nodes they have to defined. Therefore we have to ensure
         # that code for generating nodes is outputted first.
+        options = options or {}
         options['switchdraworder'] = True
         options['flattengraph'] = True
         options['rawdim'] = True
@@ -2376,7 +2377,8 @@ PSTRICKSN_TEMPLATE = r"""\documentclass{article}
 class Dot2PSTricksNConv(Dot2PSTricksConv):
     """A backend that utilizes the node and edge mechanism of PSTricks-Node"""
 
-    def __init__(self, options={}):
+    def __init__(self, options=None):
+        options = options or {}
         # to connect nodes they have to defined. Therefore we have to ensure
         # that code for generating nodes is outputted first.
         options['switchdraworder'] = True
