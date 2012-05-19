@@ -9,6 +9,8 @@ Dot2TeX change log
 The last digit in the version number denotes bug-fix releases.
 
 2.9.x:
+    ! Fixed a bug in preprocessing triggered by using the --styleonly option
+      with the tikz output format.
     ! The number of sides in the hexagon tikz shape is now correct. Thanks to Jean Pichon for
       reporting this.
     + Added support for the point shape when using the TikZ output format [issue 8].

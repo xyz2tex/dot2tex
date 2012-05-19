@@ -2123,7 +2123,7 @@ class Dot2TikZConv(Dot2PGFConv):
 
         sn = ""
         if self.options.get('styleonly'):
-            sn += "\\tikz  \\node (%s) [%s] {%s};\n" %\
+            sn += "\\tikz  \\node [%s] {%s};\n" %\
                   (style, label)
         else:
             sn += "\\tikz  \\node [draw,%s,%s] {%s};\n" %\

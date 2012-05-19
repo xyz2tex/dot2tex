@@ -359,7 +359,13 @@ class TikZTemplateTests(unittest.TestCase):
         """
         code = dot2tex.dot2tex(testgraph, format="tikz")
         self.failIf("dummy" in code)
-        
+
+
+class TestBugs(unittest.TestCase):
+    def test_styleonly_tikz_preproc(self):
+        """Test for a bug in get_node_preproc_code. Used to raise a TypeError"""
+        code = dot2tex.dot2tex(testgraph, format="tikz", preproc=True, styleonly=True)
+
         
 if __name__ == '__main__':
     unittest.main()
