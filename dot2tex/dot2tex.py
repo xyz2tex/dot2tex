@@ -2847,13 +2847,15 @@ def main(run_as_module=False, dotdata=None, options=None):
     dotdata = "".join(lines)
 
     if options.cache and not run_as_module:
-        import md5, cPickle
+        import hashlib, cPickle
 
         if len(args) == 1 and options.outputfile:
             log.info('Caching enabled')
             inputfilename = args[0]
             # calculate hash from command line options and dotdata
-            inputhash = md5.new(dotdata + "".join(sys.argv)).hexdigest()
+            m = hashlib.md5()
+            m.update(dotdata + "".join(sys.argv))
+            inputhash = m.digest()
             log.debug('Hash for %s and command line : %s', inputfilename, inputhash)
             # now look for a hash file
             hashfilename = path.join(path.dirname(inputfilename), 'dot2tex.cache')
