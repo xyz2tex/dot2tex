@@ -185,8 +185,7 @@ def create_xdot(dotdata, prog='dot', options=''):
         return None
     if not progs.has_key(prog):
         log.error('Invalid prog=%s', prog)
-        # Program not found ?!?!
-        return None
+        raise NameError('The %s program is not recognized. Valid values are %s' % (prog, progs.keys()))
 
     tmp_fd, tmp_name = tempfile.mkstemp()
     os.close(tmp_fd)

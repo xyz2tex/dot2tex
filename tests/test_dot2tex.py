@@ -220,11 +220,8 @@ class GraphvizInterfaceTests(unittest.TestCase):
     def test_invalid_program(self):
         """Invoking create_xdot with an invalid prog parameter should raise an exception"""
         from dot2tex.dot2tex import create_xdot
-        try:
-            xdot_data = create_xdot(testgraph, prog="dummy")
-            self.fail()
-        except:
-            raise
+        #xdot_data = create_xdot(testgraph, prog="dummy")
+        self.assertRaises(NameError, create_xdot, testgraph, prog="dummy")
 
 class AutosizeTests(unittest.TestCase):
     def test__dim_extraction(self):
