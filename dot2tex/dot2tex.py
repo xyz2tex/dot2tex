@@ -908,31 +908,6 @@ class DotConvBase(object):
 
         return text
 
-    # temp
-    def get_labeld(self, drawobj):
-        text = ""
-        texmode = self.options.get('texmode', 'verbatim')
-        if drawobj.get('texmode', ''):
-            texmode = drawobj["texmode"]
-        text = drawobj.get('label', None)
-        if text is None or text.strip() == '\N':
-            text = drawobj.get('name', None) or\
-                   drawobj.get('graph_name', '')
-        else:
-            text = text.replace("\\\\", "\\")
-
-        if drawobj.get('texlbl', ''):
-            # the texlbl overrides everything
-            text = drawobj["texlbl"]
-        elif texmode == 'verbatim':
-            # verbatim mode
-            text = escape_texchars(text)
-            pass
-        elif texmode == 'math':
-            # math mode
-            text = "$%s$" % text
-        return text
-
     def get_node_preproc_code(self, node):
         return node.attr.get('texlbl', '')
 
@@ -1068,8 +1043,8 @@ To see what happened, run dot2tex with the --debug option.
                     height = minheight
                 else:
                     height = ht + 2 * ymargin
-                # Treat shapes with equal widht and height differently
-            # Warning! Rectangles will not alway fit inside a circle
+                # Treat shapes with equal width and height differently
+            # Warning! Rectangles will not always fit inside a circle
             #          Should use the diagonal.
             if item.attr.get('shape', '') in ['circle', 'Msquare', 'doublecircle', 'Mcircle']:
                 #log.warning('%s %s', name, item['shape'])
