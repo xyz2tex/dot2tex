@@ -71,21 +71,17 @@ DEFAULT_NODE_HEIGHT = 0.5
 # Todo: Need to reconsider edge draw order.
 # See for instance html2.xdot
 
-
 # Inch to bp conversion factor
-in2bp = 72.0
+INCH2BP = 72.0
 
 # Examples of draw strings
 # c 5 -black F 14.000000 11 -Times-Roman T 99 159 0 44 8 -a_1 test
 
 
-special_chars = ['$','\\','%','_','#','{',r'}','^','&']
-special_chars_escape = [r'\$', r'$\backslash$',r'\%',r'\_',r'\#',
+SPECIAL_CHARS = ['$','\\','%','_','#','{',r'}','^','&']
+SPECIAL_CHARS_REPLACE = [r'\$', r'$\backslash$',r'\%',r'\_',r'\#',
                         r'\{',r'\}',r'\^{}',r'\&']
-charmap = dict(zip(special_chars,special_chars_escape))
-
-
-
+charmap = dict(zip(SPECIAL_CHARS,SPECIAL_CHARS_REPLACE))
 
 helpmsg = """\
 Failed to parse the input data. Is it a valid dot file?
@@ -151,7 +147,7 @@ def chunks(s, cl):
 
 
 def replace_tags(template, tags, tagsreplace):
-    """Replace occurrences of tags with tagreplace
+    """Replace occurrences of tags with tagsreplace
 
     Example:
     >>> replace_tags('a b c d',('b','d'),{'b':'bbb','d':'ddd'})
@@ -174,7 +170,7 @@ def getboolattr(item, key, default):
 
 
 def create_xdot(dotdata, prog='dot', options=''):
-    """Run a graph throug Graphviz and return an xdot-version of the graph"""
+    """Run a graph through Graphviz and return an xdot-version of the graph"""
     # The following code is from the pydot module written by Ero Carrera
     progs = dotparsing.find_graphviz()
 
@@ -621,8 +617,8 @@ class DotConvBase(object):
             x, y = node.attr.get('pos', '').split(',')
 
             # width and height are in inches. Convert to bp units
-            w = float(node.attr['width']) * in2bp
-            h = float(node.attr['height']) * in2bp
+            w = float(node.attr['width']) * INCH2BP
+            h = float(node.attr['height']) * INCH2BP
 
             s += self.output_node_comment(node)
             s += self.start_node(node)
