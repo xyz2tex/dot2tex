@@ -548,16 +548,7 @@ class DotConvBase(object):
                 # Todo: Use text from node|edge.label or name
                 # Todo: What about multiline labels?
                 text = drawop[5]
-                ##                label = getattr(drawobj,'label','\N')
-                ##                multiline = False
-                ##                if label:
-                ##                    if label.find(r'\n') >= 0:
-                ##                        multiline = True
-                ##                        #print label
-                ##                else:
-                ##                    label = "\N"
-                ##                if not multiline and label <> '\N':
-                ##                    text =  drawobj.label
+
                 texmode = self.options.get('texmode', 'verbatim')
                 if drawobj.attr.get('texmode', ''):
                     texmode = drawobj.attr['texmode']
@@ -793,25 +784,7 @@ class DotConvBase(object):
             self.graph = graph
             self.do_graph()
 
-        ##        if not self.options.get('flattengraph',False):
-        ##            for graph in graphlist:
-        ##                self.graph = graph
-        ##                self.nodes = clean_dot_nodes(graph)
-        ##                self.edges = graph.edge_list
-        ##                if not self.options.get('switchdraworder',False):
-        ##                    self.do_edges() # tmp
-        ##                    self.do_nodes()
-        ##                else:
-        ##                    self.do_nodes()
-        ##                    self.do_edges()
-        ##        else:
         if True:
-        ##            nodelist = []
-        ##            edgelist = []
-        ##            for graph in graphlist:
-        ##                self.graph = graph
-        ##                nodelist.extend(clean_dot_nodes(graph))
-        ##                edgelist.extend(graph.edge_list)
             self.nodes = list(maingraph.allnodes)
             self.edges = list(maingraph.alledges)
             if not self.options.get('switchdraworder', False):
@@ -1009,18 +982,6 @@ class DotConvBase(object):
         usedgraphs = {}
         # iterate over every element in the graph
         counter = 0
-
-        ##            elif isinstance(element, dotparsing.DotSubGraph):
-        ##                if not getattr(element,'label',None) and \
-        ##                    not getattr(element,'texlbl',None): continue
-        ##                name = element.graph_name
-        ##                label = self.get_label(element)
-        ##                element.texlbl = label
-        ##                processedgraphs[name]=element
-        ##
-        ##            else:
-        ##                pass
-        ##            counter += 1
 
         for node in self.maingraph.allnodes:
             name = node.name
@@ -1316,10 +1277,6 @@ class Dot2PSTricksConv(DotConvBase):
 
     def set_color(self, drawop):
         c, color = drawop
-        #color = color.replace('grey','gray')
-        #self.pencolor = "";
-        #self.fillcolor = ""
-        #self.color = ""
         color = self.convert_color(color)
         s = ""
         if c == 'c':
@@ -1384,22 +1341,6 @@ class Dot2PSTricksConv(DotConvBase):
 
     def end_graph(self, node):
         return "}\n"
-
-
-    ##    def draw_ellipseNode(self, x,y,w,h,node):
-    ##        s =  "  %% Node: %s\n" % node.name
-    ##        s += "  \psellipse(%sbp,%sbp)(%sbp,%sbp)\n" % (x,y, \
-    ##                 w/2+self.linewidth,h/2+self.linewidth)
-    ##        # label
-    ##        if node.label:
-    ##            label = node.label
-    ##        else:
-    ##            label = node.name
-    ##        s += "  \\rput(%sbp,%sbp){$%s$}\n" % (x,y,label)
-    ##
-    ##        return s
-    ##
-
 
     def draw_edge(self, edge):
         s = ""
@@ -1578,11 +1519,6 @@ class Dot2PGFConv(DotConvBase):
         # get bounding box
         # get bounding box
         s = ""
-        ##        bbstr = self.maingraph.bb
-        ##        if bbstr:
-        ##            bb = bbstr.split(',')
-        ##            s += "%%(%sbp,%sbp)(%sbp,%sbp)\n" % \
-        ##                (bb[0],bb[1],bb[2],bb[3])
 
         return s
 
