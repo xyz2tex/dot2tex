@@ -12,22 +12,19 @@ __version__ = '2.9.0dev'
 __author__ = ['Michael Krause', 'Ero Carrera', 'Kjell Magne Fauske']
 __license__ = 'MIT'
 
-import sys, glob, re, itertools, os, logging
-
+import re
+import itertools
+import os
+import logging
 from itertools import izip
 import string
-
 from exceptions import KeyError, AttributeError
 
+import pyparsing
 from pyparsing import __version__ as pyparsing_version
 
-import pyparsing
-
-from pyparsing import (Literal, CaselessLiteral, Word, Upcase, OneOrMore, ZeroOrMore,
-                       Forward, NotAny, delimitedList, oneOf, Group, Optional, Combine, alphas, nums,
-                       restOfLine, cStyleComment, nums, alphanums, printables, empty, quotedString,
-                       ParseException, ParseResults, CharsNotIn, dblQuotedString, QuotedString, ParserElement,
-                       Suppress, Regex, removeQuotes)
+from pyparsing import (Literal, CaselessLiteral, Word, OneOrMore, Forward, Group, Optional, Combine, restOfLine, cStyleComment, nums, alphanums,
+                       ParseException, CharsNotIn, Suppress, Regex, removeQuotes)
 
 dot_keywords = ['graph', 'subgraph', 'digraph', 'node', 'edge', 'strict']
 
