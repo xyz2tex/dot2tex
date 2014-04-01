@@ -32,7 +32,6 @@ __author__ = 'Kjell Magne Fauske'
 __version__ = '2.9.0dev'
 __license__ = 'MIT'
 
-
 from itertools import izip
 from optparse import OptionParser
 import os.path as path
@@ -43,7 +42,7 @@ import warnings
 import dotparsing
 
 # Silence DeprecationWarnings about os.popen3 in Python 2.6
-warnings.filterwarnings('ignore', category=DeprecationWarning, message=r'os\.popen3') 
+warnings.filterwarnings('ignore', category=DeprecationWarning, message=r'os\.popen3')
 
 # initialize logging module
 log = logging.getLogger("dot2tex")
@@ -78,10 +77,10 @@ INCH2BP = 72.0
 # c 5 -black F 14.000000 11 -Times-Roman T 99 159 0 44 8 -a_1 test
 
 
-SPECIAL_CHARS = ['$','\\','%','_','#','{',r'}','^','&']
-SPECIAL_CHARS_REPLACE = [r'\$', r'$\backslash$',r'\%',r'\_',r'\#',
-                        r'\{',r'\}',r'\^{}',r'\&']
-charmap = dict(zip(SPECIAL_CHARS,SPECIAL_CHARS_REPLACE))
+SPECIAL_CHARS = ['$', '\\', '%', '_', '#', '{', r'}', '^', '&']
+SPECIAL_CHARS_REPLACE = [r'\$', r'$\backslash$', r'\%', r'\_', r'\#',
+                         r'\{', r'\}', r'\^{}', r'\&']
+charmap = dict(zip(SPECIAL_CHARS, SPECIAL_CHARS_REPLACE))
 
 helpmsg = """\
 Failed to parse the input data. Is it a valid dot file?
@@ -95,10 +94,12 @@ dot2tex in debug mode using the --debug option:
 A file dot2tex.log will be written to the current directory with detailed
 information useful for debugging."""
 
+
 def mreplace(s, chararray, newchararray):
     for a, b in zip(chararray, newchararray):
         s = s.replace(a, b)
     return s
+
 
 def escape_texchars(string):
     r"""Escape the special LaTeX-chars %{}_^
@@ -110,7 +111,7 @@ def escape_texchars(string):
     >>> escape_texchars('%{}_^\\$')
     '\\%\\{\\}\\_\\^{}$\\backslash$\\$'
     """
-    return "".join([charmap.get(c,c) for c in string])
+    return "".join([charmap.get(c, c) for c in string])
 
 
 def tikzify(s):
@@ -523,7 +524,7 @@ class DotConvBase(object):
             if style and not self.options.get('duplicate', False):
                 # map Graphviz styles to backend styles
                 style = self.filter_styles(style)
-                styles = [self.styles.get(key.strip(), key.strip())\
+                styles = [self.styles.get(key.strip(), key.strip()) \
                           for key in style.split(',') if key]
                 style = ','.join(styles)
             else:
@@ -566,11 +567,11 @@ class DotConvBase(object):
                 drawop[5] = text
                 if self.options.get('alignstr', ''):
                     drawop.append(self.options.get('alignstr'))
-                if stat['T'] == 1 and\
-                   self.options.get('valignmode', 'center') == 'center':
+                if stat['T'] == 1 and \
+                                self.options.get('valignmode', 'center') == 'center':
                     # do this for single line only
                     # Todo: Make this optional
-                    pos = drawobj.attr.get('lp', None) or\
+                    pos = drawobj.attr.get('lp', None) or \
                           drawobj.attr.get('pos', None)
                     # force centered alignment
                     drawop[3] = '0'
@@ -603,7 +604,7 @@ class DotConvBase(object):
             # detect node type
             shape = node.attr.get('shape', '')
             if not shape:
-                shape = 'ellipse' # default
+                shape = 'ellipse'  # default
                 # extract size information
             x, y = node.attr.get('pos', '').split(',')
 
@@ -619,18 +620,18 @@ class DotConvBase(object):
         self.body += s
 
     def get_edge_points(self, edge):
-    # edge BNF
-    #   <edge>   :: <spline> (';' <spline>)*
-    #   <spline> :: <endp>? <startp>? <point> <triple>+
-    #   <point>  :: <x> ',' <y>
-    #   <triple> :: <point> <point> <point>
-    #   <endp>   :: "e" "," <x> "," <y>
-    ##        spline ( ';' spline )*
-    ##where spline  =   (endp)? (startp)? point (triple)+
-    ##and triple    =   point point point
-    ##and endp  =   "e,%d,%d"
-    ##and startp    =   "s,%d,%d"
-    ##If a spline has points p1 p2 p3 ... pn, (n = 1 (mod 3)), the points correspond to the control points of a B-spline from p1 to pn. If startp is given, it touches one node of the edge, and the arrowhead goes from p1 to startp. If startp is not given, p1 touches a node. Similarly for pn and endp.
+        # edge BNF
+        #   <edge>   :: <spline> (';' <spline>)*
+        #   <spline> :: <endp>? <startp>? <point> <triple>+
+        #   <point>  :: <x> ',' <y>
+        #   <triple> :: <point> <point> <point>
+        #   <endp>   :: "e" "," <x> "," <y>
+        ##        spline ( ';' spline )*
+        ##where spline  =   (endp)? (startp)? point (triple)+
+        ##and triple    =   point point point
+        ##and endp  =   "e,%d,%d"
+        ##and startp    =   "s,%d,%d"
+        ##If a spline has points p1 p2 p3 ... pn, (n = 1 (mod 3)), the points correspond to the control points of a B-spline from p1 to pn. If startp is given, it touches one node of the edge, and the arrowhead goes from p1 to startp. If startp is not given, p1 touches a node. Similarly for pn and endp.
         pos = edge.attr.get('pos')
         if pos:
             segments = pos.split(';')
@@ -678,7 +679,7 @@ class DotConvBase(object):
 
             # Note that the order of the draw strings should be the same
             # as in the xdot output.
-            drawstring = dstring + " " + hstring + " " + tstring\
+            drawstring = dstring + " " + hstring + " " + tstring \
                          + " " + lstring + " " + tlstring + " " + hlstring
             drawop, stat = parse_drawstring(drawstring)
             if not drawstring.strip():
@@ -698,12 +699,12 @@ class DotConvBase(object):
         lstring = self.graph.attr.get('_ldraw_', "")
         # print lstring
         # Avoid filling background of graphs with white
-        if dstring.startswith('c 5 -white C 5 -white')\
-        and not self.graph.attr.get('style'):
+        if dstring.startswith('c 5 -white C 5 -white') \
+                and not self.graph.attr.get('style'):
             dstring = ''
         if getattr(self.graph, '_draw_', None):
             # bug
-            dstring = "c 5 -black " + dstring #self.graph._draw_
+            dstring = "c 5 -black " + dstring  #self.graph._draw_
             pass
         drawstring = dstring + " " + lstring
         if drawstring.strip():
@@ -718,12 +719,12 @@ class DotConvBase(object):
         # Warning! If graph attribute is true and command line option is false,
         # the graph attribute will be used. Command line option should have
         # precedence.
-        self.options['alignstr'] = self.options.get('alignstr', '')\
-        or getattr(self.maingraph, 'd2talignstr', '')
+        self.options['alignstr'] = self.options.get('alignstr', '') \
+            or getattr(self.maingraph, 'd2talignstr', '')
 
         # Todo: bad!
-        self.options['valignmode'] = getattr(self.maingraph, 'd2tvalignmode', '')\
-        or self.options.get('valignmode', 'center')
+        self.options['valignmode'] = getattr(self.maingraph, 'd2tvalignmode', '') \
+            or self.options.get('valignmode', 'center')
 
 
     def convert(self, dotdata):
@@ -740,7 +741,7 @@ class DotConvBase(object):
                 log.info('Trying to create xdotdata')
 
                 tmpdata = create_xdot(dotdata, self.options.get('prog', 'dot'),
-                    options=self.options.get('progoptions', ''))
+                                      options=self.options.get('progoptions', ''))
                 if tmpdata is None or not tmpdata.strip():
                     log.error('Failed to create xdotdata. Is Graphviz installed?')
                     sys.exit(1)
@@ -788,7 +789,7 @@ class DotConvBase(object):
             self.nodes = list(maingraph.allnodes)
             self.edges = list(maingraph.alledges)
             if not self.options.get('switchdraworder', False):
-                self.do_edges() # tmp
+                self.do_edges()  # tmp
                 self.do_nodes()
             else:
                 self.do_nodes()
@@ -801,34 +802,34 @@ class DotConvBase(object):
         """Remove preprocsection or outputsection"""
         if not self.dopreproc and self.options.get('codeonly', False):
             r = re.compile('<<startcodeonlysection>>(.*?)<<endcodeonlysection>>',
-                re.DOTALL | re.MULTILINE)
+                           re.DOTALL | re.MULTILINE)
             m = r.search(template)
             if m:
                 return m.group(1).strip()
         if not self.dopreproc and self.options.get('figonly', False):
             r = re.compile('<<start_figonlysection>>(.*?)<<end_figonlysection>>',
-                re.DOTALL | re.MULTILINE)
+                           re.DOTALL | re.MULTILINE)
             m = r.search(template)
             if m:
                 return m.group(1)
             r = re.compile('<<startfigonlysection>>(.*?)<<endfigonlysection>>',
-                re.DOTALL | re.MULTILINE)
+                           re.DOTALL | re.MULTILINE)
             m = r.search(template)
             if m:
                 return m.group(1)
 
         if self.dopreproc:
             r = re.compile('<<startoutputsection>>.*?<<endoutputsection>>',
-                re.DOTALL | re.MULTILINE)
+                           re.DOTALL | re.MULTILINE)
         else:
             r = re.compile('<<startpreprocsection>>.*?<<endpreprocsection>>',
-                re.DOTALL | re.MULTILINE)
+                           re.DOTALL | re.MULTILINE)
             # remove codeonly and figonly section
         r2 = re.compile('<<start_figonlysection>>.*?<<end_figonlysection>>',
-            re.DOTALL | re.MULTILINE)
+                        re.DOTALL | re.MULTILINE)
         tmp = r2.sub('', template)
         r2 = re.compile('<<startcodeonlysection>>.*?<<endcodeonlysection>>',
-            re.DOTALL | re.MULTILINE)
+                        re.DOTALL | re.MULTILINE)
         tmp = r2.sub('', tmp)
         return r.sub('', tmp)
 
@@ -846,17 +847,17 @@ class DotConvBase(object):
         vars['<<figcode>>'] = self.body.strip()
         vars['<<drawcommands>>'] = self.body.strip()
         vars['<<textencoding>>'] = self.textencoding
-        docpreamble = self.options.get('docpreamble', '')\
-        or getattr(self.maingraph, 'd2tdocpreamble', '')
+        docpreamble = self.options.get('docpreamble', '') \
+            or getattr(self.maingraph, 'd2tdocpreamble', '')
         ##        if docpreamble:
         ##            docpreamble = docpreamble.replace('\\n','\n')
         vars['<<docpreamble>>'] = docpreamble
-        vars['<<figpreamble>>'] = self.options.get('figpreamble', '')\
-        or getattr(self.maingraph, 'd2tfigpreamble', '%')
-        vars['<<figpostamble>>'] = self.options.get('figpostamble', '')\
-        or getattr(self.maingraph, 'd2tfigpostamble', '')
-        vars['<<graphstyle>>'] = self.options.get('graphstyle', '')\
-        or getattr(self.maingraph, 'd2tgraphstyle', '')
+        vars['<<figpreamble>>'] = self.options.get('figpreamble', '') \
+            or getattr(self.maingraph, 'd2tfigpreamble', '%')
+        vars['<<figpostamble>>'] = self.options.get('figpostamble', '') \
+            or getattr(self.maingraph, 'd2tfigpostamble', '')
+        vars['<<graphstyle>>'] = self.options.get('graphstyle', '') \
+            or getattr(self.maingraph, 'd2tgraphstyle', '')
         vars['<<margin>>'] = self.options.get('margin', '0pt')
         vars['<<startpreprocsection>>'] = vars['<<endpreprocsection>>'] = ''
         vars['<<startoutputsection>>'] = vars['<<endoutputsection>>'] = ''
@@ -870,7 +871,7 @@ class DotConvBase(object):
         self.init_template_vars()
         template = self.clean_template(self.template)
         code = replace_tags(template, self.templatevars.keys(),
-            self.templatevars)
+                            self.templatevars)
         #code = self.template.replace('<<figcode>>', self.body)
         return code
 
@@ -885,7 +886,7 @@ class DotConvBase(object):
 
         if text is None or text.strip() == '\N':
             if not isinstance(drawobj, dotparsing.DotEdge):
-                text = getattr(drawobj, 'name', None) or\
+                text = getattr(drawobj, 'name', None) or \
                        getattr(drawobj, 'graph_name', '')
                 text = text.replace("\\\\", "\\")
             else:
@@ -946,7 +947,7 @@ class DotConvBase(object):
         self.init_template_vars()
         template = self.clean_template(self.template)
         template = replace_tags(template, self.templatevars.keys(),
-            self.templatevars)
+                                self.templatevars)
         pp = TeXDimProc(template, self.options)
         processednodes = {}
         processededges = {}
@@ -960,8 +961,8 @@ class DotConvBase(object):
 
         for node in self.maingraph.allnodes:
             name = node.name
-            if node.attr.get('fixedsize', '') == 'true'\
-            or node.attr.get('style', '') in ['invis', 'invisible']:
+            if node.attr.get('fixedsize', '') == 'true' \
+                    or node.attr.get('style', '') in ['invis', 'invisible']:
                 continue
             if node.attr.get('shape', '') == 'record':
                 log.warning('Record nodes not supported in preprocessing mode: %s', name)
@@ -975,8 +976,8 @@ class DotConvBase(object):
 
             usednodes[name] = node
         for edge in dotparsing.flatten(self.maingraph.alledges):
-            if not edge.attr.get('label') and\
-               not edge.attr.get('texlbl'): continue
+            if not edge.attr.get('label') and \
+                    not edge.attr.get('texlbl'): continue
             # Ensure that the edge name is unique.
             name = edge.src.name + edge.dst.name + str(counter)
             label = self.get_label(edge)
@@ -987,8 +988,8 @@ class DotConvBase(object):
             counter += 1
 
         for graph in self.maingraph.allgraphs:
-            if not graph.attr.get('label', None) and\
-               not graph.attr.get('texlbl', None): continue
+            if not graph.attr.get('label', None) and \
+                    not graph.attr.get('texlbl', None): continue
             # Make sure that the name is unique
             name = graph.name + str(counter)
 
@@ -1043,12 +1044,12 @@ To see what happened, run dot2tex with the --debug option.
                     height = minheight
                 else:
                     height = ht + 2 * ymargin
-                # Treat shapes with equal width and height differently
+                    # Treat shapes with equal width and height differently
             # Warning! Rectangles will not always fit inside a circle
             #          Should use the diagonal.
             if item.attr.get('shape', '') in ['circle', 'Msquare', 'doublecircle', 'Mcircle']:
                 #log.warning('%s %s', name, item['shape'])
-                if  wt < height and width < height:
+                if wt < height and width < height:
                     width = height
                 else:
                     height = width
@@ -1065,8 +1066,8 @@ To see what happened, run dot2tex with the --debug option.
             edge = item
             hp, dp, wt = pp.texdims[name]
             xmargin, ymargin = self.get_margins(edge)
-            labelcode = '<<<table border="0" cellborder="0" cellpadding="0">'\
-                        '<tr><td fixedsize="true" width="%s" height="%s">a</td>'\
+            labelcode = '<<<table border="0" cellborder="0" cellpadding="0">' \
+                        '<tr><td fixedsize="true" width="%s" height="%s">a</td>' \
                         '</tr></table>>>'
             edge.attr['label'] = labelcode % ((wt + 2 * xmargin) * 72, (hp + dp + 2 * ymargin) * 72)
             #self.maingraph.allitems.append(edge)
@@ -1074,13 +1075,13 @@ To see what happened, run dot2tex with the --debug option.
             graph = item
             hp, dp, wt = pp.texdims[name]
             xmargin, ymargin = self.get_margins(graph)
-            labelcode = '<<<table border="0" cellborder="0" cellpadding="0">'\
-                        '<tr><td fixedsize="true" width="%s" height="%s">a</td>'\
+            labelcode = '<<<table border="0" cellborder="0" cellpadding="0">' \
+                        '<tr><td fixedsize="true" width="%s" height="%s">a</td>' \
                         '</tr></table>>>'
             graph.attr['label'] = labelcode % ((wt + 2 * xmargin) * 72, (hp + dp + 2 * ymargin) * 72)
 
         self.maingraph.attr['d2toutputformat'] = self.options.get('format',
-            DEFAULT_OUTPUT_FORMAT)
+                                                                  DEFAULT_OUTPUT_FORMAT)
         graphcode = str(self.maingraph)
         graphcode = graphcode.replace('<<<', '<<')
         graphcode = graphcode.replace('>>>', '>>')
@@ -1136,6 +1137,7 @@ PSTRICKS_TEMPLATE = r"""\documentclass{article}
 <<endcodeonlysection>>
 """
 
+
 class Dot2PSTricksConv(DotConvBase):
     """PSTricks converter backend"""
 
@@ -1165,7 +1167,7 @@ class Dot2PSTricksConv(DotConvBase):
         if bbstr:
             bb = bbstr.split(',')
             #fillcolor=black,
-        s = "\\begin{pspicture}[linewidth=1bp](%sbp,%sbp)(%sbp,%sbp)\n" %\
+        s = "\\begin{pspicture}[linewidth=1bp](%sbp,%sbp)(%sbp,%sbp)\n" % \
             (bb[0], bb[1], bb[2], bb[3])
         # Set line style to mitre
         s += "  \pstVerb{2 setlinejoin} % set line join style to 'mitre'\n"
@@ -1240,9 +1242,9 @@ class Dot2PSTricksConv(DotConvBase):
             c, x, y, align, w, text = drawop
             valign = ""
         if align == "-1":
-            alignstr = 'l' # left aligned
+            alignstr = 'l'  # left aligned
         elif align == "1":
-            alignstr = 'r' # right aligned
+            alignstr = 'r'  # right aligned
         else:
             alignstr = ""  # centered (default)
         if alignstr or valign:
@@ -1259,13 +1261,15 @@ class Dot2PSTricksConv(DotConvBase):
             if self.pencolor <> color:
                 self.pencolor = color
                 s = "  \psset{linecolor=%s}\n" % color
-            else: return ""
+            else:
+                return ""
         elif c == 'C':
             # set fill color
             if self.fillcolor <> color:
                 self.fillcolor = color
                 s = "  \psset{fillcolor=%s}\n" % color
-            else: return ""
+            else:
+                return ""
         elif c == 'cC':
             if self.color <> color:
                 self.color = color
@@ -1341,7 +1345,7 @@ class Dot2PSTricksConv(DotConvBase):
             if arrowstyle:
                 styles.append('arrows=%s' % arrowstyle)
             if edgestyle:
-                edgestyles = [self.styles.get(key.strip(), key.strip())\
+                edgestyles = [self.styles.get(key.strip(), key.strip()) \
                               for key in edgestyle.split(',') if key]
                 styles.extend(edgestyles)
             if styles:
@@ -1483,8 +1487,8 @@ class Dot2PGFConv(DotConvBase):
             else:
                 self.template = PGF_TEMPLATE
         self.styles = dict(dashed='dashed', dotted='dotted',
-            bold='very thick', filled='fill', invis="",
-            rounded='rounded corners', )
+                           bold='very thick', filled='fill', invis="",
+                           rounded='rounded corners', )
         self.dashstyles = dict(
             dashed='\pgfsetdash{{3pt}{3pt}}{0pt}',
             dotted='\pgfsetdash{{\pgflinewidth}{2pt}}{0pt}',
@@ -1568,7 +1572,8 @@ class Dot2PGFConv(DotConvBase):
                     s += "  \definecolor{strokecol}%s;\n" % ccolor
                     ccolor = 'strokecol'
                 s += "  \pgfsetstrokecolor{%s}\n" % ccolor
-            else: return ""
+            else:
+                return ""
         elif c == 'C':
             # set fill color
             if self.fillcolor <> color:
@@ -1586,7 +1591,8 @@ class Dot2PGFConv(DotConvBase):
                     #s += "  \pgfsetfillopacity{%s};\n" % opacity
                 else:
                     self.opacity = None
-            else: return ""
+            else:
+                return ""
         return s
 
     def set_style(self, drawop):
@@ -1664,9 +1670,9 @@ class Dot2PGFConv(DotConvBase):
             valign = ""
         styles = []
         if align == "-1":
-            alignstr = 'right' # left aligned
+            alignstr = 'right'  # left aligned
         elif align == "1":
-            alignstr = 'left' # right aligned
+            alignstr = 'left'  # right aligned
         else:
             alignstr = ""  # centered (default)
         styles.append(alignstr)
@@ -1721,7 +1727,7 @@ class Dot2PGFConv(DotConvBase):
 
             # Note that the order of the draw strings should be the same
             # as in the xdot output.
-            drawstring = dstring + " " + hstring + " " + tstring\
+            drawstring = dstring + " " + hstring + " " + tstring \
                          + " " + lstring + " " + tlstring + " " + hlstring
             drawop, stat = parse_drawstring(drawstring)
             if not drawstring.strip():
@@ -1749,7 +1755,7 @@ class Dot2PGFConv(DotConvBase):
             return ""
         edges = self.get_edge_points(edge)
         for arrowstyle, points in edges:
-        #arrowstyle, points = self.get_edge_points(edge)
+            #arrowstyle, points = self.get_edge_points(edge)
             # PGF uses the fill style when drawing some arrowheads. We have to
             # ensure that the fill color is the same as the pen color.
             color = getattr(edge, 'color', '')
@@ -1808,8 +1814,8 @@ class Dot2PGFConv(DotConvBase):
     def init_template_vars(self):
         DotConvBase.init_template_vars(self)
         if self.options.get('crop', False):
-            cropcode = "\usepackage[active,tightpage]{preview}\n" +\
-                       "\PreviewEnvironment{tikzpicture}\n" +\
+            cropcode = "\usepackage[active,tightpage]{preview}\n" + \
+                       "\PreviewEnvironment{tikzpicture}\n" + \
                        "\setlength\PreviewBorder{%s}" % self.options.get('margin', '0pt')
         else:
             cropcode = ""
@@ -1938,6 +1944,7 @@ TIKZ118_TEMPLATE = r"""\documentclass{article}
 <<endcodeonlysection>>
 """
 
+
 class Dot2TikZConv(Dot2PGFConv):
     """A backend that utilizes the node and edge mechanism of PGF/TikZ"""
     shapemap = {'doublecircle': 'circle, double',
@@ -1952,7 +1959,7 @@ class Dot2TikZConv(Dot2PGFConv):
                 'septagon': 'regular polygon, regular polygon sides=7',
                 'octagon': 'regular polygon, regular polygon sides=8',
                 'point': 'circle, fill',
-                }
+    }
 
     compassmap = {'n': 'north', 'ne': 'north east', 'e': 'east',
                   'se': 'south east', 's': 'south', 'sw': 'south west',
@@ -1972,8 +1979,8 @@ class Dot2TikZConv(Dot2PGFConv):
         DotConvBase.__init__(self, options)
 
         self.styles = dict(dashed='dashed', dotted='dotted',
-            bold='very thick', filled='fill', invis="", invisible="",
-            rounded='rounded corners', )
+                           bold='very thick', filled='fill', invis="", invisible="",
+                           rounded='rounded corners', )
         self.dashstyles = dict(
             dashed='\pgfsetdash{{3pt}{3pt}}{0pt}',
             dotted='\pgfsetdash{{\pgflinewidth}{2pt}}{0pt}',
@@ -1981,14 +1988,14 @@ class Dot2TikZConv(Dot2PGFConv):
 
     def set_options(self):
         Dot2PGFConv.set_options(self)
-        self.options['tikzedgelabels'] = self.options.get('tikzedgelabels', '')\
-        or getboolattr(self.maingraph, 'd2ttikzedgelabels', '')
-        self.options['styleonly'] = self.options.get('styleonly', '')\
-        or getboolattr(self.maingraph, 'd2tstyleonly', '')
-        self.options['nodeoptions'] = self.options.get('nodeoptions', '')\
-        or getattr(self.maingraph, 'd2tnodeoptions', '')
-        self.options['edgeoptions'] = self.options.get('edgeoptions', '')\
-        or getattr(self.maingraph, 'd2tedgeoptions', '')
+        self.options['tikzedgelabels'] = self.options.get('tikzedgelabels', '') \
+            or getboolattr(self.maingraph, 'd2ttikzedgelabels', '')
+        self.options['styleonly'] = self.options.get('styleonly', '') \
+            or getboolattr(self.maingraph, 'd2tstyleonly', '')
+        self.options['nodeoptions'] = self.options.get('nodeoptions', '') \
+            or getattr(self.maingraph, 'd2tnodeoptions', '')
+        self.options['edgeoptions'] = self.options.get('edgeoptions', '') \
+            or getattr(self.maingraph, 'd2tedgeoptions', '')
 
     def output_node_comment(self, node):
         # With the node syntax comments are unnecessary
@@ -2029,10 +2036,10 @@ class Dot2TikZConv(Dot2PGFConv):
 
         sn = ""
         if self.options.get('styleonly'):
-            sn += "\\tikz  \\node [%s] {%s};\n" %\
+            sn += "\\tikz  \\node [%s] {%s};\n" % \
                   (style, label)
         else:
-            sn += "\\tikz  \\node [draw,%s,%s] {%s};\n" %\
+            sn += "\\tikz  \\node [draw,%s,%s] {%s};\n" % \
                   (shape, style, label)
         return sn
 
@@ -2081,13 +2088,13 @@ class Dot2TikZConv(Dot2PGFConv):
             if shape == "coordinate":
                 sn += "  \\coordinate (%s) at (%s);\n" % (tikzify(node.name), pos)
             elif self.options.get('styleonly'):
-                sn += "  \\node (%s) at (%s) [%s] {%s};\n" %\
+                sn += "  \\node (%s) at (%s) [%s] {%s};\n" % \
                       (tikzify(node.name), pos, style, label)
             else:
                 color = node.attr.get('color', '')
                 drawstr = 'draw'
                 if style.strip() == 'filled':
-                    fillcolor = node.attr.get('fillcolor') or\
+                    fillcolor = node.attr.get('fillcolor') or \
                                 node.attr.get('color') or "gray"
                     drawstr = 'fill,draw'
                     style = ''
@@ -2107,10 +2114,10 @@ class Dot2TikZConv(Dot2PGFConv):
                     drawstr += '=' + color
 
                 if style.strip():
-                    sn += "  \\node (%s) at (%s) [%s,%s,%s] {%s};\n" %\
+                    sn += "  \\node (%s) at (%s) [%s,%s,%s] {%s};\n" % \
                           (tikzify(node.name), pos, drawstr, shape, style, label)
                 else:
-                    sn += "  \\node (%s) at (%s) [%s,%s] {%s};\n" %\
+                    sn += "  \\node (%s) at (%s) [%s,%s] {%s};\n" % \
                           (tikzify(node.name), pos, drawstr, shape, label)
             sn += self.end_node(node)
 
@@ -2169,7 +2176,7 @@ class Dot2TikZConv(Dot2PGFConv):
                 styles = [arrowstyle]
 
             if edgestyle:
-                edgestyles = [self.styles.get(key.strip(), key.strip())\
+                edgestyles = [self.styles.get(key.strip(), key.strip()) \
                               for key in edgestyle.split(',') if key]
                 styles.extend(edgestyles)
 
@@ -2355,10 +2362,10 @@ class Dot2PSTricksNConv(Dot2PSTricksConv):
             sn += self.output_node_comment(node)
             sn += self.start_node(node)
             if psbox == "false":
-                sn += "\\rput(%s){\\rnode{%s}{\\%s[%s]{%s}}}\n" %\
+                sn += "\\rput(%s){\\rnode{%s}{\\%s[%s]{%s}}}\n" % \
                       (pos, tikzify(node.name), psshape, psshadeoption, label)
             else:
-                sn += "\\rput(%s){\\rnode{%s}{\\%s[%s]{\parbox[c][%sin][c]{%sin}{\centering %s}}}}\n" %\
+                sn += "\\rput(%s){\\rnode{%s}{\\%s[%s]{\parbox[c][%sin][c]{%sin}{\centering %s}}}}\n" % \
                       (pos, tikzify(node.name), psshape, psshadeoption, height, width, label)
             sn += self.end_node(node)
             s += sn
@@ -2449,10 +2456,12 @@ class PositionsDotConv(Dot2PGFConv):
                     positions[node.name] = map(float, pos.split(','))
         return positions
 
+
 dimext = r"""
 ^.*? Preview:\s Snippet\s
 (?P<number>\d*)\s ended.
 \((?P<ht>\d*)\+(?P<dp>\d*)x(?P<wd>\d*)\)"""
+
 
 class TeXDimProc:
     """Helper class for for finding the size of TeX snippets
@@ -2555,79 +2564,79 @@ def create_options_parser():
     usage = "Usage: %prog [options] <files>"
     parser = OptionParser(usage)
     parser.add_option("-f", "--format",
-        action="store", dest="format",
-        choices=('pstricks', 'pgf', 'pst', 'tikz', 'psn'),
-        help="Set output format to 'v' (pstricks, pgf, pst, tikz, psn) ", metavar="v")
+                      action="store", dest="format",
+                      choices=('pstricks', 'pgf', 'pst', 'tikz', 'psn'),
+                      help="Set output format to 'v' (pstricks, pgf, pst, tikz, psn) ", metavar="v")
     parser.add_option('-t', '--texmode', dest='texmode', default='verbatim',
-        choices=('math', 'verbatim', 'raw'),
-        help="Set text mode (verbatim, math, raw).")
+                      choices=('math', 'verbatim', 'raw'),
+                      help="Set text mode (verbatim, math, raw).")
     parser.add_option('-d', '--duplicate', dest='duplicate', action='store_true',
-        default=False, help='Try to duplicate Graphviz graphics')
+                      default=False, help='Try to duplicate Graphviz graphics')
     parser.add_option('-s', '--straightedges', dest='straightedges', action='store_true',
-        default=False, help='Force straight edges')
+                      default=False, help='Force straight edges')
     parser.add_option('--template', dest='templatefile', action='store',
-        metavar="FILE")
+                      metavar="FILE")
     parser.add_option('-o', '--output', dest='outputfile', action='store',
-        metavar="FILE", default='', help="Write output to FILE")
+                      metavar="FILE", default='', help="Write output to FILE")
     parser.add_option('-e', '--encoding', dest='encoding', action='store',
-        choices=('utf8', 'latin1'), default=DEFAULT_TEXTENCODING,
-        help="Set text encoding to utf8 or latin1")
+                      choices=('utf8', 'latin1'), default=DEFAULT_TEXTENCODING,
+                      help="Set text encoding to utf8 or latin1")
     parser.add_option('-V', '--version', dest='printversion', action='store_true',
-        help="Print version information and exit", default=False),
+                      help="Print version information and exit", default=False),
     parser.add_option('-w', '--switchdraworder', dest='switchdraworder',
-        action="store_true", help="Switch draw order", default=False),
+                      action="store_true", help="Switch draw order", default=False),
     parser.add_option('-p', '-c', '--preview', '--crop', dest='crop', action='store_true',
-        help="Use preview.sty to crop graph", default=False),
+                      help="Use preview.sty to crop graph", default=False),
     parser.add_option('--margin', dest='margin', action='store',
-        help="Set preview margin", default="0pt"),
+                      help="Set preview margin", default="0pt"),
     parser.add_option('--docpreamble', dest='docpreamble', action='store',
-        help="Insert TeX code in document preamble", metavar="TEXCODE"),
+                      help="Insert TeX code in document preamble", metavar="TEXCODE"),
     parser.add_option('--figpreamble', dest='figpreamble', action='store',
-        help="Insert TeX code in figure preamble", metavar="TEXCODE"),
+                      help="Insert TeX code in figure preamble", metavar="TEXCODE"),
     parser.add_option('--figpostamble', dest='figpostamble', action='store',
-        help="Insert TeX code in figure postamble", metavar="TEXCODE"),
+                      help="Insert TeX code in figure postamble", metavar="TEXCODE"),
     parser.add_option('--graphstyle', dest='graphstyle', action='store',
-        help="Insert graph style", metavar="STYLE"),
+                      help="Insert graph style", metavar="STYLE"),
     parser.add_option('--gvcols', dest='gvcols', action="store_true",
-        default=False, help="Include gvcols.tex"),
+                      default=False, help="Include gvcols.tex"),
     parser.add_option('--figonly', dest='figonly', action="store_true",
-        help="Output graph with no preamble", default=False)
+                      help="Output graph with no preamble", default=False)
     parser.add_option('--codeonly', dest='codeonly', action="store_true",
-        help="Output only drawing commands", default=False)
+                      help="Output only drawing commands", default=False)
     parser.add_option('--styleonly', dest='styleonly', action="store_true",
-        help="Use style parameter only", default=False)
+                      help="Use style parameter only", default=False)
     parser.add_option('--debug', dest='debug', action="store_true",
-        help="Show additional debugging information", default=False)
+                      help="Show additional debugging information", default=False)
     parser.add_option('--preproc', dest='texpreproc', action="store_true",
-        help='Preprocess graph through TeX', default=False)
+                      help='Preprocess graph through TeX', default=False)
     parser.add_option('--alignstr', dest='alignstr', action='store')
     parser.add_option('--valignmode', dest='valignmode', default='center',
-        choices=('center', 'dot'),
-        help="Set vertical alginment mode  (center, dot).")
+                      choices=('center', 'dot'),
+                      help="Set vertical alginment mode  (center, dot).")
     parser.add_option('--nominsize', dest='nominsize', action="store_true",
-        help="No minimum node sizes", default=False)
+                      help="No minimum node sizes", default=False)
     parser.add_option('--usepdflatex', dest='usepdflatex', action="store_true",
-        help="Use PDFLaTeX for preprocessing", default=False)
+                      help="Use PDFLaTeX for preprocessing", default=False)
     parser.add_option('--tikzedgelabels', dest='tikzedgelabels', action="store_true",
-        help="Let TikZ place edge labels", default=False)
+                      help="Let TikZ place edge labels", default=False)
     parser.add_option('--nodeoptions', dest='nodeoptions', action='store',
-        help="Set options for nodes", metavar="OPTIONS"),
+                      help="Set options for nodes", metavar="OPTIONS"),
     parser.add_option('--edgeoptions', dest='edgeoptions', action='store',
-        help="Set options for edges", metavar="OPTIONS"),
+                      help="Set options for edges", metavar="OPTIONS"),
     parser.add_option('--runtests', dest='runtests',
-        help="Run testes", action="store_true", default=False)
+                      help="Run testes", action="store_true", default=False)
 
     parser.add_option("--prog", action="store", dest="prog", default='dot',
-        choices=('dot', 'neato', 'circo', 'fdp', 'twopi'),
-        help="Use v to process the graph", metavar="v")
+                      choices=('dot', 'neato', 'circo', 'fdp', 'twopi'),
+                      help="Use v to process the graph", metavar="v")
     parser.add_option("--progoptions", action="store", dest="progoptions",
-        default="", help="Pass options to graph layout engine", metavar="OPTIONS")
+                      default="", help="Pass options to graph layout engine", metavar="OPTIONS")
     parser.add_option('--autosize', dest='autosize',
-        help="Preprocess graph and then run Graphviz", action="store_true", default=False)
+                      help="Preprocess graph and then run Graphviz", action="store_true", default=False)
 
     parser.add_option('--cache', dest='cache', action='store_true', default=False)
     parser.add_option('--pgf118', dest='pgf118', action='store_true',
-        help="Generate code compatible with PGF 1.18", default=False)
+                      help="Generate code compatible with PGF 1.18", default=False)
     return parser
 
 
@@ -2700,8 +2709,8 @@ def main(run_as_module=False, dotdata=None, options=None):
              "  Python: %s \n"
              "  Platform: %s\n"
              "  Pyparsing: %s",
-        sys.version_info, platform.platform(),
-        dotparsing.pyparsing_version)
+             sys.version_info, platform.platform(),
+             dotparsing.pyparsing_version)
     log.info('dot2tex called with: %s' % sys.argv)
     log.info('Program started in %s' % os.getcwd())
     if not run_as_module:
@@ -2728,7 +2737,7 @@ def main(run_as_module=False, dotdata=None, options=None):
     s = ""
     # look for a line containing an \input
     m = re.search(r"^\s*\\input\{(?P<filename>.+?)\}\s*$",
-        "".join(dotdata), re.MULTILINE)
+                  "".join(dotdata), re.MULTILINE)
     if m:
         filename = m.group(1)
         log.info('Found \\input{%s}', filename)
@@ -2884,6 +2893,7 @@ def convert_graph(dotsource, **kwargs):
     options.__dict__.update(kwargs)
     tex = main(True, dotsource, options)
     return tex
+
 
 if __name__ == '__main__':
     main()

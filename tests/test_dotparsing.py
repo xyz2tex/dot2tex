@@ -22,84 +22,83 @@ digraph G {
 class DotNodeTest(unittest.TestCase):
     def test_create(self):
         node = dotp.DotNode("a")
-        self.failUnless(node.name=="a")
-        self.assertEqual(len(node.attr),0)
-        
+        self.failUnless(node.name == "a")
+        self.assertEqual(len(node.attr), 0)
+
     def test_createwithattributes(self):
-        node = dotp.DotNode("a",label='a_1',style='filled')
-        self.failUnless(node.name=="a")
-        self.assertEqual(len(node.attr),2)
-        self.assertEqual(node.attr['label'],'a_1')
-        self.assertEqual(node.attr['style'],'filled')
-        
+        node = dotp.DotNode("a", label='a_1', style='filled')
+        self.failUnless(node.name == "a")
+        self.assertEqual(len(node.attr), 2)
+        self.assertEqual(node.attr['label'], 'a_1')
+        self.assertEqual(node.attr['style'], 'filled')
+
     def test_createwithdict(self):
-        attr = dict(label="a_1",style='filled')
-        node = dotp.DotNode("a",**attr)
-        self.assertEqual(len(node.attr),2)
-        self.assertEqual(node.attr['label'],'a_1')
-        self.assertEqual(node.attr['style'],'filled')
-        
+        attr = dict(label="a_1", style='filled')
+        node = dotp.DotNode("a", **attr)
+        self.assertEqual(len(node.attr), 2)
+        self.assertEqual(node.attr['label'], 'a_1')
+        self.assertEqual(node.attr['style'], 'filled')
+
     def test_createwithdictandnamed(self):
-        attr = dict(label="a_1",style='filled')
-        node = dotp.DotNode("a",texmode="math",**attr)
-        self.assertEqual(len(node.attr),3)
-        self.assertEqual(node.attr['label'],'a_1')
-        self.assertEqual(node.attr['style'],'filled')
-        self.assertEqual(node.attr['texmode'],'math')
-        
+        attr = dict(label="a_1", style='filled')
+        node = dotp.DotNode("a", texmode="math", **attr)
+        self.assertEqual(len(node.attr), 3)
+        self.assertEqual(node.attr['label'], 'a_1')
+        self.assertEqual(node.attr['style'], 'filled')
+        self.assertEqual(node.attr['texmode'], 'math')
+
     def test_cmp(self):
         node = dotp.DotNode("a")
-        self.failUnless(node.name=="a")
-        self.assertEqual(node,'a')
+        self.failUnless(node.name == "a")
+        self.assertEqual(node, 'a')
 
 
 class DotGraphTest(unittest.TestCase):
     def test_create(self):
-        g = dotp.DotGraph('mygraph',strict=False, directed=True)
-        self.failUnless(g.name=="mygraph")
-        self.assertEqual(g.strict,False)
-        self.assertEqual(g.directed,True)
+        g = dotp.DotGraph('mygraph', strict=False, directed=True)
+        self.failUnless(g.name == "mygraph")
+        self.assertEqual(g.strict, False)
+        self.assertEqual(g.directed, True)
 
     def test_create_with_attributes(self):
-        g = dotp.DotGraph(style='fancy',label='testgraph')
-        self.assertEqual(len(g.attr),2)
-        self.assertEqual(g.attr['style'],'fancy')
-        self.assertEqual(g.attr['label'],'testgraph')
-        
+        g = dotp.DotGraph(style='fancy', label='testgraph')
+        self.assertEqual(len(g.attr), 2)
+        self.assertEqual(g.attr['style'], 'fancy')
+        self.assertEqual(g.attr['label'], 'testgraph')
 
 
     def test_add_node(self):
         g = dotp.DotGraph()
         na = g.add_node('a')
         nb = g.add_node('b')
-        self.assertEqual(len(g.nodes),2)
+        self.assertEqual(len(g.nodes), 2)
 
-##
+    ##
     def test_addequalnodes(self):
         g = dotp.DotGraph()
-        g.add_node('a',label="test1")
-        g.add_node('a',style="filled")
-        g.add_node('a',label="test2",texmode="math")
+        g.add_node('a', label="test1")
+        g.add_node('a', style="filled")
+        g.add_node('a', label="test2", texmode="math")
         n = g.get_node('a')
-        self.assertEqual(len(g.nodes),1)
-        self.assertEqual(len(n.attr),3)
-        self.assertEqual(n.attr['label'],'test2')
-        self.assertEqual(set(n.attr.keys()),set(['label','style','texmode']))
-        
+        self.assertEqual(len(g.nodes), 1)
+        self.assertEqual(len(n.attr), 3)
+        self.assertEqual(n.attr['label'], 'test2')
+        self.assertEqual(set(n.attr.keys()), set(['label', 'style', 'texmode']))
+
     def test_add_nonstring_nodes(self):
         g = dotp.DotGraph()
         n = g.add_node(1)
-        self.assertEqual(n.name,'1')
+        self.assertEqual(n.name, '1')
         n = g.add_node(3.14)
-        self.assertEqual(n.name,'3.14')
-        
+        self.assertEqual(n.name, '3.14')
+
     def test_add_edge(self):
         g = dotp.DotGraph()
-        e = g.add_edge('a','b',label='test')
-        e2 = g.add_edge('a','d',label='test2')
-        self.assertEqual(len(g),3)
-        self.assertEqual(len(g.edges),2)
-        
+        e = g.add_edge('a', 'b', label='test')
+        e2 = g.add_edge('a', 'd', label='test2')
+        self.assertEqual(len(g), 3)
+        self.assertEqual(len(g.edges), 2)
+
 
 class DotSubgraphsTest(unittest.TestCase):
     def test_add_subgraph(self):
@@ -110,38 +109,39 @@ class DotSubgraphsTest(unittest.TestCase):
     def test_add_edge_to_subgraph(self):
         g = dotp.DotGraph()
         s = g.add_subgraph('subG')
-        self.assertEqual(len(g),0)
-        s.add_edge(1,2)
-        self.assertEqual(len(s),2)
-        self.assertEqual(len(g),2)
-        g.add_edge(3,4)
-        self.assertEqual(len(s),2)
-        self.assertEqual(len(g),4)
-        
+        self.assertEqual(len(g), 0)
+        s.add_edge(1, 2)
+        self.assertEqual(len(s), 2)
+        self.assertEqual(len(g), 2)
+        g.add_edge(3, 4)
+        self.assertEqual(len(s), 2)
+        self.assertEqual(len(g), 4)
+
 
 class DotDefaultAttrTest(unittest.TestCase):
     """Test default attributes"""
+
     def test_add_default(self):
         g = dotp.DotGraph()
         g.add_default_node_attr(color="red", label="a")
-        self.assertEqual(len(g.default_node_attr),2)
+        self.assertEqual(len(g.default_node_attr), 2)
         g.add_default_edge_attr(color="red")
-        self.assertEqual(len(g.default_edge_attr),1)
+        self.assertEqual(len(g.default_edge_attr), 1)
         g.add_default_graph_attr(color="red")
-        self.assertEqual(len(g.default_graph_attr),1)
-        
+        self.assertEqual(len(g.default_graph_attr), 1)
+
     def test_add_default_node(self):
         g = dotp.DotGraph()
         g.add_default_node_attr(color="red")
         n = g.add_node('a')
         self.failUnless('color' in n.attr)
-        self.assertEqual(n.attr['color'],"red")
-        g.add_default_node_attr(color="blue",label="b")
+        self.assertEqual(n.attr['color'], "red")
+        g.add_default_node_attr(color="blue", label="b")
         n = g.add_node(2)
         self.failUnless('color' in n.attr)
-        self.assertEqual(n.attr['color'],"blue")
+        self.assertEqual(n.attr['color'], "blue")
         self.failUnless('label' in n.attr)
-        self.assertEqual(n.attr['label'],"b")
+        self.assertEqual(n.attr['label'], "b")
 
     def test_add_default_node_subgraph(self):
         g = dotp.DotGraph()
@@ -151,16 +151,12 @@ class DotDefaultAttrTest(unittest.TestCase):
         s.add_default_node_attr(style='test')
         n = s.add_node('b')
         self.failUnless('color' in n.attr)
-        self.assertEqual(n.attr['color'],"red")
+        self.assertEqual(n.attr['color'], "red")
         self.failUnless('style' in n.attr)
         nn = g.add_node(2)
         self.failIf('style' in nn.attr)
-        
 
-        
-        
-        
-        
+
 ##
 ##
 ##    def test_addequalnodes2(self):
@@ -308,11 +304,11 @@ class DotDefaultAttrTest(unittest.TestCase):
 ##
 ##
 ##
-        
-        
-        
-        
-        
+
+
+
+
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -10,40 +10,43 @@ digraph G {
 }
 """
 
+
 class InterfaceTest(unittest.TestCase):
     def test_default(self):
         source = dot2tex.dot2tex(testgraph)
         self.failUnless(source.strip())
-        
+
     def test_pgf(self):
-        source = dot2tex.dot2tex(testgraph,format='pgf')
+        source = dot2tex.dot2tex(testgraph, format='pgf')
         self.failUnless(source.strip())
-        
+
     def test_pstricks(self):
-        source = dot2tex.dot2tex(testgraph,format='pst')
+        source = dot2tex.dot2tex(testgraph, format='pst')
         self.failUnless(source.strip())
-        
+
     def test_tikz(self):
-        source = dot2tex.dot2tex(testgraph,format='tikz')
+        source = dot2tex.dot2tex(testgraph, format='tikz')
         self.failUnless(source.strip())
-        
+
     def test_positions(self):
         positions = dot2tex.dot2tex(testgraph, format='positions')
-        self.failUnless(type(positions)==dict)
+        self.failUnless(type(positions) == dict)
         self.failUnless('a_1' in positions.keys())
-        self.failUnless(len(positions.keys())==3)
-        self.failUnless(len(positions['a_1'])==2)
+        self.failUnless(len(positions.keys()) == 3)
+        self.failUnless(len(positions['a_1']) == 2)
+
 
 class UnicodeTest(unittest.TestCase):
     def test_russian(self):
         testgraph = """digraph {AAA [label="ЯЯЯ"];}"""
-        source = dot2tex.dot2tex(testgraph,debug=True,format='tikz',codeonly=True)
-        self.failUnless(source.find("{ЯЯЯ}") > 0,"Found %s" % source)
+        source = dot2tex.dot2tex(testgraph, debug=True, format='tikz', codeonly=True)
+        self.failUnless(source.find("{ЯЯЯ}") > 0, "Found %s" % source)
+
     def test_russian2(self):
         testgraph = """digraph {AAA [label=aaЯЯЯ];}"""
-        source = dot2tex.dot2tex(testgraph,debug=True,format='tikz',codeonly=True)
-        self.failUnless(source.find("{aaЯЯЯ}") > 0,"Found %s" % source)
-    
+        source = dot2tex.dot2tex(testgraph, debug=True, format='tikz', codeonly=True)
+        self.failUnless(source.find("{aaЯЯЯ}") > 0, "Found %s" % source)
+
 
 class D2TOptionsTest(unittest.TestCase):
     def test_d2tcommented(self):
@@ -54,7 +57,7 @@ digraph SSA
  B
 }
 """
-        source = dot2tex.dot2tex(testgraph,debug=True)
+        source = dot2tex.dot2tex(testgraph, debug=True)
         self.failIf(source.find("insertedstyle") >= 0)
 
     def test_d2toptions(self):
@@ -65,31 +68,31 @@ digraph SSA
  B
 }
 """
-        source = dot2tex.dot2tex(testgraph,debug=True)
+        source = dot2tex.dot2tex(testgraph, debug=True)
         self.failUnless(source.find("insertedstyle") >= 0)
 
+
 class PGF118CompatabilityTest(unittest.TestCase):
-    
     def test_pgf118option(self):
-        source = dot2tex.dot2tex(testgraph,debug=True, pgf118=True)
+        source = dot2tex.dot2tex(testgraph, debug=True, pgf118=True)
         self.failUnless(source.find("\usepackage{pgflibrarysnakes}") >= 0)
         self.failIf(source.find("\usetikzlibrary") >= 0)
         self.failIf(source.find("line join=bevel") >= 0)
 
     def test_tikz118option(self):
-        source = dot2tex.dot2tex(testgraph,debug=True, format='tikz', pgf118=True)
+        source = dot2tex.dot2tex(testgraph, debug=True, format='tikz', pgf118=True)
         self.failUnless(source.find("\usepackage{pgflibrarysnakes}") >= 0)
         self.failIf(source.find("\usetikzlibrary") >= 0)
         self.failIf(source.find("line join=bevel") >= 0)
-        
+
     def test_nopgf118option(self):
-        source = dot2tex.dot2tex(testgraph,debug=True, pgf118=False)
+        source = dot2tex.dot2tex(testgraph, debug=True, pgf118=False)
         self.failIf(source.find("\usepackage{pgflibrarysnakes}") >= 0)
         self.failUnless(source.find("\usetikzlibrary") >= 0)
         self.failUnless(source.find("line join=bevel") >= 0)
 
+
 class BuggyGraphTests(unittest.TestCase):
-    
     def test_small_label(self):
         testgraph = """
         digraph {
@@ -99,7 +102,7 @@ class BuggyGraphTests(unittest.TestCase):
         source = dot2tex.dot2tex(testgraph, debug=True, autosize=True,
                                  figonly=True, format='tikz')
         self.failUnless('$1$' in source)
-    
+
     #http://code.google.com/p/dot2tex/issues/detail?id=16
     def test_name_with_parantheses(self):
         testgraph = """
@@ -108,11 +111,13 @@ class BuggyGraphTests(unittest.TestCase):
         source = dot2tex.dot2tex(testgraph, debug=True,
                                  figonly=True, format='tikz')
         self.failUnless(r'\node (F{K}/R-1)' in source)
-    
+
+
 class NeedsQuotesTests(unittest.TestCase):
     # http://code.google.com/p/dot2tex/issues/detail?id=17    
     def test_numeral(self):
         from dot2tex import dotparsing
+
         self.failUnless(dotparsing.needs_quotes('1.2.3.4') == True)
         self.failUnless(dotparsing.needs_quotes('1.2') == False)
         self.failUnless(dotparsing.needs_quotes('-1.2') == False)
@@ -120,7 +125,7 @@ class NeedsQuotesTests(unittest.TestCase):
         self.failUnless(dotparsing.needs_quotes('--1') == True)
         self.failUnless(dotparsing.needs_quotes('.12') == False)
         self.failUnless(dotparsing.needs_quotes('-.1') == False)
-    
+
     # http://code.google.com/p/dot2tex/issues/detail?id=17    
     def test_not_numeral_in_label(self):
         testgraph = """
@@ -129,7 +134,8 @@ class NeedsQuotesTests(unittest.TestCase):
         source = dot2tex.dot2tex(testgraph, debug=True,
                                  figonly=True, format='tikz', autosize=True)
         self.failUnless(r'{1.2.3.4}' in source)
-    
+
+
 class MultipleStatements(unittest.TestCase):
     # http://code.google.com/p/dot2tex/issues/detail?id=19
     def test_semicolon(self):
@@ -145,16 +151,16 @@ class MultipleStatements(unittest.TestCase):
           a -> c;
           {rank=same; b;c}
         }"""
-        source1 = dot2tex.dot2tex(testgraph1, 
-                                 figonly=True, format='tikz', autosize=True)
-        source2 = dot2tex.dot2tex(testgraph2, 
-                                 figonly=True, format='tikz', autosize=True)
+        source1 = dot2tex.dot2tex(testgraph1,
+                                  figonly=True, format='tikz', autosize=True)
+        source2 = dot2tex.dot2tex(testgraph2,
+                                  figonly=True, format='tikz', autosize=True)
         #print source1
         #print source2
-        self.failUnless(source1==source2)
-        
+        self.failUnless(source1 == source2)
+
+
 class TestPositionsOutputFormat(unittest.TestCase):
-    
     # http://code.google.com/p/dot2tex/issues/detail?id=20
     def test_floating_point_coordinates(self):
         testxdotgraph = """
@@ -169,29 +175,28 @@ class TestPositionsOutputFormat(unittest.TestCase):
         }
         """
         positions = dot2tex.dot2tex(testxdotgraph, format='positions')
-        self.failUnless(type(positions)==dict)
-        self.failUnless(type(positions['a'][0])==float)
-        self.failUnless(type(positions['b'][0])==float)
-        
+        self.failUnless(type(positions) == dict)
+        self.failUnless(type(positions['a'][0]) == float)
+        self.failUnless(type(positions['b'][0]) == float)
 
 
 class ErrorHandlingTest(unittest.TestCase):
-    
     def test_parse_error(self):
         graph = "graph {a-b]"
         parser = dot2tex.dotparsing.DotDataParser()
         self.assertRaises(dot2tex.ParseException, parser.parse_dot_data, graph)
-        
+
     def test_module_parse_error(self):
         graph = "graph {a-b]"
         #dot2tex.dot2tex(graph, debug=True, figonly=True)
         #logdata = dot2tex.get_logstream()
         #print logdata.getvalue()
         self.assertRaises(dot2tex.ParseException, dot2tex.dot2tex, graph)
-        
+
     def test_no_input_file(self):
         graph = r"\input{dymmy.dot}"
         self.assertRaises(IOError, dot2tex.dot2tex, graph)
+
 
 class EdgeLabelsTests(unittest.TestCase):
     def test_edgetexlbl_nolabel_preproc(self):
@@ -199,34 +204,37 @@ class EdgeLabelsTests(unittest.TestCase):
         graph = r'digraph G {a -> b [texlbl="TestLabel"];}'
         code = dot2tex.dot2tex(graph, autosize=True)
         self.failUnless("TestLabel" in code)
-        
+
     def test_edgetexlbl_nolabel_nopreproc(self):
         """Edge labels specified using 'texlbl' only will not be generated by Graphviz"""
         graph = r'digraph G {a -> b [texlbl="TestLabel"];}'
         code = dot2tex.dot2tex(graph)
         self.failUnless("TestLabel" not in code)
 
+
 class GraphvizInterfaceTests(unittest.TestCase):
-    
     def test_prog_options(self):
         from dot2tex.dot2tex import create_xdot
+
         xdot_data = create_xdot(testgraph)
         xdot_data2 = create_xdot(testgraph)
         self.failUnlessEqual(xdot_data, xdot_data2)
         xdot_data2 = create_xdot(testgraph, options='-y')
         self.failIfEqual(xdot_data, xdot_data2, 'No options were passed to dot')
-    
-        
+
+
     def test_invalid_program(self):
         """Invoking create_xdot with an invalid prog parameter should raise an exception"""
         from dot2tex.dot2tex import create_xdot
         #xdot_data = create_xdot(testgraph, prog="dummy")
         self.assertRaises(NameError, create_xdot, testgraph, prog="dummy")
 
+
 class AutosizeTests(unittest.TestCase):
     def test__dim_extraction(self):
         """Failed to extract dimension data from logfile"""
         from dot2tex.dot2tex import dimext
+
         logdata = """
 ABD: EveryShipout initializing macros
 Preview: Fontsize 10pt
@@ -277,14 +285,15 @@ Not a real error.
 [3] ) 
 Here is how much of TeX's memory you used:
 """
-        dimext_re = re.compile(dimext,re.MULTILINE|re.VERBOSE)
+        dimext_re = re.compile(dimext, re.MULTILINE | re.VERBOSE)
         texdimdata = dimext_re.findall(logdata)
         self.failIf(len(texdimdata) == 0)
-        
+
     def test__dim_extraction_cygwin(self):
         """Failed to extract dimension data from logfile generated under Cygwin"""
         # issue [14] http://code.google.com/p/dot2tex/issues/detail?id=14
         from dot2tex.dot2tex import dimext
+
         logdata = """
 Preview: Fontsize 10pt
 /tmp/dot2texS8qrUI/dot2tex.tex:18: Preview: Snippet 1 started.
@@ -337,10 +346,11 @@ Not a real error.
 [3] ) 
 Here is how much of TeX's memory you used:
 """
-        dimext_re = re.compile(dimext,re.MULTILINE|re.VERBOSE)
+        dimext_re = re.compile(dimext, re.MULTILINE | re.VERBOSE)
         texdimdata = dimext_re.findall(logdata)
         self.failIf(len(texdimdata) == 0)
-        
+
+
 class TikZTemplateTests(unittest.TestCase):
     def test_point_shape(self):
         """Nodes with the point shape should not have labels"""
@@ -371,7 +381,7 @@ class TestBugs(unittest.TestCase):
         self.assertTrue('LABEL' in code)
         self.assertTrue('TAILLABEL' in code)
 
-        
+
 if __name__ == '__main__':
     unittest.main()
     #import unicodedata
