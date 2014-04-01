@@ -23,11 +23,11 @@ from pyparsing import __version__ as pyparsing_version
 
 import pyparsing
 
-from pyparsing import  (Literal, CaselessLiteral, Word, Upcase, OneOrMore, ZeroOrMore,
-                        Forward, NotAny, delimitedList, oneOf, Group, Optional, Combine, alphas, nums,
-                        restOfLine, cStyleComment, nums, alphanums, printables, empty, quotedString,
-                        ParseException, ParseResults, CharsNotIn, _noncomma, dblQuotedString, QuotedString, ParserElement,
-                        Suppress, Regex, removeQuotes)
+from pyparsing import (Literal, CaselessLiteral, Word, Upcase, OneOrMore, ZeroOrMore,
+                       Forward, NotAny, delimitedList, oneOf, Group, Optional, Combine, alphas, nums,
+                       restOfLine, cStyleComment, nums, alphanums, printables, empty, quotedString,
+                       ParseException, ParseResults, CharsNotIn, dblQuotedString, QuotedString, ParserElement,
+                       Suppress, Regex, removeQuotes)
 
 dot_keywords = ['graph', 'subgraph', 'digraph', 'node', 'edge', 'strict']
 
@@ -39,7 +39,8 @@ id_re_html = re.compile('^<<.*>>$', re.S)
 
 log = logging.getLogger("dot2tex")
 
-def needs_quotes( s ):
+
+def needs_quotes(s):
     """Checks whether a string is a dot language ID.
 
     It will check whether the string is solely composed
@@ -64,8 +65,8 @@ def needs_quotes( s ):
                 res = id_re_html.match(s)
             pass
 
-        ##                if not res:
-        ##                    res = id_re_with_port.match(s)
+            ##                if not res:
+            ##                    res = id_re_with_port.match(s)
 
     if not res:
         return True
@@ -78,7 +79,7 @@ def quote_if_necessary(s):
         return s
     tmp = s
     if needs_quotes(tmp):
-        tmp = '"%s"' % s#.replace('"','\\"')
+        tmp = '"%s"' % s  #.replace('"','\\"')
     tmp = tmp.replace('<<', '<')
     tmp = tmp.replace('>>', '>')
     return tmp
@@ -124,6 +125,7 @@ def nsplit(seq, n=2):
     [('a', 'a', 'b', 'b')]
     """
     return [xy for xy in izip(*[iter(seq)] * n)]
+
 
 # The following function is from the pydot project
 def __find_executables(path):
@@ -209,7 +211,7 @@ def find_graphviz():
             # Get the GraphViz install path from the registry
             #
             hkey = win32api.RegOpenKeyEx(win32con.HKEY_LOCAL_MACHINE,
-                "SOFTWARE\AT&T Research Labs\Graphviz", 0, win32con.KEY_QUERY_VALUE)
+                                         "SOFTWARE\AT&T Research Labs\Graphviz", 0, win32con.KEY_QUERY_VALUE)
 
             path = win32api.RegQueryValueEx(hkey, "InstallPath")[0]
             win32api.RegCloseKey(hkey)
@@ -262,10 +264,10 @@ def find_graphviz():
             return progs
 
     for path in (
-        '/usr/bin', '/usr/local/bin',
-        '/opt/local/bin',
-        '/opt/bin', '/sw/bin', '/usr/share',
-        '/Applications/Graphviz.app/Contents/MacOS/' ):
+            '/usr/bin', '/usr/local/bin',
+            '/opt/local/bin',
+            '/opt/bin', '/sw/bin', '/usr/share',
+            '/Applications/Graphviz.app/Contents/MacOS/' ):
         progs = __find_executables(path)
         if progs is not None:
             #print "Used path"
@@ -286,6 +288,7 @@ SET_DEF_NODE_ATTR = 'set_def_node_attr'
 SET_DEF_EDGE_ATTR = 'set_def_edge_attr'
 SET_DEF_GRAPH_ATTR = 'set_def_graph_attr'
 SET_GRAPH_ATTR = 'set_graph_attr'
+
 
 class DotDataParser(object):
     """Container class for parsing Graphviz dot data"""
@@ -428,9 +431,9 @@ class DotDataParser(object):
         closer = '>'
         try:
             html_text = pyparsing.nestedExpr(opener, closer,
-                (( CharsNotIn(
-                    opener + closer).setParseAction(lambda t: t[0]))
-                    )).setParseAction(parse_html)
+                                             (( CharsNotIn(
+                                                 opener + closer).setParseAction(lambda t: t[0]))
+                                             )).setParseAction(parse_html)
         except:
             log.debug('nestedExpr not available.')
             log.warning('Old version of pyparsing detected. Version 1.4.8 or '
@@ -439,7 +442,7 @@ class DotDataParser(object):
             html_text = Combine(Literal("<<") + OneOrMore(CharsNotIn(",]")))
 
         ID = ( alphastring_ | html_text |
-               quoted_string | #.setParseAction(strip_quotes) |
+               quoted_string |  #.setParseAction(strip_quotes) |
                identifier ).setName("ID")
 
         float_number = Combine(Optional(minus) +
@@ -673,8 +676,8 @@ class DotDefaultAttr(object):
         self.attr = kwds
 
     def __str__(self):
-        attrstr = ",".join(["%s=%s" %\
-                            (quote_if_necessary(key), quote_if_necessary(val))\
+        attrstr = ",".join(["%s=%s" % \
+                            (quote_if_necessary(key), quote_if_necessary(val)) \
                             for key, val in self.attr.items()])
         if attrstr:
             attrstr = "[%s]" % attrstr
@@ -704,8 +707,8 @@ class DotNode(object):
         self.attr.update(kwds)
 
     def __str__(self):
-        attrstr = ",".join(["%s=%s" %\
-                            (quote_if_necessary(key), quote_if_necessary(val))\
+        attrstr = ",".join(["%s=%s" % \
+                            (quote_if_necessary(key), quote_if_necessary(val)) \
                             for key, val in self.attr.items()])
         if attrstr:
             attrstr = "[%s]" % attrstr
@@ -734,10 +737,10 @@ class DotGraph(object):
 
     def __init__(self, name='G', strict=True, directed=False, **kwds):
         self._nodes = OrderedDict()
-        self._allnodes = {}#OrderedDict()
-        self._alledges = {} #OrderedDict()
+        self._allnodes = {}  #OrderedDict()
+        self._alledges = {}  #OrderedDict()
         self._allgraphs = []
-        self._edges = {} #OrderedDict()
+        self._edges = {}  #OrderedDict()
         self.strict = strict
         self.directed = directed
         self.subgraphs = []
@@ -832,11 +835,11 @@ class DotGraph(object):
                     self._edges[edgekey].append(edge)
                 edgs.append(edge)
 
-            ##            else:
-            ##                edgs[0].attributes.update(edge.attributes)
-            ##                return edgs[0]
+                ##            else:
+                ##                edgs[0].attributes.update(edge.attributes)
+                ##                return edgs[0]
         else:
-        ##            edge.parent = edge_parent
+            ##            edge.parent = edge_parent
             #edge.attr.update(self.default_edge_attr)
             self._alledges[edgekey] = [edge]
             self._edges[edgekey] = [edge]
@@ -999,8 +1002,8 @@ class DotGraph(object):
         padding = self.padding
         if len(self.allitems) > 0:
             grstr = "".join(["%s%s" % (padding, n) for n in map(str, flatten(self.allitems))])
-            attrstr = ",".join(["%s=%s" %\
-                                (quote_if_necessary(key), quote_if_necessary(val))\
+            attrstr = ",".join(["%s=%s" % \
+                                (quote_if_necessary(key), quote_if_necessary(val)) \
                                 for key, val in self.attr.items()])
             if attrstr:
                 attrstr = "%sgraph [%s];" % (padding, attrstr)
@@ -1018,13 +1021,13 @@ class DotGraph(object):
 
         subgraphstr = "\n".join(["%s%s" % (padding, n) for n in map(str, self.subgraphs)])
 
-        nodestr = "".join(["%s%s" % (padding, n) for n in\
+        nodestr = "".join(["%s%s" % (padding, n) for n in \
                            map(str, self._nodes.itervalues())])
-        edgestr = "".join(["%s%s" % (padding, n) for n in\
+        edgestr = "".join(["%s%s" % (padding, n) for n in \
                            map(str, flatten(self.edges.itervalues()))])
 
-        attrstr = ",".join(["%s=%s" %\
-                            (quote_if_necessary(key), quote_if_necessary(val))\
+        attrstr = ",".join(["%s=%s" % \
+                            (quote_if_necessary(key), quote_if_necessary(val)) \
                             for key, val in self.attr.items()])
         if attrstr:
             attrstr = "%sgraph [%s];" % (padding, attrstr)
@@ -1039,7 +1042,7 @@ class DotGraph(object):
             return "%s %s{\n%s\n%s\n%s\n%s\n}" % (s, self.get_name(), subgraphstr, attrstr, nodestr, edgestr)
         else:
             return "%s %s{\n%s\n%s\n%s\n%s\n%s}" % (
-            'subgraph', self.get_name(), subgraphstr, attrstr, nodestr, edgestr, padding)
+                'subgraph', self.get_name(), subgraphstr, attrstr, nodestr, edgestr, padding)
 
 
 class DotEdge(object):
@@ -1060,13 +1063,13 @@ class DotEdge(object):
         self.attr.update(kwds)
 
     def __str__(self):
-        attrstr = ",".join(["%s=%s" %\
-                            (quote_if_necessary(key), quote_if_necessary(val))\
+        attrstr = ",".join(["%s=%s" % \
+                            (quote_if_necessary(key), quote_if_necessary(val)) \
                             for key, val in self.attr.items()])
         if attrstr:
             attrstr = "[%s]" % attrstr
-        return "%s%s %s %s%s %s;\n" % (quote_if_necessary(self.src.name),\
-                                       self.src_port, self.conn,\
+        return "%s%s %s %s%s %s;\n" % (quote_if_necessary(self.src.name), \
+                                       self.src_port, self.conn, \
                                        quote_if_necessary(self.dst.name), self.dst_port, attrstr)
 
     def get_source(self):
@@ -1108,6 +1111,7 @@ def parse_dot_data(data):
         print " " * (err.column - 1) + "^"
         print err
         return None
+
 
 testgraph = r"""
 /* Test that the various id types are parsed correctly */
