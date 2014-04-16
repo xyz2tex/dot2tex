@@ -478,13 +478,13 @@ class DotDataParser(object):
         subgraph = (Optional(subgraph_, '') + Optional(ID, '') + Group(graph_stmt)).setName("subgraph").setResultsName(
             'ssubgraph')
 
-        edge_point << (subgraph | graph_stmt | node_id )
+        edge_point <<= (subgraph | graph_stmt | node_id )
 
         node_stmt = (node_id + Optional(attr_list) + Optional(semi)).setName("node_stmt")
 
         assignment = (ID + equals + righthand_id).setName("assignment")
         stmt = (assignment | edge_stmt | attr_stmt | subgraph | graph_stmt | node_stmt).setName("stmt")
-        stmt_list << OneOrMore(stmt + Optional(semi))
+        stmt_list <<= OneOrMore(stmt + Optional(semi))
 
         graphparser = ( (Optional(strict_, 'notstrict') + ((graph_ | digraph_)) +
                          Optional(ID, '') + lbrace + Group(Optional(stmt_list)) + rbrace).setResultsName("graph") )
