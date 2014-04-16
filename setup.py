@@ -18,8 +18,8 @@ Graphviz_, a more LaTeX friendly look and feel. This is accomplished by:
 """,
       author='Kjell Magne Fauske',
       author_email='kjellmf@gmail.com',
-      url="http://www.fauskes.net/code/dot2tex/",
-      download_url="http://www.fauskes.net/code/dot2tex/download/",
+      url="https://github.com/kjellmf/dot2tex",
+      download_url="https://pypi.python.org/pypi/dot2tex#downloads",
       py_modules=['dot2tex.dot2tex', 'dot2tex.dotparsing'],
       scripts=['dot2tex/dot2tex'],
       classifiers=[
