@@ -23,7 +23,8 @@ from exceptions import KeyError, AttributeError
 import pyparsing
 from pyparsing import __version__ as pyparsing_version
 
-from pyparsing import (Literal, CaselessLiteral, Word, OneOrMore, Forward, Group, Optional, Combine, restOfLine, cStyleComment, nums, alphanums,
+from pyparsing import (Literal, CaselessLiteral, Word, OneOrMore, Forward, Group, Optional, Combine, restOfLine,
+                       cStyleComment, nums, alphanums,
                        ParseException, CharsNotIn, Suppress, Regex, removeQuotes)
 
 dot_keywords = ['graph', 'subgraph', 'digraph', 'node', 'edge', 'strict']
@@ -229,7 +230,6 @@ def find_graphviz():
         except:
             log.debug('Failed to access the registry key')
 
-
     # Method 2 (Linux, Windows etc)
     #
     if os.environ.has_key('PATH'):
@@ -264,7 +264,7 @@ def find_graphviz():
             '/usr/bin', '/usr/local/bin',
             '/opt/local/bin',
             '/opt/bin', '/sw/bin', '/usr/share',
-            '/Applications/Graphviz.app/Contents/MacOS/' ):
+            '/Applications/Graphviz.app/Contents/MacOS/'):
         progs = __find_executables(path)
         if progs is not None:
             #print "Used path"
@@ -354,7 +354,7 @@ class DotDataParser(object):
     def _proc_default_attr_stmt(self, toks):
         """Return (ADD_DEFAULT_NODE_ATTR,options"""
         if len(toks) == 1:
-            gtype = toks;
+            gtype = toks
             attr = {}
         else:
             gtype, attr = toks
@@ -423,12 +423,11 @@ class DotDataParser(object):
         def parse_html(s, loc, toks):
             return '<<%s>>' % ''.join(toks[0])
 
-
         opener = '<'
         closer = '>'
         try:
             html_text = pyparsing.nestedExpr(opener, closer,
-                                             (( CharsNotIn(
+                                             ((CharsNotIn(
                                                  opener + closer).setParseAction(lambda t: t[0]))
                                              )).setParseAction(parse_html)
         except:
@@ -438,14 +437,14 @@ class DotDataParser(object):
                         'work properly.')
             html_text = Combine(Literal("<<") + OneOrMore(CharsNotIn(",]")))
 
-        ID = ( alphastring_ | html_text |
-               quoted_string |  #.setParseAction(strip_quotes) |
-               identifier ).setName("ID")
+        ID = (alphastring_ | html_text |
+              quoted_string |  #.setParseAction(strip_quotes) |
+              identifier).setName("ID")
 
         float_number = Combine(Optional(minus) +
                                OneOrMore(Word(nums + "."))).setName("float_number")
 
-        righthand_id = (float_number | ID ).setName("righthand_id")
+        righthand_id = (float_number | ID).setName("righthand_id")
 
         port_angle = (at + ID).setName("port_angle")
 
@@ -468,7 +467,7 @@ class DotDataParser(object):
 
         stmt_list = Forward()
         graph_stmt = (lbrace + Optional(stmt_list) +
-                      rbrace + Optional(semi) ).setName("graph_stmt")
+                      rbrace + Optional(semi)).setName("graph_stmt")
 
         edge_point = Forward()
 
@@ -478,7 +477,7 @@ class DotDataParser(object):
         subgraph = (Optional(subgraph_, '') + Optional(ID, '') + Group(graph_stmt)).setName("subgraph").setResultsName(
             'ssubgraph')
 
-        edge_point <<= (subgraph | graph_stmt | node_id )
+        edge_point <<= (subgraph | graph_stmt | node_id)
 
         node_stmt = (node_id + Optional(attr_list) + Optional(semi)).setName("node_stmt")
 
@@ -486,11 +485,10 @@ class DotDataParser(object):
         stmt = (assignment | edge_stmt | attr_stmt | subgraph | graph_stmt | node_stmt).setName("stmt")
         stmt_list <<= OneOrMore(stmt + Optional(semi))
 
-        graphparser = ( (Optional(strict_, 'notstrict') + ((graph_ | digraph_)) +
-                         Optional(ID, '') + lbrace + Group(Optional(stmt_list)) + rbrace).setResultsName("graph") )
+        graphparser = ((Optional(strict_, 'notstrict') + ((graph_ | digraph_)) +
+                        Optional(ID, '') + lbrace + Group(Optional(stmt_list)) + rbrace).setResultsName("graph"))
 
         singleLineComment = Group("//" + restOfLine) | Group("#" + restOfLine)
-
 
         # actions
         graphparser.ignore(singleLineComment)
@@ -547,7 +545,6 @@ class DotDataParser(object):
                 edges = graph.add_special_edge(src, dest, srcport, destport, **opts)
                 graph.allitems.extend(edges)
 
-
             elif cmd == SET_GRAPH_ATTR:
                 graph.set_attr(**element[1])
 
@@ -574,7 +571,6 @@ class DotDataParser(object):
 
         return graph
 
-
     def build_top_graph(self, tokens):
         """Build a DotGraph instance from parsed data"""
         # get basic graph information
@@ -585,7 +581,6 @@ class DotDataParser(object):
         # lets build the graph
         graph = DotGraph(graphname, strict, directed)
         self.graph = self.build_graph(graph, tokens[3])
-
 
     def parse_dot_data(self, data):
         """Parse dot data and return a DotGraph instance"""
@@ -607,7 +602,6 @@ class DotDataParser(object):
             #print err
             #return None
             raise
-
 
     def parse_dot_data_debug(self, data):
         """Parse dot data"""
@@ -637,16 +631,13 @@ class OrderedDict(DictMixin):
         self._keys = []
         self._data = {}
 
-
     def __setitem__(self, key, value):
         if key not in self._data:
             self._keys.append(key)
         self._data[key] = value
 
-
     def __getitem__(self, key):
         return self._data[key]
-
 
     def __delitem__(self, key):
         del self._data[key]
@@ -659,12 +650,11 @@ class OrderedDict(DictMixin):
     def keys(self):
         return list(self._keys)
 
-
     def copy(self):
-        copyDict = odict()
-        copyDict._data = self._data.copy()
-        copyDict._keys = self._keys[:]
-        return copyDict
+        ordered_dict_copy = OrderedDict()
+        ordered_dict_copy._data = self._data.copy()
+        ordered_dict_copy._keys = self._keys[:]
+        return ordered_dict_copy
 
 
 class DotDefaultAttr(object):
@@ -734,21 +724,21 @@ class DotGraph(object):
 
     def __init__(self, name='G', strict=True, directed=False, **kwds):
         self._nodes = OrderedDict()
-        self._allnodes = {}  #OrderedDict()
-        self._alledges = {}  #OrderedDict()
+        self._allnodes = {}
+        self._alledges = {}
         self._allgraphs = []
-        self._edges = {}  #OrderedDict()
+        self._edges = {}
         self.strict = strict
         self.directed = directed
         self.subgraphs = []
         self.name = name
         self.padding = "    "
-        self.seq = 0;
+        self.seq = 0
         self.allitems = []
 
         self.attr = {}
         self.strict = strict
-        self.level = 0;
+        self.level = 0
         self.parent = None
         self.root = self
         self.adj = {}
@@ -898,7 +888,6 @@ class DotGraph(object):
     ##            self._allnodes[name]=nodecls
     ##            self._nodes[name] = nodecls
 
-
     def delete_node(self, node):
         if isinstance(node, DotNode):
             name = node.name
@@ -909,7 +898,6 @@ class DotGraph(object):
             del self._allnodes[name]
         except:
             raise DotParsingException, "Node %s does not exists" % name
-
 
     def get_node(self, nodename):
         """Return node with name=nodename
@@ -960,7 +948,7 @@ class DotGraph(object):
         subgraphcls._allgraphs = self._allgraphs
         subgraphcls.parent = self
         subgraphcls.root = self.root
-        subgraphcls.level = self.level + 1;
+        subgraphcls.level = self.level + 1
         subgraphcls.add_default_node_attr(**self.default_node_attr)
         subgraphcls.add_default_edge_attr(**self.default_edge_attr)
         subgraphcls.add_default_graph_attr(**self.attr)
@@ -992,7 +980,6 @@ class DotGraph(object):
     allgraphs = property(lambda self: self._allgraphs.__iter__())
     alledges = property(lambda self: flatten(self._alledges.itervalues()))
     edges = property(get_edges)
-
 
     def __str__(self):
         s = ""
@@ -1070,10 +1057,10 @@ class DotEdge(object):
                                        quote_if_necessary(self.dst.name), self.dst_port, attrstr)
 
     def get_source(self):
-        return self.src.name;
+        return self.src.name
 
     def get_destination(self):
-        return self.dst.name;
+        return self.dst.name
 
     def __getattr__(self, name):
         try:
@@ -1088,28 +1075,6 @@ class DotSubGraph(DotGraph):
     def __init__(self, name='subgG', strict=True, directed=False, **kwds):
         DotGraph.__init__(self, name, strict, directed, **kwds)
 
-
-def parse_dot_data(data):
-    """Parse dot data and return a DotGraph instance"""
-    try:
-        try:
-            self.dotparser.parseWithTabs()
-        except:
-            #log.warning('Old version of pyparsing. Parser may not work correctly')
-            raise
-        ndata = data.replace('\\\n', '')
-
-        tokens = self.dotparser.parseString(ndata)
-        self.build_top_graph(tokens[0])
-        return self.graph
-
-    except ParseException, err:
-        print err.line
-        print " " * (err.column - 1) + "^"
-        print err
-        return None
-
-
 testgraph = r"""
 /* Test that the various id types are parsed correctly */
 digraph G {
@@ -1123,16 +1088,11 @@ if __name__ == '__main__':
     import pprint
 
     print "Creating parser"
-
     gp = DotDataParser()
-
     tok = gp.parse_dot_data_debug(testgraph)
     #dg = parse_dot_data(testgraph)
     pprint.pprint(tok)
     print gp.graph
-    #del(gp)
-    #pprint.pprint(t)
-    #print g
 
 
 
