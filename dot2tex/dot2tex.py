@@ -175,7 +175,6 @@ def create_xdot(dotdata, prog='dot', options=''):
     # The following code is from the pydot module written by Ero Carrera
     progs = dotparsing.find_graphviz()
 
-
     #prog = 'dot'
     if progs is None:
         log.error('Could not locate Graphviz binaries')
@@ -189,9 +188,9 @@ def create_xdot(dotdata, prog='dot', options=''):
     f = open(tmp_name, 'w')
     f.write(dotdata)
     f.close()
-    format = 'xdot'
+    output_format = 'xdot'
     progpath = '"%s"' % progs[prog].strip()
-    cmd = progpath + ' -T' + format + ' ' + options + ' ' + tmp_name
+    cmd = progpath + ' -T' + output_format + ' ' + options + ' ' + tmp_name
     log.debug('Creating xdot data with: %s', cmd)
     stdin, stdout, stderr = os.popen3(cmd, 't')
     stdin.close()
@@ -239,7 +238,8 @@ def parse_drawstring(drawstring):
         # E x0 y0 w h  Filled ellipse ((x-x0)/w)^2 + ((y-y0)/h)^2 = 1
         # e x0 y0 w h  Unfilled ellipse ((x-x0)/w)^2 + ((y-y0)/h)^2 = 1
         tokens = s.split()[0:4]
-        if not tokens: return None
+        if not tokens:
+            return None
         points = map(int, tokens)
         didx = sum(map(len, tokens)) + len(points) + 1
         return didx, (c, points[0], points[1], points[2], points[3])
@@ -340,7 +340,8 @@ def get_graphlist(gg, l=[]):
     if gg.get_subgraphs():
         for g in gg.get_subgraphs():
             get_graphlist(g, l)
-    if outer: return l
+    if outer:
+        return l
 
 
 class EndOfGraphElement(object):
@@ -504,7 +505,6 @@ class DotConvBase(object):
             drawopcolor = drawopcolor.replace(' ', '')
             return drawopcolor
 
-
     def do_drawstring(self, drawstring, drawobj):
         """Parse and draw drawsting
 
@@ -524,7 +524,7 @@ class DotConvBase(object):
             if style and not self.options.get('duplicate', False):
                 # map Graphviz styles to backend styles
                 style = self.filter_styles(style)
-                styles = [self.styles.get(key.strip(), key.strip()) \
+                styles = [self.styles.get(key.strip(), key.strip())
                           for key in style.split(',') if key]
                 style = ','.join(styles)
             else:
@@ -600,7 +600,8 @@ class DotConvBase(object):
 
             drawstring = dstring + " " + lstring
 
-            if not drawstring.strip(): continue
+            if not drawstring.strip():
+                continue
             # detect node type
             shape = node.attr.get('shape', '')
             if not shape:
@@ -661,7 +662,8 @@ class DotConvBase(object):
                 del points[0]
                 arrowstyle = '->'
                 i += 1
-            if i > 1: arrowstyle = '<->'
+            if i > 1:
+                arrowstyle = '<->'
             segret.append((arrowstyle, points))
 
         return segret
@@ -704,7 +706,7 @@ class DotConvBase(object):
             dstring = ''
         if getattr(self.graph, '_draw_', None):
             # bug
-            dstring = "c 5 -black " + dstring  #self.graph._draw_
+            dstring = "c 5 -black " + dstring  # self.graph._draw_
             pass
         drawstring = dstring + " " + lstring
         if drawstring.strip():
@@ -725,7 +727,6 @@ class DotConvBase(object):
         # Todo: bad!
         self.options['valignmode'] = getattr(self.maingraph, 'd2tvalignmode', '') \
             or self.options.get('valignmode', 'center')
-
 
     def convert(self, dotdata):
         # parse data processed by dot.
@@ -834,38 +835,38 @@ class DotConvBase(object):
         return r.sub('', tmp)
 
     def init_template_vars(self):
-        vars = {}
+        variables = {}
         # get bounding box
         bbstr = self.maingraph.attr.get('bb', '')
         if bbstr:
             bb = bbstr.split(',')
-            vars['<<bbox>>'] = "(%sbp,%sbp)(%sbp,%sbp)\n" % (bb[0], bb[1], bb[2], bb[3])
-            vars['<<bbox.x0>>'] = bb[0]
-            vars['<<bbox.y0>>'] = bb[1]
-            vars['<<bbox.x1>>'] = bb[2]
-            vars['<<bbox.y1>>'] = bb[3]
-        vars['<<figcode>>'] = self.body.strip()
-        vars['<<drawcommands>>'] = self.body.strip()
-        vars['<<textencoding>>'] = self.textencoding
+            variables['<<bbox>>'] = "(%sbp,%sbp)(%sbp,%sbp)\n" % (bb[0], bb[1], bb[2], bb[3])
+            variables['<<bbox.x0>>'] = bb[0]
+            variables['<<bbox.y0>>'] = bb[1]
+            variables['<<bbox.x1>>'] = bb[2]
+            variables['<<bbox.y1>>'] = bb[3]
+        variables['<<figcode>>'] = self.body.strip()
+        variables['<<drawcommands>>'] = self.body.strip()
+        variables['<<textencoding>>'] = self.textencoding
         docpreamble = self.options.get('docpreamble', '') \
             or getattr(self.maingraph, 'd2tdocpreamble', '')
         ##        if docpreamble:
         ##            docpreamble = docpreamble.replace('\\n','\n')
-        vars['<<docpreamble>>'] = docpreamble
-        vars['<<figpreamble>>'] = self.options.get('figpreamble', '') \
+        variables['<<docpreamble>>'] = docpreamble
+        variables['<<figpreamble>>'] = self.options.get('figpreamble', '') \
             or getattr(self.maingraph, 'd2tfigpreamble', '%')
-        vars['<<figpostamble>>'] = self.options.get('figpostamble', '') \
+        variables['<<figpostamble>>'] = self.options.get('figpostamble', '') \
             or getattr(self.maingraph, 'd2tfigpostamble', '')
-        vars['<<graphstyle>>'] = self.options.get('graphstyle', '') \
+        variables['<<graphstyle>>'] = self.options.get('graphstyle', '') \
             or getattr(self.maingraph, 'd2tgraphstyle', '')
-        vars['<<margin>>'] = self.options.get('margin', '0pt')
-        vars['<<startpreprocsection>>'] = vars['<<endpreprocsection>>'] = ''
-        vars['<<startoutputsection>>'] = vars['<<endoutputsection>>'] = ''
+        variables['<<margin>>'] = self.options.get('margin', '0pt')
+        variables['<<startpreprocsection>>'] = variables['<<endpreprocsection>>'] = ''
+        variables['<<startoutputsection>>'] = variables['<<endoutputsection>>'] = ''
         if self.options.get('gvcols', False):
-            vars['<<gvcols>>'] = "\input{gvcols.tex}"
+            variables['<<gvcols>>'] = "\input{gvcols.tex}"
         else:
-            vars['<<gvcols>>'] = ""
-        self.templatevars = vars
+            variables['<<gvcols>>'] = ""
+        self.templatevars = variables
 
     def output(self):
         self.init_template_vars()
@@ -917,7 +918,6 @@ class DotConvBase(object):
 
     def get_graph_preproc_code(self, graph):
         return graph.attr.get('texlbl', '')
-
 
     def get_margins(self, element):
         """Return element margins"""
@@ -976,8 +976,8 @@ class DotConvBase(object):
 
             usednodes[name] = node
         for edge in dotparsing.flatten(self.maingraph.alledges):
-            if not edge.attr.get('label') and \
-                    not edge.attr.get('texlbl'): continue
+            if not edge.attr.get('label') and not edge.attr.get('texlbl'):
+                continue
             # Ensure that the edge name is unique.
             name = edge.src.name + edge.dst.name + str(counter)
             label = self.get_label(edge)
@@ -988,8 +988,8 @@ class DotConvBase(object):
             counter += 1
 
         for graph in self.maingraph.allgraphs:
-            if not graph.attr.get('label', None) and \
-                    not graph.attr.get('texlbl', None): continue
+            if not graph.attr.get('label', None) and not graph.attr.get('texlbl', None):
+                continue
             # Make sure that the name is unique
             name = graph.name + str(counter)
 
@@ -1012,7 +1012,8 @@ To see what happened, run dot2tex with the --debug option.
             sys.exit(1)
 
         for name, item in usednodes.items():
-            if not item.attr.get('texlbl'): continue
+            if not item.attr.get('texlbl'):
+                continue
             node = item
             hp, dp, wt = pp.texdims[name]
             if self.options.get('rawdim', False):
@@ -1234,7 +1235,6 @@ class Dot2PSTricksConv(DotConvBase):
         arrowstyle = ""
         return "  \psbezier{%s}%s\n" % (arrowstyle, "".join(pp))
 
-
     def draw_text(self, drawop, style=None):
         if len(drawop) == 7:
             c, x, y, align, w, text, valign = drawop
@@ -1258,20 +1258,20 @@ class Dot2PSTricksConv(DotConvBase):
         s = ""
         if c == 'c':
             # set pen color
-            if self.pencolor <> color:
+            if self.pencolor != color:
                 self.pencolor = color
                 s = "  \psset{linecolor=%s}\n" % color
             else:
                 return ""
         elif c == 'C':
             # set fill color
-            if self.fillcolor <> color:
+            if self.fillcolor != color:
                 self.fillcolor = color
                 s = "  \psset{fillcolor=%s}\n" % color
             else:
                 return ""
         elif c == 'cC':
-            if self.color <> color:
+            if self.color != color:
                 self.color = color
                 self.pencolor = self.fillcolor = color
                 s = "  \psset{linecolor=%s}\n" % color
@@ -1327,9 +1327,10 @@ class Dot2PSTricksConv(DotConvBase):
             return ""
         edges = self.get_edge_points(edge)
         for arrowstyle, points in edges:
-            if arrowstyle == '--': arrowstyle = ''
+            if arrowstyle == '--':
+                arrowstyle = ''
             color = getattr(edge, 'color', '')
-            if self.color <> color:
+            if self.color != color:
                 if color:
                     s += self.set_color(('c', color))
                 else:
@@ -1552,7 +1553,7 @@ class Dot2PGFConv(DotConvBase):
         if c == 'cC':
             #self.pencolor = color
             #self.fillcolor = color
-            if self.color <> color:
+            if self.color != color:
                 self.color = color
                 self.pencolor = color
                 self.fillcolor = color
@@ -1564,7 +1565,7 @@ class Dot2PGFConv(DotConvBase):
                 #s += "  \pgfsetfillcolor{%s}\n" % ccolor
         elif c == 'c':
             # set pen color
-            if self.pencolor <> color:
+            if self.pencolor != color:
                 self.pencolor = color
                 self.color = ''
                 if ccolor.startswith('{'):
@@ -1576,7 +1577,7 @@ class Dot2PGFConv(DotConvBase):
                 return ""
         elif c == 'C':
             # set fill color
-            if self.fillcolor <> color:
+            if self.fillcolor != color:
                 self.fillcolor = color
                 self.color = ''
                 if ccolor.startswith('{'):
@@ -1610,7 +1611,6 @@ class Dot2PGFConv(DotConvBase):
             if keyval.find('setlinewidth') < 0 and not keyval == 'filled':
                 fstyles.append(keyval)
         return ', '.join(fstyles)
-
 
     def draw_ellipse(self, drawop, style=None):
         op, x, y, w, h = drawop
@@ -1657,7 +1657,6 @@ class Dot2PGFConv(DotConvBase):
         ##            stylestr = ''
         stylestr = ''
         return "  \draw%s %s;\n" % (stylestr, " -- ".join(pp))
-
 
     def draw_text(self, drawop, style=None):
         # The coordinates given by drawop are not the same as the node
@@ -1713,7 +1712,6 @@ class Dot2PGFConv(DotConvBase):
 
         return s
 
-
     def do_edges(self):
         s = ""
         s += self.set_color(('cC', "black"))
@@ -1760,7 +1758,7 @@ class Dot2PGFConv(DotConvBase):
             # ensure that the fill color is the same as the pen color.
             color = getattr(edge, 'color', '')
 
-            if self.color <> color:
+            if self.color != color:
                 if color:
                     s += self.set_color(('cC', color))
                 else:
@@ -1775,7 +1773,7 @@ class Dot2PGFConv(DotConvBase):
             edgestyle = edge.attr.get('style', '')
 
             styles = []
-            if arrowstyle <> '--':
+            if arrowstyle != '--':
                 #styles.append(arrowstyle)
                 styles = [arrowstyle]
 
@@ -1819,8 +1817,8 @@ class Dot2PGFConv(DotConvBase):
                        "\setlength\PreviewBorder{%s}" % self.options.get('margin', '0pt')
         else:
             cropcode = ""
-        vars = {'<<cropcode>>': cropcode}
-        self.templatevars.update(vars)
+        variables = {'<<cropcode>>': cropcode}
+        self.templatevars.update(variables)
 
     def get_node_preproc_code(self, node):
         lblstyle = node.attr.get('lblstyle', '')
@@ -2019,7 +2017,6 @@ class Dot2TikZConv(Dot2PGFConv):
 
         return s, cname
 
-
     def get_node_preproc_code(self, node):
         lblstyle = node.attr.get('lblstyle', '')
 
@@ -2065,7 +2062,7 @@ class Dot2TikZConv(Dot2PGFConv):
             if not pos:
                 continue
             x, y = pos.split(',')
-            if dotshape <> 'point':
+            if dotshape != 'point':
                 label = self.get_label(node)
             else:
                 label = ''
@@ -2171,7 +2168,7 @@ class Dot2TikZConv(Dot2PGFConv):
             #print edgestyle
 
             styles = []
-            if arrowstyle <> '--':
+            if arrowstyle != '--':
                 #styles.append(arrowstyle)
                 styles = [arrowstyle]
 
@@ -2286,7 +2283,9 @@ PSTRICKSN_TEMPLATE = r"""\documentclass{article}
 <<endcodeonlysection>>
 """
 
-# ----------------- mgn -------------- 
+# ----------------- mgn --------------
+
+
 class Dot2PSTricksNConv(Dot2PSTricksConv):
     """A backend that utilizes the node and edge mechanism of PSTricks-Node"""
 
