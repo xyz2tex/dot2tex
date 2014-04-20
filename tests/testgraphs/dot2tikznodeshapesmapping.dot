@@ -1,0 +1,36 @@
+graph G {
+	c [shape=circle];
+	n_1 [shape=box];
+	n_2 [shape=ellipse];
+	n_3 [shape=oval];
+	n_4 [shape="point"];
+	n_5 [shape="egg"];
+	n_6 [shape="triangle"];
+	n_7 [shape="plaintext"];
+	n_8 [shape="diamond"];
+	n_9 [shape="trapezium"];
+	n_10 [shape="parallelogram"];
+	n_11 [shape="house"];
+	n_12 [shape="pentagon"];
+	n_13 [shape="hexagon"];
+	n_14 [shape="septagon"];
+    n_15 [shape="square"];
+    n_16 [shape="star"];
+	c -- n_1 [label="box"];
+	c -- n_2 [label="ellipse"];
+	c -- n_3 [label="oval"];
+	c -- n_4 [label="point"];
+	c -- n_5 [label="egg"];
+	c -- n_6 [label="triangle"];
+	c -- n_7 [label="plaintext"];
+	c -- n_8 [label="diamond"];
+	c -- n_9 [label="trapezium"];
+	c -- n_10 [label="parallelogram"];
+	c -- n_11 [label="house"];
+	c -- n_12 [label="pentagon"];
+	c -- n_13 [label="hexagon"];
+	c -- n_14 [label="septagon"];
+	c -- n_15 [label="square"];
+    c -- n_16 [label="star"];
+
+}

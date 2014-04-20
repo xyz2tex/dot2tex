@@ -1952,11 +1952,18 @@ class Dot2TikZConv(Dot2PGFConv):
                 'plaintext': 'draw=none',
                 'polygon': 'regular polygon, regular polygon sides=7',
                 'triangle': 'regular polygon, regular polygon sides=3',
+                'square': 'regular polygon, regular polygon sides=4',
                 'pentagon': 'regular polygon, regular polygon sides=5',
                 'hexagon': 'regular polygon, regular polygon sides=6',
                 'septagon': 'regular polygon, regular polygon sides=7',
                 'octagon': 'regular polygon, regular polygon sides=8',
                 'point': 'circle, fill',
+                'ellipse': 'ellipse',
+                'oval': 'ellipse',
+                'diamond': 'diamond',
+                'trapezium': 'trapezium',
+                'star': 'star'
+
     }
 
     compassmap = {'n': 'north', 'ne': 'north east', 'e': 'east',
