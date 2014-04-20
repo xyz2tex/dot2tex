@@ -16,7 +16,7 @@ Users have reported problems using dot2tex with old versions of pyparsing and Gr
 
 A natural companion to dot2tex is `the dot2texi LaTeX package`_ for embedding graphs directly in your LaTeX source code.
 
-Dot2tex was developed and tested using Python_ 2.4 and 2.5. However, dot2tex will probably run fine using Python 2.3.
+Dot2tex was developed and tested using Python_ 2.7.
 
 
 From source
@@ -38,7 +38,7 @@ The easiest way to install dot2tex is to use `easy_install`_::
 The command will locate dot2tex and download it automatically. Note that documentation and examples are not installed by default. `Easy_install`_ will also create a wrapper script or EXE file for you and install dependencies if necessary.
 
 
-.. _download: http://www.fauskes.net/code/dot2tex/download/
+.. _download: https://pypi.python.org/pypi/dot2tex#downloads
 
 Binary packages
 ---------------
@@ -48,12 +48,12 @@ Binary packages are available for Debian_ and OpenSUSE_.
 Development version
 -------------------
 
-The development version of ``dot2tex`` is  available from a `Mercurial repository`_ hosted at Google code. To get the code you can use the following command::
+The development version of ``dot2tex`` is  `hosted on GitHub <https://github.com/kjellmf/dot2tex>`_. To get the code you can use the following command::
 
-    hg clone https://dot2tex.googlecode.com/hg/ dot2tex
+    git clone https://github.com/kjellmf/dot2tex.git
 
 .. _Debian: http://packages.qa.debian.org/d/dot2tex.html
 .. _OpenSUSE: http://download.opensuse.org/repositories/home:/jimfunk/
-.. _Mercurial repository: http://code.google.com/p/dot2tex/source
+
 
 .. include:: common.inc
