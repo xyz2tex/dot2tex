@@ -35,11 +35,6 @@ Graphviz_, a more LaTeX friendly look and feel. This is accomplished by:
           'Topic :: Utilities',
       ],
       install_requires=['pyparsing'],
-      # easy_install does not manage to install pyparsing from pypi,
-      # so we have to provide the correct download link.
-      dependency_links=[
-          "http://sourceforge.net/project/showfiles.php?group_id=97203"
-      ],
       entry_points={
           'console_scripts': [
               'dot2tex = dot2tex.dot2tex:main',
