@@ -763,7 +763,7 @@ class DotConvBase(object):
         if self.dopreproc:
             return self.do_preview_preproc()
 
-        # Romove annoying square
+        # Remove annoying square
         # Todo: Remove squares from subgraphs. See pgram.dot
         dstring = self.maingraph.attr.get('_draw_', "")
         if dstring:
@@ -975,6 +975,7 @@ class DotConvBase(object):
                 pp.add_snippet(name, code)
 
             usednodes[name] = node
+
         for edge in dotparsing.flatten(self.maingraph.alledges):
             if not edge.attr.get('label') and not edge.attr.get('texlbl'):
                 continue
@@ -1026,7 +1027,6 @@ To see what happened, run dot2tex with the --debug option.
                 continue
 
             xmargin, ymargin = self.get_margins(node)
-            #print xmargin, ymargin
             ht = hp + dp
             minwidth = float(item.attr.get('width') or DEFAULT_NODE_WIDTH)
             minheight = float(item.attr.get('height') or DEFAULT_NODE_HEIGHT)
@@ -1036,8 +1036,6 @@ To see what happened, run dot2tex with the --debug option.
             else:
                 if (wt + 2 * xmargin) < minwidth:
                     width = minwidth
-                    #log.warning("%s %s %s %s %s",minwidth,wt,width,name,tmp)
-                    pass
                 else:
                     width = wt + 2 * xmargin
                 height = ht
@@ -1049,12 +1047,10 @@ To see what happened, run dot2tex with the --debug option.
             # Warning! Rectangles will not always fit inside a circle
             #          Should use the diagonal.
             if item.attr.get('shape', '') in ['circle', 'Msquare', 'doublecircle', 'Mcircle']:
-                #log.warning('%s %s', name, item['shape'])
                 if wt < height and width < height:
                     width = height
                 else:
                     height = width
-                    pass
 
             node.attr['width'] = width
             node.attr['height'] = height
@@ -1071,7 +1067,7 @@ To see what happened, run dot2tex with the --debug option.
                         '<tr><td fixedsize="true" width="%s" height="%s">a</td>' \
                         '</tr></table>>>'
             edge.attr['label'] = labelcode % ((wt + 2 * xmargin) * 72, (hp + dp + 2 * ymargin) * 72)
-            #self.maingraph.allitems.append(edge)
+
         for name, item in usedgraphs.items():
             graph = item
             hp, dp, wt = pp.texdims[name]
@@ -1746,7 +1742,6 @@ class Dot2PGFConv(DotConvBase):
                     #s += self.do_drawstring(lstring+" "+tlstring+" "+hlstring, edge)
         self.body += s
 
-
     def draw_edge(self, edge):
         s = ""
         if edge.attr.get('style', '') in ['invis', 'invisible']:
@@ -1802,7 +1797,6 @@ class Dot2PGFConv(DotConvBase):
                 s += "  \draw [%s] %s to[%s]%s %s;\n" % (stylestr, src,
                                                          topath, extra, dst)
             elif not self.options.get('straightedges', False):
-                #s += "  \draw [%s] %s .. %s;\n" % (stylestr, " .. ".join(pstrs), pp[-1])
                 s += "  \draw [%s] %s ..%s %s;\n" % (stylestr, " .. ".join(pstrs), extra, pp[-1])
             else:
                 s += "  \draw [%s] %s --%s %s;\n" % (stylestr, pp[0], extra, pp[-1])
@@ -2516,7 +2510,6 @@ class TeXDimProc:
             s += "\end{preview}%\n"
 
         f.write(self.template.replace('<<preproccode>>', s))
-        #f.flush()
         f.close()
         s = open(self.tempfilename, 'r').read()
         log.debug('Code written to %s\n' % self.tempfilename + s)
@@ -2556,12 +2549,9 @@ class TeXDimProc:
             self.texdims = None
             return
 
-        c = 1 / (100.0 * 7227)
         c = 1.0 / 4736286
         self.texdims = {}
         self.texdimlist = [(float(i[1]) * c, float(i[2]) * c, float(i[3]) * c) for i in texdimdata]
-        #for i in range(len(self.snippets_id)):
-        #    self.texdims[self.snippets_id[i]] = self.texdimlist[i]
         self.texdims = dict(zip(self.snippets_id, self.texdimlist))
 
 
