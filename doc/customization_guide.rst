@@ -299,12 +299,12 @@ All Graphviz `color formats`_ are supported, including the RGBA format. Transpar
 Named colors are supported, but you have to ensure that the colors are defined in the resulting LaTeX file. The default PSTricks and PGF/TikZ templates load the ``X11names`` color scheme defined in the xcolor_ package. Note that color names in the xcolor_ package are case sensitive. This is not the case with Graphviz's `color names`_. Use CamelCase_  names in your graphs to ensure compatibility with xcolor_.
 
 .. _CamelCase: http://en.wikipedia.org/wiki/CamelCase
-.. _xcolor: http://www.ctan.org/tex-archive/help/Catalogue/entries/xcolor.html
+.. _xcolor: http://www.ctan.org/pkg/xcolor
 .. _color names: http://www.graphviz.org/doc/info/colors.html
 
 For convenience, a color definition file ``gcols.tex`` is distributed with dot2tex. You can find it in the ``examples`` directory. This file defines most of Graphviz's named colors as lower case. Include this file in the preamble if you need it.
 
-.. _templates:
+.. templates:
 
 Templates
 =========
@@ -473,7 +473,7 @@ Special attributes
 Dot2tex defines several special graph, node and edge attributes. Most of them are not part of the DOT language.
 
 ``texmode``
-  Changes locally how labels_ are interpreted.
+  Changes locally how :ref:`labels` are interpreted.
 
 ``texlbl``
   Overrides the current node or edge label.

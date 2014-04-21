@@ -204,7 +204,7 @@ PGF
 
 This is the default output format. Generates code for the `Portable Graphics Format`_ (PGF) package . Mixes both PGF and TikZ commands.
 
-.. _Portable Graphics Format: http://www.ctan.org/tex-archive/help/Catalogue/entries/pgf.html
+.. _Portable Graphics Format: http://www.ctan.org/pkg/pgf
 
 .. _output-fomat-pstricks:
 

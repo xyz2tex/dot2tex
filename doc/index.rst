@@ -22,7 +22,6 @@ Contents:
    :numbered:
    
    installation_guide
-   gettingstarted_guide
    usage_guide
    customization_guide
    tipsandtricks
