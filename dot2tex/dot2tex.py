@@ -170,6 +170,14 @@ def getboolattr(item, key, default):
         return False
 
 
+def smart_float(number):
+    number_as_string = "%s" % float(number)
+    if 'e' in number_as_string:
+        return "%.4f" % float(number)
+    else:
+        return number_as_string
+
+
 def create_xdot(dotdata, prog='dot', options=''):
     """Run a graph through Graphviz and return an xdot-version of the graph"""
     # The following code is from the pydot module written by Ero Carrera
@@ -840,7 +848,7 @@ class DotConvBase(object):
         bbstr = self.maingraph.attr.get('bb', '')
         if bbstr:
             bb = bbstr.split(',')
-            variables['<<bbox>>'] = "(%sbp,%sbp)(%sbp,%sbp)\n" % (bb[0], bb[1], bb[2], bb[3])
+            variables['<<bbox>>'] = "(%sbp,%sbp)(%sbp,%sbp)\n" % (smart_float(bb[0]), smart_float(bb[1]), smart_float(bb[2]), smart_float(bb[3]))
             variables['<<bbox.x0>>'] = bb[0]
             variables['<<bbox.y0>>'] = bb[1]
             variables['<<bbox.x1>>'] = bb[2]
@@ -1165,7 +1173,7 @@ class Dot2PSTricksConv(DotConvBase):
             bb = bbstr.split(',')
             #fillcolor=black,
         s = "\\begin{pspicture}[linewidth=1bp](%sbp,%sbp)(%sbp,%sbp)\n" % \
-            (bb[0], bb[1], bb[2], bb[3])
+            (smart_float(bb[0]), smart_float(bb[1]), smart_float(bb[2]), smart_float(bb[3]))
         # Set line style to mitre
         s += "  \pstVerb{2 setlinejoin} % set line join style to 'mitre'\n"
         #return s
@@ -1192,15 +1200,15 @@ class Dot2PSTricksConv(DotConvBase):
             else:
                 stylestr = style
 
-        s += "  \psellipse[%s](%sbp,%sbp)(%sbp,%sbp)\n" % (stylestr, x, y,
+        s += "  \psellipse[%s](%sbp,%sbp)(%sbp,%sbp)\n" % (stylestr, smart_float(x), smart_float(y),
                                                            # w+self.linewidth,h+self.linewidth)
-                                                           w, h)
+                                                           smart_float(w), smart_float(h))
 
         return s
 
     def draw_polygon(self, drawop, style=None):
         op, points = drawop
-        pp = ['(%sbp,%sbp)' % (p[0], p[1]) for p in points]
+        pp = ['(%sbp,%sbp)' % (smart_float(p[0]), smart_float(p[1])) for p in points]
         stylestr = ""
         if op == 'P':
             if style:
@@ -1217,7 +1225,7 @@ class Dot2PSTricksConv(DotConvBase):
 
     def draw_polyline(self, drawop, style=None):
         op, points = drawop
-        pp = ['(%sbp,%sbp)' % (p[0], p[1]) for p in points]
+        pp = ['(%sbp,%sbp)' % (smart_float(p[0]), smart_float(p[1])) for p in points]
         s = "  \psline%s\n" % "".join(pp)
         return s
 
@@ -1225,9 +1233,8 @@ class Dot2PSTricksConv(DotConvBase):
         op, points = drawop
         pp = []
         for point in points:
-            pp.append("(%sbp,%sbp)" % (point[0], point[1]))
+            pp.append("(%sbp,%sbp)" % (smart_float(point[0]), smart_float(point[1])))
 
-        #points = ['(%sbp, %sbp)' % (p[0],p[1]) for p in points]
         arrowstyle = ""
         return "  \psbezier{%s}%s\n" % (arrowstyle, "".join(pp))
 
@@ -1245,7 +1252,7 @@ class Dot2PSTricksConv(DotConvBase):
             alignstr = ""  # centered (default)
         if alignstr or valign:
             alignstr = '[' + alignstr + valign + ']'
-        s = "  \\rput%s(%sbp,%sbp){%s}\n" % (alignstr, x, y, text)
+        s = "  \\rput%s(%sbp,%sbp){%s}\n" % (alignstr, smart_float(x), smart_float(y), text)
         return s
 
     def set_color(self, drawop):
@@ -1335,7 +1342,7 @@ class Dot2PSTricksConv(DotConvBase):
             pp = []
             for point in points:
                 p = point.split(',')
-                pp.append("(%sbp,%sbp)" % (p[0], p[1]))
+                pp.append("(%sbp,%sbp)" % (smart_float(p[0]), smart_float(p[1])))
 
             edgestyle = edge.attr.get('style', '')
             styles = []
@@ -1625,14 +1632,14 @@ class Dot2PGFConv(DotConvBase):
             stylestr = " [%s]" % style
         else:
             stylestr = ''
-        s += "  \%s%s (%sbp,%sbp) ellipse (%sbp and %sbp);\n" % (cmd, stylestr, x, y,
+        s += "  \%s%s (%sbp,%sbp) ellipse (%sbp and %sbp);\n" % (cmd, stylestr, smart_float(x), smart_float(y),
                                                                  # w+self.linewidth,h+self.linewidth)
-                                                                 w, h)
+                                                                 smart_float(w), smart_float(h))
         return s
 
     def draw_polygon(self, drawop, style=None):
         op, points = drawop
-        pp = ['(%sbp,%sbp)' % (p[0], p[1]) for p in points]
+        pp = ['(%sbp,%sbp)' % (smart_float(p[0]), smart_float(p[1])) for p in points]
         cmd = "draw"
         if op == 'P':
             cmd = "filldraw"
@@ -1646,7 +1653,7 @@ class Dot2PGFConv(DotConvBase):
 
     def draw_polyline(self, drawop, style=None):
         op, points = drawop
-        pp = ['(%sbp,%sbp)' % (p[0], p[1]) for p in points]
+        pp = ['(%sbp,%sbp)' % (smart_float(p[0]), smart_float(p[1])) for p in points]
         ##if style:
         ##            stylestr = " [%s]" % style
         ##        else:
@@ -1679,7 +1686,7 @@ class Dot2PGFConv(DotConvBase):
         lblstyle = ",".join([i for i in styles if i])
         if lblstyle:
             lblstyle = '[' + lblstyle + ']'
-        s = "  \draw (%sbp,%sbp) node%s {%s};\n" % (x, y, lblstyle, text)
+        s = "  \draw (%sbp,%sbp) node%s {%s};\n" % (smart_float(x), smart_float(y), lblstyle, text)
         return s
 
     def draw_bezier(self, drawop, style=None):
@@ -1689,23 +1696,11 @@ class Dot2PGFConv(DotConvBase):
 
         pp = []
         for point in points:
-            pp.append("(%sbp,%sbp)" % (point[0], point[1]))
+            pp.append("(%sbp,%sbp)" % (smart_float(point[0]), smart_float(point[1])))
 
-        #points = ['(%sbp, %sbp)' % (p[0],p[1]) for p in points]
-        #quadp = nsplit(pp, 4)
         pstrs = ["%s .. controls %s and %s " % p for p in nsplit(pp, 3)]
-        ##if style:
-        ##            stylestr = " [%s]" % style
-        ##        else:
-        ##            stylestr = ''
         stylestr = ''
-        ##        if arrowstyle == '--':
-        ##            style = ''
-        ##        else:
-        ##            style = '[%s]' % arrowstyle
-
         s += "  \draw%s %s .. %s;\n" % (stylestr, " .. ".join(pstrs), pp[-1])
-
         return s
 
     def do_edges(self):
@@ -1763,7 +1758,7 @@ class Dot2PGFConv(DotConvBase):
             pp = []
             for point in points:
                 p = point.split(',')
-                pp.append("(%sbp,%sbp)" % (p[0], p[1]))
+                pp.append("(%sbp,%sbp)" % (smart_float(p[0]), smart_float(p[1])))
 
             edgestyle = edge.attr.get('style', '')
 
@@ -2068,7 +2063,7 @@ class Dot2TikZConv(Dot2PGFConv):
             else:
                 label = ''
 
-            pos = "%sbp,%sbp" % (x, y)
+            pos = "%sbp,%sbp" % (smart_float(x), smart_float(y))
             style = node.attr.get('style') or ""
             if node.attr.get('lblstyle'):
                 if style:
@@ -2163,7 +2158,7 @@ class Dot2TikZConv(Dot2PGFConv):
             pp = []
             for point in points:
                 p = point.split(',')
-                pp.append("(%sbp,%sbp)" % (p[0], p[1]))
+                pp.append("(%sbp,%sbp)" % (smart_float(p[0]), smart_float(p[1])))
 
             edgestyle = edge.attr.get('style')
             #print edgestyle
@@ -2355,7 +2350,7 @@ class Dot2PSTricksNConv(Dot2PSTricksConv):
                 continue
             x, y = pos.split(',')
             label = self.get_label(node)
-            pos = "%sbp,%sbp" % (x, y)
+            pos = "%sbp,%sbp" % (smart_float(x), smart_float(y))
             # TODO style 
 
             sn = ""

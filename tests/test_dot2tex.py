@@ -3,6 +3,7 @@ import unittest
 
 import dot2tex
 import re
+from dot2tex.dot2tex import smart_float
 
 testgraph = """
 digraph G {
@@ -380,6 +381,18 @@ class TestBugs(unittest.TestCase):
         self.assertTrue('HEADLABEL' in code)
         self.assertTrue('LABEL' in code)
         self.assertTrue('TAILLABEL' in code)
+
+
+class TestNumberFormatting(unittest.TestCase):
+    def test_numbers(self):
+        self.assertEqual("2.0", smart_float(2))
+        self.assertEqual("0.0001", smart_float(1e-4))
+
+    def test_decimal_places(self):
+        self.assertEqual("2.1", smart_float(2.1))
+        self.assertEqual("2.11119", smart_float(2.11119))
+        self.assertEqual("2.1", smart_float(2.100))
+        self.assertEqual("100000000000.0000", smart_float(1e11))
 
 
 if __name__ == '__main__':
