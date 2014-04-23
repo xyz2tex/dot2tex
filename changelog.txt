@@ -9,16 +9,22 @@ Dot2TeX change log
 The last digit in the version number denotes bug-fix releases.
 
 2.9.x:
+    * Project is now hosted on GitHub.
+    ! Numbers are now outputted as floats. Some versions of Graphviz uses scientific notation
+      for small numbers. TeX does not handle that well [issue #11].
+    * Added support for more Graphviz node shapes when using the tikz output format:
+      square, diamond, trapezium and star.
+    ! Fixed compatibility issue with Pyparsing 2.0.1.
     ! Fixed a bug in preprocessing triggered by using the --styleonly option
       with the tikz output format.
     ! The number of sides in the hexagon tikz shape is now correct. Thanks to Jean Pichon for
       reporting this.
-    + Added support for the point shape when using the TikZ output format [issue 8].
+    + Added support for the point shape when using the TikZ output format.
     ! Node labels are no longer shown when the node shape is point and the output
       format is TikZ. 
     ! Fixed issue 14. Parsing of dimension data from the TeX-log is now
       more robust and the --autosize option should now work in Cygwin. 
-    + Added the --progoptions option for passing options to the graph layout program [issue 13].
+    + Added the --progoptions option for passing options to the graph layout program.
     * Documentation is now built using Sphinx
     * Cleaned up internal error handling.
     * When dot2tex fails to parse a graph, dot2tex will now raise an exception
@@ -34,7 +40,7 @@ The last digit in the version number denotes bug-fix releases.
       Thanks to Vsevolod for reporting this.
     ! stdout is now properly restored after parsing dot data. Thanks to Nicolas Thiery 
       for the patch.
-    ! Parantheses in tikz node names are now replaced with {}. Parantheses are not valid
+    ! Parentheses in tikz node names are now replaced with {}. Parentheses are not valid
       characters in node names. Tanks DamienJadeDuff for reporting this.
 
 2.8.7:
