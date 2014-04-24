@@ -1,4 +1,7 @@
-from distutils.core import setup
+try:
+    from setuptools import setup
+except ImportError:
+    from distutils.core import setup
 
 setup(name='dot2tex',
       version='2.9.0dev',
@@ -19,7 +22,6 @@ Graphviz_, a more LaTeX friendly look and feel. This is accomplished by:
       author='Kjell Magne Fauske',
       author_email='kjellmf@gmail.com',
       url="https://github.com/kjellmf/dot2tex",
-      download_url="https://pypi.python.org/pypi/dot2tex#downloads",
       py_modules=['dot2tex.dot2tex', 'dot2tex.dotparsing'],
       scripts=['dot2tex/dot2tex'],
       classifiers=[
@@ -29,7 +31,9 @@ Graphviz_, a more LaTeX friendly look and feel. This is accomplished by:
           'License :: OSI Approved :: MIT License',
           'Natural Language :: English',
           'Operating System :: OS Independent',
-          'Programming Language :: Python',
+          'Programming Language :: Python :: 2',
+          'Programming Language :: Python :: 2.6',
+          'Programming Language :: Python :: 2.7',
           'Topic :: Scientific/Engineering :: Visualization',
           'Topic :: Text Processing :: Markup :: LaTeX',
           'Topic :: Utilities',

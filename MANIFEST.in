@@ -1,8 +1,6 @@
-include doc/*.txt
-include doc/usage.pdf
-include doc/usage.html
-include doc/img/*.png
-include doc/docgraphs/*.dot
+recursive-include docs *
+recursive-exclude docs *.pyc
+recursive-exclude docs *.pyo
 include changelog.txt LICENSE
 include examples/*.dot
 include examples/*dtti.tex
@@ -15,6 +13,4 @@ include tests/test_buildexamples.py
 include tests/test_dot2tex.py
 prune examples/*dot2tex-fig*
 include examples/gvcols.tex
-prune doc/.svn
-prune doc/img/.svn
-prune doc/docgraphs/.svn
+
