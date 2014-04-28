@@ -10,3 +10,4 @@
 .. _preview: http://www.ctan.org/pkg/preview
 .. _preview-latex: http://www.gnu.org/software/auctex/preview-latex.html
 .. _AUCTeX: http://www.gnu.org/software/auctex/
+.. _dot2texi: http://www.ctan.org/pkg/dot2texi
