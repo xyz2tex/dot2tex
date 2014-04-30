@@ -1,10 +1,13 @@
 dot2tex - A Graphviz to LaTeX converter
 =======================================
 
-Copyright (C) 2007-2008 Kjell Magne Fauske
+Copyright (C) 2007-2014 Kjell Magne Fauske
+
 License: MIT (See LICENSE for details.)
-Version: 2.8.7
-URL: http://www.fauskes.net/code/dot2tex/
+
+Version: 2.9.0dev
+
+URL: https://github.com/kjellmf/dot2tex
 
 Dot2tex is a tool for converting graphs rendered by Graphviz to formats
 that can be used with LaTeX.
@@ -14,7 +17,7 @@ Installation
 
 Before you install dot2tex you have to have a working Python environment
 installed on your system. Dot2tex has been developed and tested with
-Python 2.4, but it will probably run fine using Python 2.3. In addition
+Python 2.7, but it will probably run fine using Python 2.6. In addition
 you'll need the following modules:
 
 * [pyparsing](http://pyparsing.wikispaces.com/). A recent version is required.
@@ -32,8 +35,7 @@ the dot2tex.py as a module.
 From source
 -----------
 
-Download a zip or a tarball from the download_ page. It is also available on
-[CTAN][]. Unpack the file to a directory and run ``python`` on the ``setup.py``
+Download a zip or a tarball from the download_ page. Unpack the file to a directory and run ``python`` on the ``setup.py``
 file:
 
     $ python setup.py install
@@ -45,19 +47,17 @@ some extra information in the ``setup.py`` file that distutils does not understa
 
 [CTAN]: http://www.ctan.org/pkg/dot2tex
 
-Using easy_install
-------------------
+Using pip
+---------
 
-The easiest way to install dot2tex is to use [easy_install][]:
+The easiest way to install dot2tex is to use [pip][]:
 
-    $ easy_install dot2tex
+    $ pip install dot2tex
 
-The command will locate dot2tex and download it automatically. Note that
-documentation and examples are not installed by default. `Easy_install`_
-will also create a wrapper script or EXE file for you and install dependencies
-if necessary.
+The command will locate dot2tex and download it automatically along with dependencies. Note that
+documentation and examples are not installed by default. 
 
-[easy_install]: http://peak.telecommunity.com/DevCenter/EasyInstall
+[pip]: http://www.pip-installer.org/en/latest/#
 
 Binary packages
 ---------------
