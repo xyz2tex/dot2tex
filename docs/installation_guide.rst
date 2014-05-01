@@ -14,7 +14,7 @@ The following software and modules are required to run dot2tex:
 
 Users have reported problems using dot2tex with old versions of pyparsing and Graphviz.
 
-A natural companion to dot2tex is `the dot2texi LaTeX package`_ for embedding graphs directly in your LaTeX source code.
+A natural companion to dot2tex is `the dot2texi LaTeX package <dot2texi_>`_ for embedding graphs directly in your LaTeX source code.
 
 Dot2tex was developed and tested using Python_ 2.7.
 

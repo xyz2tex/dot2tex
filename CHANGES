@@ -37,7 +37,7 @@ Here you can see the full list of changes between each dot2tex release.
   Thanks to Vsevolod for reporting this.
 - ``stdout`` is now properly restored after parsing dot data. Thanks to Nicolas Thiery
   for the patch.
-- Parentheses in tikz node names are now replaced with {}. Parentheses are not valid
+- Parentheses, ``()``,  in tikz node names are now replaced with ``{}``. Parentheses are not valid
   characters in node names. Tanks DamienJadeDuff for reporting this.
 
 2.8.7

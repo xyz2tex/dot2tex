@@ -15,7 +15,8 @@ Graphviz_ to a series of PSTricks_ or `PGF/TikZ`_ commands. This approach allows
     * Using backend specific styles to customize the output
 
 
-Contents:
+User's guide
+============
 
 .. toctree::
    :maxdepth: 2
@@ -29,6 +30,7 @@ Contents:
 
 
 Additional notes
+================
 
 .. toctree::
    :maxdepth: 2

@@ -136,6 +136,8 @@ Compare the above code with the ``tikz`` output:
 
 The code is much more compact and it is quite easy to modify the graph.
 
+.. _dot2texi_package:
+
 The dot2texi LaTeX package
 --------------------------
 
@@ -224,4 +226,4 @@ The ``codeonly`` option is useful in conjunction with ``dot2texi``, especially w
 
 .. note::
 
-    If you don't want to include the dot directly in your document, you can use the ``\input{..}`` command. See the section `Including external dot files`_ for more details.
+    If you don't want to include the dot directly in your document, you can use the ``\input{..}`` command. See the section :ref:`external_dot_files` for more details.

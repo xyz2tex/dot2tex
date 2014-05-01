@@ -38,14 +38,10 @@ The same as above, but use neato for graph layout::
 
 .. admonition:: Invoking dot2tex
 
-   Windows users you have to type ``python dot2tex`` to invoke the program.
-   If you find this annoying, try the `ExeMaker`_ tool from `effbot.org`_, or better, use `easy_install`_ to install dot2tex.
+   If you are on Windows and have installed dot2tex from source, you have to type ``python dot2tex`` to invoke the program.
 
 
 
-   .. _ExeMaker: http://effbot.org/zone/exemaker.htm
-   .. _effbot.org: http://effbot.org
-   .. _easy_install: http://peak.telecommunity.com/DevCenter/EasyInstall
 
 
 .. _command-line-options:
@@ -167,7 +163,7 @@ The following options are available:
 --pgf118
     Generate code compatible with PGF 1.18 and earlier. 
 
-The following options are used by the output templates_.
+The following options are used by the output :ref:`templates <templates>`.
 
 -e encoding, --encoding encoding
     Set text encoding. Supported encodings are:

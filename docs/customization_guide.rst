@@ -304,7 +304,7 @@ Named colors are supported, but you have to ensure that the colors are defined i
 
 For convenience, a color definition file ``gcols.tex`` is distributed with dot2tex. You can find it in the ``examples`` directory. This file defines most of Graphviz's named colors as lower case. Include this file in the preamble if you need it.
 
-.. templates:
+.. _templates:
 
 Templates
 =========
@@ -519,3 +519,16 @@ Dot2tex defines several special graph, node and edge attributes. Most of them ar
 ``d2toptions``
   Allows you to pass options to dot2tex in the same format as from the command line. The ``d2toptions`` value is parsed in the same way as ordinary command line options.
 
+
+.. _external_dot_files:
+
+Including external dot files
+============================
+
+If your input file contains the single line
+
+.. sourcecode:: latex
+
+    \input{filename.dot}
+
+dot2tex will load the ``filename.dot`` file and convert it. This feature is useful when you want to use :ref:`the dot2texi package <dot2texi_package>`, but don't want to include your dot code directly in your document.
