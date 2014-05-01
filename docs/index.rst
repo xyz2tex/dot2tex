@@ -20,20 +20,26 @@ Contents:
 .. toctree::
    :maxdepth: 2
    :numbered:
-   
+
    installation_guide
    usage_guide
    customization_guide
    tipsandtricks
    module_guide
 
-    
+
+Additional notes
+
+.. toctree::
+   :maxdepth: 2
+
+   Change log <changelog>
+
 
 Acknowledgements
 ================
 
 The dot parser used by dot2tex is based on code from the pydot_ project.
-
 
 
 Indices and tables

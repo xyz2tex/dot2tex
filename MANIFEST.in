@@ -13,4 +13,5 @@ include tests/test_buildexamples.py
 include tests/test_dot2tex.py
 prune examples/*dot2tex-fig*
 include examples/gvcols.tex
+prune docs/_build
 
