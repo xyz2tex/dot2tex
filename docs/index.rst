@@ -34,6 +34,7 @@ Additional notes
    :maxdepth: 2
 
    Change log <changelog>
+   license
 
 
 Acknowledgements
