@@ -1,7 +1,7 @@
 dot2tex - A Graphviz to LaTeX converter
 =======================================
 
-Copyright (C) 2007-2014 Kjell Magne Fauske
+Copyright (C) 2006-2014 Kjell Magne Fauske
 
 License: MIT (See LICENSE for details.)
 
@@ -32,21 +32,6 @@ version of the dot2tex.py file in your SCRIPTS directory before you install the
 latest dot2tex version. Otherwise the new dot2tex wrapper script will try to load
 the dot2tex.py as a module.
 
-From source
------------
-
-Download a zip or a tarball from the download_ page. Unpack the file to a directory and run ``python`` on the ``setup.py``
-file:
-
-    $ python setup.py install
-
-This will create a dot2tex module in your Python module directory and a wrapper
-script in your ``SCRIPTS`` directory. Note that a few warnings will be
-displayed. You can safely ignore them. The warnings are shown because there is
-some extra information in the ``setup.py`` file that distutils does not understand.
-
-[CTAN]: http://www.ctan.org/pkg/dot2tex
-
 Using pip
 ---------
 
@@ -67,21 +52,36 @@ Binary packages are available for [Debian][] and [OpenSUSE][].
 [Debian]: http://packages.qa.debian.org/d/dot2tex.html
 [OpenSUSE]: http://download.opensuse.org/repositories/home:/jimfunk/
 
+From source
+-----------
+
+Download a zip or a tarball from the download_ page. Unpack the file to a directory and run ``python`` on the ``setup.py``
+file:
+
+    $ python setup.py install
+
+This will create a dot2tex module in your Python module directory and a wrapper
+script in your ``SCRIPTS`` directory. Note that a few warnings will be
+displayed. You can safely ignore them. The warnings are shown because there is
+some extra information in the ``setup.py`` file that distutils does not understand.
+
+
 Development version
 -------------------
 
 The development version of ``dot2tex`` is  [available on GitHub](https://github.com/kjellmf/dot2tex).
 
+Contribute
+==========
 
-What's new in version 2.8.7
+- Issue tracker: https://github.com/kjellmf/dot2tex/issues
+- Source code: https://github.com/kjellmf/dot2tex
+
+What's new in version 2.9.0
 ===========================
 
 Bugfixes:
 
-- Edges with no edge points are now properly handled.
-- Fixed handling of stderr when creating xdot data.
-- Exceptions are now caught when accessing invalid win32 registry keys.
-- Updated Graphviz registry key.
-- Fixed templates so that crop code is not inserted when preprocessing the graph.
+- Fixed compatibility issue with Pyparsing 2.0.1
 
-For a full list of changes see changelog.txt
+For a full list of changes see CHANGELOG
