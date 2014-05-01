@@ -14,7 +14,7 @@ To increase the font size you can for instance insert a ``\Huge`` command in the
 
     $ dot2tex -tmath --figpreamble="\Huge" ex1.dot > ex1huge.tex
 
-.. figure:: img/ex1huge.png
+.. figure:: img/ex1huge.*
    :alt: Setting label font size to \Huge
 
 Debugging
@@ -41,7 +41,7 @@ Running through dot2tex again with::
 
 gives labels that do not fit properly inside the nodes.
 
-.. figure:: img/consistent.png
+.. figure:: img/consistent.*
    :alt: Inconsistence between preproc mode and output mode
 
 Postprocessing
@@ -91,7 +91,7 @@ Rendering the graph using ``circo`` and the ``pgf`` and ``tikz`` output formats:
 
 gives visually different graphs:
 
-.. figure:: img/pgftikzsimple.png
+.. figure:: img/pgftikzsimple.*
    :alt: Difference between pgf and tikz output format
 
 However, the main difference is in the generated code. Here is the ``pgf`` output:
@@ -169,7 +169,7 @@ When the above code is run through LaTeX, the following will happen is shell esc
 
 The whole process is completely automated. The generated graph will look like this:
 
-.. figure:: img/dot2texiex1.png
+.. figure:: img/dot2texiex1.*
    :alt: Graph generated with dot2texi
 
 The ``codeonly`` option is useful in conjunction with ``dot2texi``, especially when used with the ``tikz`` output format. Here is an example that shows how to annotate a graph:
@@ -221,7 +221,7 @@ The ``codeonly`` option is useful in conjunction with ``dot2texi``, especially w
     \end{tikzpicture}
     \end{document}
 
-.. figure:: img/dot2texiex2.png
+.. figure:: img/dot2texiex2.*
    :alt: Annotated graph
 
 .. note::

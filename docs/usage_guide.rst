@@ -268,7 +268,7 @@ Converting the graph using::
 
 gives the result shown in the left hand side of the figure below. The default rendering is shown to the right. Using the ``raw`` mode will result in a compilation error because of the underscore character.
 
-.. figure:: img/ex1comb.png
+.. figure:: img/ex1comb.*
    :alt: Difference between math and verbatim mode
 
 Example of using ``texlbl``:
@@ -280,7 +280,7 @@ Example of using ``texlbl``:
         a_1-> a_2 -> a_3 -> a_1;
     }
 
-.. figure:: img/ex2.png
+.. figure:: img/ex2.*
    :alt: Using the special texlbl attribute
 
 Example of using the ``texmode`` attribute:
@@ -298,7 +298,7 @@ Example of using the ``texmode`` attribute:
         a_3 -> b_4 -> a_1;
     }
 
-.. figure:: img/texmode.png
+.. figure:: img/texmode.*
    :alt: Using the special texmode attribute
 
 The above example shows two important things:
@@ -312,7 +312,7 @@ Preprocessing the above graph with::
 
 gives correctly sized nodes:
 
-.. figure:: img/texmodeb.png
+.. figure:: img/texmodeb.*
    :alt: Preprocessing the graph to get correct node sizes.
 
 Read more about preprocessing in the `Preprocessing graphs`_ section.
@@ -339,14 +339,14 @@ For record nodes dot2tex has to use Graphviz coordinates. This is shown in the f
 
     $ dot2tex valign.dot
 
-.. figure:: img/valignmode0.png
+.. figure:: img/valignmode0.*
    :alt: Vertical alignment for record shapes
 
 To get the same vertical alignment for both nodes, you can use::
 
     $ dot2tex --valignmode=dot valign.dot
 
-.. figure:: img/valignmode1.png
+.. figure:: img/valignmode1.*
    :alt: Vertical alignment with --valignmode=dot
 
 Now the labels are aligned, but the labels are still placed too low. The reason for this is that both PSTricks and PGF by default centers text vertically on the current coordinate. The alignment point should in this case be set to the baseline. For PGF/TikZ you can use the ``--graphstyle`` option like this::
@@ -357,7 +357,7 @@ PSTricks users have to use the ``--alingstr`` option::
 
     $ dot2tex --valignmode=dot --alignstr=B valign.dot
 
-.. figure:: img/valignmode2.png
+.. figure:: img/valignmode2.*
    :alt: blabla
 
 The result is better, but to get even better alignment you have to change the node font size. Graphviz' default font size is 14pt, which is larger than the typical 10pt or 11pt used in LaTeX documents. By changing the node font size to 10pt we can trick Graphviz to give us a better alignment:
@@ -372,7 +372,7 @@ The result is better, but to get even better alignment you have to change the no
         rankdir=LR;
     }
 
-.. figure:: img/valignmode3.png
+.. figure:: img/valignmode3.*
    :alt: blabla
 
 
@@ -425,7 +425,7 @@ Rendered with::
 
 the graph will look like this:
 
-.. figure:: img/preproc1a.png
+.. figure:: img/preproc1a.*
    :alt: Graph with oversized edge and node labels
 
 You could improve the result by adding a longer ``label`` attribute or setting a fixed width. A better solution is to preprocess the graph like this::
@@ -443,7 +443,7 @@ A shorter alternative is::
 
 The resulting graph now has correctly sized nodes and edge labels:
 
-.. figure:: img/preproc1b.png
+.. figure:: img/preproc1b.*
    :alt: Graph with preprocessed labels
 
 Modifying node sizes using the ``widht/height`` and ``margin`` attributes can be a bit counterintuitive. A few examples will hopefully make it clearer:
@@ -464,7 +464,7 @@ Processing the graph with::
 
 gives
 
-.. figure:: img/nodewidth1.png
+.. figure:: img/nodewidth1.*
    :alt: Graph with preprocessed labels
 
 Setting the margin of ``a_1`` to 0 has no effect because of the minimum node width. Processing the graph with::
@@ -473,7 +473,7 @@ Setting the margin of ``a_1`` to 0 has no effect because of the minimum node wid
 
 gives a different graph, where only label widths and margins affect the node sizes:
 
-.. figure:: img/nodewidth2.png
+.. figure:: img/nodewidth2.*
    :alt: Graph with preprocessed labels
 
 

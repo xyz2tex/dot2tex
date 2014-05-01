@@ -33,7 +33,7 @@ The ``snake`` styles only work on straight lines. We therefore have to use the `
 
 The resulting graph is shown below.
 
-.. figure:: img/balls.png
+.. figure:: img/balls.*
    :alt: Using styles to style the PGF/TikZ output.
 
 .. note:: Use the straight edge option ``-s`` to force the use of straight lines. Otherwise curves will be used to draw even straight lines.
@@ -65,14 +65,14 @@ Rendered with::
 
     $ circo -Txdot pgfarrows.dot | dot2tex -tmath > pgfarrows.tex
 
-.. figure:: img/pgfarrows.png
+.. figure:: img/pgfarrows.*
    :alt: PGF/TikZ style arrows.
 
 You can also set the default arrow style by using the ``--graphstyle`` option or ``d2tgraphstyle`` attribute::
 
     $ dot2tex -tmath --graphstyle=">=diamond" ex1.dot > ex1gstyle.tex
 
-.. figure:: img/ex1gstyle.png
+.. figure:: img/ex1gstyle.*
    :alt: Setting default PGF/TikZ arrows.
 
 A PSTricks example:
@@ -97,7 +97,7 @@ Rendered with::
     $ circo -Txdot pstarrows.dot | dot2tex -fpst > pstarrows.tex
 
 
-.. figure:: img/pstarrows.png
+.. figure:: img/pstarrows.*
    :alt: PSTricks style arrows
 
 The above example shows how the ``d2tdocpreamble`` attribute can be used to load additional LaTeX packages. You could also use the ```--docpreamble`` option::
@@ -139,7 +139,7 @@ Example:
     }
 
 
-.. figure:: img/lblstyle.png
+.. figure:: img/lblstyle.*
    :alt: Label styles
 
 See the PGF and TikZ documentation for more information about styles.
@@ -210,7 +210,7 @@ With the ``tikzedgelabels`` option the output is simply:
 
 The placement of the edge labels depends on the options passed to the edge label node (in this case ``mystyle``), and the curve used to connect the nodes. Some examples of ``mystyle`` values are shown in the figure below. The leftmost graph is rendered without the ``tikzedgelabels`` option.
 
-.. figure:: img/tikzedgelabels.png
+.. figure:: img/tikzedgelabels.*
    :alt: blabla
 
 Limitations:
@@ -242,7 +242,7 @@ Generating the graph with::
 
 yields:
 
-.. figure:: img/topaths1.png
+.. figure:: img/topaths1.*
 
 
 The generated edge drawing code is:
@@ -284,7 +284,7 @@ Generated with::
 
     neato -Txdot fsm1.dot | dot2tex -ftikz --tikzedgelabels --styleonly
 
-.. figure:: img/fsm1.png
+.. figure:: img/fsm1.*
    :alt: blabla
 
 
