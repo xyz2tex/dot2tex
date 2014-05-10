@@ -603,10 +603,10 @@ class DotConvBase(object):
         s = ""
         for node in self.nodes:
             self.currentnode = node
-            dstring = node.attr.get('_draw_', "")
-            lstring = node.attr.get('_ldraw_', "")
+            general_draw_string = node.attr.get('_draw_', "")
+            label_string = node.attr.get('_ldraw_', "")
 
-            drawstring = dstring + " " + lstring
+            drawstring = general_draw_string + " " + label_string
 
             if not drawstring.strip():
                 continue
@@ -680,17 +680,17 @@ class DotConvBase(object):
         s = ""
         s += self.set_color(('cC', "black"))
         for edge in self.edges:
-            dstring = edge.attr.get('_draw_', "")
-            lstring = edge.attr.get('_ldraw_', "")
-            hstring = edge.attr.get('_hdraw_', "")
-            tstring = edge.attr.get('_tdraw_', "")
-            tlstring = edge.attr.get('_tldraw_', "")
-            hlstring = edge.attr.get('_hldraw_', "")
+            general_draw_string = edge.attr.get('_draw_', "")
+            label_string = edge.attr.get('_ldraw_', "")
+            head_arrow_string = edge.attr.get('_hdraw_', "")
+            tail_arrow_string = edge.attr.get('_tdraw_', "")
+            tail_label_string = edge.attr.get('_tldraw_', "")
+            head_label_string = edge.attr.get('_hldraw_', "")
 
             # Note that the order of the draw strings should be the same
             # as in the xdot output.
-            drawstring = dstring + " " + hstring + " " + tstring \
-                         + " " + lstring + " " + tlstring + " " + hlstring
+            drawstring = general_draw_string + " " + head_arrow_string + " " + tail_arrow_string \
+                         + " " + label_string + " " + tail_label_string + " " + head_label_string
             drawop, stat = parse_drawstring(drawstring)
             if not drawstring.strip():
                 continue
@@ -701,22 +701,21 @@ class DotConvBase(object):
                 s += self.end_edge()
             else:
                 s += self.draw_edge(edge)
-                s += self.do_drawstring(lstring + " " + tlstring + " " + hlstring, edge)
+                s += self.do_drawstring(label_string + " " + tail_label_string + " " + head_label_string, edge)
         self.body += s
 
     def do_graph(self):
-        dstring = self.graph.attr.get('_draw_', "")
-        lstring = self.graph.attr.get('_ldraw_', "")
-        # print lstring
+        general_draw_string = self.graph.attr.get('_draw_', "")
+        label_string = self.graph.attr.get('_ldraw_', "")
         # Avoid filling background of graphs with white
-        if dstring.startswith('c 5 -white C 5 -white') \
+        if general_draw_string.startswith('c 5 -white C 5 -white') \
                 and not self.graph.attr.get('style'):
-            dstring = ''
+            general_draw_string = ''
         if getattr(self.graph, '_draw_', None):
             # bug
-            dstring = "c 5 -black " + dstring  # self.graph._draw_
+            general_draw_string = "c 5 -black " + general_draw_string  # self.graph._draw_
             pass
-        drawstring = dstring + " " + lstring
+        drawstring = general_draw_string + " " + label_string
         if drawstring.strip():
             s = self.start_graph(self.graph)
             g = self.do_drawstring(drawstring, self.graph)
@@ -730,18 +729,18 @@ class DotConvBase(object):
         # the graph attribute will be used. Command line option should have
         # precedence.
         self.options['alignstr'] = self.options.get('alignstr', '') \
-            or getattr(self.maingraph, 'd2talignstr', '')
+            or getattr(self.main_graph, 'd2talignstr', '')
 
         # Todo: bad!
-        self.options['valignmode'] = getattr(self.maingraph, 'd2tvalignmode', '') \
+        self.options['valignmode'] = getattr(self.main_graph, 'd2tvalignmode', '') \
             or self.options.get('valignmode', 'center')
 
     def convert(self, dotdata):
         # parse data processed by dot.
         log.debug('Start conversion')
-        maingraph = parse_dot_data(dotdata)
+        main_graph = parse_dot_data(dotdata)
 
-        if not self.dopreproc and not hasattr(maingraph, 'xdotversion'):
+        if not self.dopreproc and not hasattr(main_graph, 'xdotversion'):
             # Older versions of Graphviz does not include the xdotversion
             # attribute
             if not (dotdata.find('_draw_') > 0 or dotdata.find('_ldraw_') > 0):
@@ -755,33 +754,32 @@ class DotConvBase(object):
                     log.error('Failed to create xdotdata. Is Graphviz installed?')
                     sys.exit(1)
                 log.debug('xdotdata:\n' + str(tmpdata))
-                maingraph = parse_dot_data(tmpdata)
-                log.debug('dotparsing graph:\n' + str(maingraph))
+                main_graph = parse_dot_data(tmpdata)
+                log.debug('dotparsing graph:\n' + str(main_graph))
             else:
                 # old version
                 pass
 
-        self.maingraph = maingraph
+        self.main_graph = main_graph
         self.pencolor = ""
         self.fillcolor = ""
         self.linewidth = 1
         # Detect graph type
-        self.directedgraph = maingraph.directed
+        self.directedgraph = main_graph.directed
 
         if self.dopreproc:
             return self.do_preview_preproc()
 
         # Remove annoying square
         # Todo: Remove squares from subgraphs. See pgram.dot
-        dstring = self.maingraph.attr.get('_draw_', "")
+        dstring = self.main_graph.attr.get('_draw_', "")
         if dstring:
-            self.maingraph.attr['_draw_'] = ""
+            self.main_graph.attr['_draw_'] = ""
 
-        #setDotAttr(self.maingraph)
         self.set_options()
 
         # A graph can consists of nested graph. Extract all graphs
-        graphlist = get_graphlist(self.maingraph, [])
+        graphlist = get_graphlist(self.main_graph, [])
 
         self.body += self.start_fig()
 
@@ -795,8 +793,8 @@ class DotConvBase(object):
             self.do_graph()
 
         if True:
-            self.nodes = list(maingraph.allnodes)
-            self.edges = list(maingraph.alledges)
+            self.nodes = list(main_graph.allnodes)
+            self.edges = list(main_graph.alledges)
             if not self.options.get('switchdraworder', False):
                 self.do_edges()  # tmp
                 self.do_nodes()
@@ -845,7 +843,7 @@ class DotConvBase(object):
     def init_template_vars(self):
         variables = {}
         # get bounding box
-        bbstr = self.maingraph.attr.get('bb', '')
+        bbstr = self.main_graph.attr.get('bb', '')
         if bbstr:
             bb = bbstr.split(',')
             variables['<<bbox>>'] = "(%sbp,%sbp)(%sbp,%sbp)\n" % (smart_float(bb[0]), smart_float(bb[1]), smart_float(bb[2]), smart_float(bb[3]))
@@ -857,16 +855,16 @@ class DotConvBase(object):
         variables['<<drawcommands>>'] = self.body.strip()
         variables['<<textencoding>>'] = self.textencoding
         docpreamble = self.options.get('docpreamble', '') \
-            or getattr(self.maingraph, 'd2tdocpreamble', '')
+            or getattr(self.main_graph, 'd2tdocpreamble', '')
         ##        if docpreamble:
         ##            docpreamble = docpreamble.replace('\\n','\n')
         variables['<<docpreamble>>'] = docpreamble
         variables['<<figpreamble>>'] = self.options.get('figpreamble', '') \
-            or getattr(self.maingraph, 'd2tfigpreamble', '%')
+            or getattr(self.main_graph, 'd2tfigpreamble', '%')
         variables['<<figpostamble>>'] = self.options.get('figpostamble', '') \
-            or getattr(self.maingraph, 'd2tfigpostamble', '')
+            or getattr(self.main_graph, 'd2tfigpostamble', '')
         variables['<<graphstyle>>'] = self.options.get('graphstyle', '') \
-            or getattr(self.maingraph, 'd2tgraphstyle', '')
+            or getattr(self.main_graph, 'd2tgraphstyle', '')
         variables['<<margin>>'] = self.options.get('margin', '0pt')
         variables['<<startpreprocsection>>'] = variables['<<endpreprocsection>>'] = ''
         variables['<<startoutputsection>>'] = variables['<<endoutputsection>>'] = ''
@@ -967,7 +965,7 @@ class DotConvBase(object):
         # iterate over every element in the graph
         counter = 0
 
-        for node in self.maingraph.allnodes:
+        for node in self.main_graph.allnodes:
             name = node.name
             if node.attr.get('fixedsize', '') == 'true' \
                     or node.attr.get('style', '') in ['invis', 'invisible']:
@@ -984,7 +982,7 @@ class DotConvBase(object):
 
             usednodes[name] = node
 
-        for edge in dotparsing.flatten(self.maingraph.alledges):
+        for edge in dotparsing.flatten(self.main_graph.alledges):
             if not edge.attr.get('label') and not edge.attr.get('texlbl'):
                 continue
             # Ensure that the edge name is unique.
@@ -996,7 +994,7 @@ class DotConvBase(object):
             usededges[name] = edge
             counter += 1
 
-        for graph in self.maingraph.allgraphs:
+        for graph in self.main_graph.allgraphs:
             if not graph.attr.get('label', None) and not graph.attr.get('texlbl', None):
                 continue
             # Make sure that the name is unique
@@ -1031,7 +1029,7 @@ To see what happened, run dot2tex with the --debug option.
                 node.attr['height'] = hp + dp
                 node.attr['label'] = " "
                 node.attr['fixedsize'] = 'true'
-                self.maingraph.allitems.append(node)
+                self.main_graph.allitems.append(node)
                 continue
 
             xmargin, ymargin = self.get_margins(node)
@@ -1065,7 +1063,7 @@ To see what happened, run dot2tex with the --debug option.
             node.attr['label'] = " "
 
             node.attr['fixedsize'] = 'true'
-            self.maingraph.allitems.append(node)
+            self.main_graph.allitems.append(node)
 
         for name, item in usededges.items():
             edge = item
@@ -1085,9 +1083,9 @@ To see what happened, run dot2tex with the --debug option.
                         '</tr></table>>>'
             graph.attr['label'] = labelcode % ((wt + 2 * xmargin) * 72, (hp + dp + 2 * ymargin) * 72)
 
-        self.maingraph.attr['d2toutputformat'] = self.options.get('format',
+        self.main_graph.attr['d2toutputformat'] = self.options.get('format',
                                                                   DEFAULT_OUTPUT_FORMAT)
-        graphcode = str(self.maingraph)
+        graphcode = str(self.main_graph)
         graphcode = graphcode.replace('<<<', '<<')
         graphcode = graphcode.replace('>>>', '>>')
         return graphcode
@@ -1168,7 +1166,7 @@ class Dot2PSTricksConv(DotConvBase):
 
     def start_fig(self):
         # get bounding box
-        bbstr = self.maingraph.bb
+        bbstr = self.main_graph.bb
         if bbstr:
             bb = bbstr.split(',')
             #fillcolor=black,
@@ -1707,34 +1705,33 @@ class Dot2PGFConv(DotConvBase):
         s = ""
         s += self.set_color(('cC', "black"))
         for edge in self.edges:
-            dstring = getattr(edge, '_draw_', "")
-            lstring = getattr(edge, '_ldraw_', "")
-            hstring = getattr(edge, '_hdraw_', "")
-            tstring = getattr(edge, '_tdraw_', "")
-            tlstring = getattr(edge, '_tldraw_', "")
-            hlstring = getattr(edge, '_hldraw_', "")
+            general_draw_string = getattr(edge, '_draw_', "")
+            label_string = getattr(edge, '_ldraw_', "")
+            head_arrow_string = getattr(edge, '_hdraw_', "")
+            tail_arrow_string = getattr(edge, '_tdraw_', "")
+            tail_label_string = getattr(edge, '_tldraw_', "")
+            head_label_string = getattr(edge, '_hldraw_', "")
 
             # Note that the order of the draw strings should be the same
             # as in the xdot output.
-            drawstring = dstring + " " + hstring + " " + tstring \
-                         + " " + lstring + " " + tlstring + " " + hlstring
-            drawop, stat = parse_drawstring(drawstring)
+            drawstring = general_draw_string + " " + head_arrow_string + " " + tail_arrow_string \
+                         + " " + label_string + " " + tail_label_string + " " + head_label_string
+            draw_operations, stat = parse_drawstring(drawstring)
             if not drawstring.strip():
                 continue
             s += self.output_edge_comment(edge)
             if self.options.get('duplicate', False):
                 s += self.start_edge()
-                s += self.do_draw_op(drawop, edge, stat)
+                s += self.do_draw_op(draw_operations, edge, stat)
                 s += self.end_edge()
             else:
                 topath = getattr(edge, 'topath', None)
                 s += self.draw_edge(edge)
                 if not self.options.get('tikzedgelabels', False) and not topath:
-                    s += self.do_drawstring(lstring + " " + tlstring + " " + hlstring, edge)
+                    s += self.do_drawstring(label_string + " " + tail_label_string + " " + head_label_string, edge)
                 else:
-                    s += self.do_drawstring(tlstring + " " + hlstring, edge)
-                    #s += self.draw_edge(edge)
-                    #s += self.do_drawstring(lstring+" "+tlstring+" "+hlstring, edge)
+                    s += self.do_drawstring(tail_label_string + " " + head_label_string, edge)
+
         self.body += s
 
     def draw_edge(self, edge):
@@ -1934,7 +1931,7 @@ TIKZ118_TEMPLATE = r"""\documentclass{article}
 
 class Dot2TikZConv(Dot2PGFConv):
     """A backend that utilizes the node and edge mechanism of PGF/TikZ"""
-    shapemap = {'doublecircle': 'circle, double',
+    shape_map = {'doublecircle': 'circle, double',
                 'box': 'rectangle',
                 'rect': 'rectangle',
                 'none': 'draw=none',
@@ -1955,7 +1952,7 @@ class Dot2TikZConv(Dot2PGFConv):
 
     }
 
-    compassmap = {'n': 'north', 'ne': 'north east', 'e': 'east',
+    compass_map = {'n': 'north', 'ne': 'north east', 'e': 'east',
                   'se': 'south east', 's': 'south', 'sw': 'south west',
                   'w': 'west', 'nw': 'north west', 'center': 'center'}
 
@@ -1983,13 +1980,13 @@ class Dot2TikZConv(Dot2PGFConv):
     def set_options(self):
         Dot2PGFConv.set_options(self)
         self.options['tikzedgelabels'] = self.options.get('tikzedgelabels', '') \
-            or getboolattr(self.maingraph, 'd2ttikzedgelabels', '')
+            or getboolattr(self.main_graph, 'd2ttikzedgelabels', '')
         self.options['styleonly'] = self.options.get('styleonly', '') \
-            or getboolattr(self.maingraph, 'd2tstyleonly', '')
+            or getboolattr(self.main_graph, 'd2tstyleonly', '')
         self.options['nodeoptions'] = self.options.get('nodeoptions', '') \
-            or getattr(self.maingraph, 'd2tnodeoptions', '')
+            or getattr(self.main_graph, 'd2tnodeoptions', '')
         self.options['edgeoptions'] = self.options.get('edgeoptions', '') \
-            or getattr(self.maingraph, 'd2tedgeoptions', '')
+            or getattr(self.main_graph, 'd2tedgeoptions', '')
 
     def output_node_comment(self, node):
         # With the node syntax comments are unnecessary
@@ -2017,7 +2014,7 @@ class Dot2TikZConv(Dot2PGFConv):
         lblstyle = node.attr.get('lblstyle', '')
 
         shape = node.attr.get('shape', 'ellipse')
-        shape = self.shapemap.get(shape, shape)
+        shape = self.shape_map.get(shape, shape)
         #s += "%% %s\n" % (shape)
         label = node.attr.get('texlbl', '')
         style = node.attr.get('style', " ") or " "
@@ -2050,7 +2047,7 @@ class Dot2TikZConv(Dot2PGFConv):
             if node.attr.get('style') in ['invis', 'invisible']:
                 shape = "coordinate"
             else:
-                shape = self.shapemap.get(dotshape, shape)
+                shape = self.shape_map.get(dotshape, shape)
             if shape is None:
                 shape = 'ellipse'
 
@@ -2125,18 +2122,18 @@ class Dot2TikZConv(Dot2PGFConv):
         if edgeoptions:
             s += "\\begin{scope}[%s]\n" % edgeoptions
         for edge in self.edges:
-            dstring = getattr(edge, '_draw_', "")
-            lstring = getattr(edge, '_ldraw_', "")
-            hstring = getattr(edge, '_hdraw_', "")
-            tstring = getattr(edge, '_tdraw_', "")
-            tlstring = getattr(edge, '_tldraw_', "")
-            hlstring = getattr(edge, '_hldraw_', "")
+            general_draw_string = getattr(edge, '_draw_', "")
+            label_string = getattr(edge, '_ldraw_', "")
+            head_arrow_string = getattr(edge, '_hdraw_', "")
+            tail_arrow_string = getattr(edge, '_tdraw_', "")
+            tail_label_string = getattr(edge, '_tldraw_', "")
+            head_label_string = getattr(edge, '_hldraw_', "")
             topath = getattr(edge, 'topath', None)
             s += self.draw_edge(edge)
             if not self.options.get('tikzedgelabels', False) and not topath:
-                s += self.do_drawstring(lstring + " " + tlstring + " " + hlstring, edge)
+                s += self.do_drawstring(label_string + " " + tail_label_string + " " + head_label_string, edge)
             else:
-                s += self.do_drawstring(tlstring + " " + hlstring, edge)
+                s += self.do_drawstring(tail_label_string + " " + head_label_string, edge)
 
         if edgeoptions:
             s += "\\end{scope}\n"
@@ -2161,7 +2158,6 @@ class Dot2TikZConv(Dot2PGFConv):
                 pp.append("(%sbp,%sbp)" % (smart_float(p[0]), smart_float(p[1])))
 
             edgestyle = edge.attr.get('style')
-            #print edgestyle
 
             styles = []
             if arrowstyle != '--':
@@ -2181,12 +2177,12 @@ class Dot2TikZConv(Dot2PGFConv):
             src = tikzify(edge.get_source())
             # check for a port
             if edge.src_port:
-                src_anchor = self.compassmap.get(edge.src_port.split(':')[-1], '')
+                src_anchor = self.compass_map.get(edge.src_port.split(':')[-1], '')
                 if src_anchor:
                     src = "%s.%s" % (src, src_anchor)
             dst = tikzify(edge.get_destination())
             if edge.dst_port:
-                dst_anchor = self.compassmap.get(edge.dst_port.split(':')[-1], '')
+                dst_anchor = self.compass_map.get(edge.dst_port.split(':')[-1], '')
                 if dst_anchor:
                     dst = "%s.%s" % (dst, dst_anchor)
             topath = edge.attr.get('topath', None)
