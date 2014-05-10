@@ -71,7 +71,7 @@ class DotGraphTest(unittest.TestCase):
         g = dotp.DotGraph()
         na = g.add_node('a')
         nb = g.add_node('b')
-        self.assertEqual(len(g.nodes), 2)
+        self.assertEqual(len(list(g.nodes)), 2)
 
     ##
     def test_addequalnodes(self):
@@ -80,7 +80,7 @@ class DotGraphTest(unittest.TestCase):
         g.add_node('a', style="filled")
         g.add_node('a', label="test2", texmode="math")
         n = g.get_node('a')
-        self.assertEqual(len(g.nodes), 1)
+        self.assertEqual(len(list(g.nodes)), 1)
         self.assertEqual(len(n.attr), 3)
         self.assertEqual(n.attr['label'], 'test2')
         self.assertEqual(set(n.attr.keys()), set(['label', 'style', 'texmode']))

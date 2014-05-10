@@ -15,7 +15,7 @@ digraph G {
 	size = "8,8";
 	{rank=min S8 S24 S1 S35 S30}
 	{rank=max T8 T24 T1 T35 T30}
-	edge [style="showpoints=true, linecolor=red"];
+	edge [exstyle="showpoints=true, linecolor=red"];
 	node [style="fillstyle=solid"];
 	S8 -> 9;
 	S24 -> 27;
