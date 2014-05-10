@@ -73,7 +73,7 @@ digraph SSA
         self.failUnless(source.find("insertedstyle") >= 0)
 
 
-class PGF118CompatabilityTest(unittest.TestCase):
+class PGF118CompatibilityTest(unittest.TestCase):
     def test_pgf118option(self):
         source = dot2tex.dot2tex(testgraph, debug=True, pgf118=True)
         self.failUnless(source.find("\usepackage{pgflibrarysnakes}") >= 0)
@@ -156,8 +156,6 @@ class MultipleStatements(unittest.TestCase):
                                   figonly=True, format='tikz', autosize=True)
         source2 = dot2tex.dot2tex(testgraph2,
                                   figonly=True, format='tikz', autosize=True)
-        #print source1
-        #print source2
         self.failUnless(source1 == source2)
 
 
@@ -189,9 +187,6 @@ class ErrorHandlingTest(unittest.TestCase):
 
     def test_module_parse_error(self):
         graph = "graph {a-b]"
-        #dot2tex.dot2tex(graph, debug=True, figonly=True)
-        #logdata = dot2tex.get_logstream()
-        #print logdata.getvalue()
         self.assertRaises(dot2tex.ParseException, dot2tex.dot2tex, graph)
 
     def test_no_input_file(self):
@@ -397,9 +392,3 @@ class TestNumberFormatting(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-    #import unicodedata
-    #dd = u'Я'
-    #print dd
-    #print unicodedata.numeric(dd[0])
-
-    #print ord(u'Я')

@@ -2,23 +2,6 @@ import unittest
 
 import dot2tex.dotparsing as dotp
 
-testgraph = """
-digraph G {
-    a_1-> a_2 -> a_3 -> a_1;
-}
-"""
-
-##class InterfaceTest(unittest.TestCase):
-##
-##    def test_grammarcreate(self):
-##        grammar = dotp.graph_definition()
-##        self.failUnless(grammar)
-##
-##    def test_parsebasic(self):
-##        """parse_dot_data should return a DotGraph instance"""
-##        g = dotp.parse_dot_data(testgraph)
-##        self.failUnless(isinstance(g,dotp.DotGraph))
-
 class DotNodeTest(unittest.TestCase):
     def test_create(self):
         node = dotp.DotNode("a")
