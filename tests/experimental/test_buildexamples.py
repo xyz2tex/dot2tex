@@ -18,7 +18,7 @@ log.addHandler(console)
 
 BASE_DIR = join(abspath(os.path.dirname(__file__)), "")
 DEST_DIR = join(BASE_DIR, 'exrender/')
-EXAMPLES_DIR = normpath(abspath(join(BASE_DIR, "../examples/")))
+EXAMPLES_DIR = normpath(abspath(join(BASE_DIR, "../../examples/")))
 
 
 def copyifnewer(source, dest):
