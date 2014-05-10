@@ -138,8 +138,9 @@ class NeedsQuotesTests(unittest.TestCase):
 
 
 class MultipleStatements(unittest.TestCase):
-    # http://code.google.com/p/dot2tex/issues/detail?id=19
+    # https://github.com/kjellmf/dot2tex/issues/5
     def test_semicolon(self):
+        """Test for issue 5"""
         testgraph1 = """
         digraph example {
           a -> b
@@ -369,8 +370,9 @@ class TestBugs(unittest.TestCase):
         """Test for a bug in get_node_preproc_code. Used to raise a TypeError"""
         code = dot2tex.dot2tex(testgraph, format="tikz", preproc=True, styleonly=True)
 
+    # https://github.com/kjellmf/dot2tex/issues/12
     def test_head_and_tail_labels(self):
-        """Test for issue 30"""
+        """Test for issue 12"""
         graph = "digraph { a -> b [headlabel=HEADLABEL,taillabel=TAILLABEL,label=LABEL] }"
         code = dot2tex.dot2tex(graph, format="tikz", autosize=True)
         self.assertTrue('HEADLABEL' in code)
