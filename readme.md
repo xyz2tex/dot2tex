@@ -9,6 +9,8 @@ Version: 2.9.0dev
 
 URL: https://github.com/kjellmf/dot2tex
 
+Documentation: http://dot2tex.readthedocs.org/
+
 Dot2tex is a tool for converting graphs rendered by Graphviz to formats
 that can be used with LaTeX.
 
