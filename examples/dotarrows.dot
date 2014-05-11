@@ -1,0 +1,39 @@
+/*
+
+:Title: Graphviz arrows
+:Tags: PGF
+
+Shows how Graphviz arrows are mapped to PGF/TikZ arrows
+
+Generated with::
+
+    $ dot2tex --prog=circo -s -ftikz dotarrows.dot > dotarrows.tex
+
+*/
+digraph G {
+	graph [mindist=0.5];
+	node [texmode="math", shape=circle, style="circle, fill=green!20"];
+	edge [lblstyle="above,sloped"];
+	d2ttikzedgelabels=true;
+	c -> n_1 [arrowhead="normal", label="normal"];
+	c -> n_2 [arrowhead="inv", label="inv"];
+	c -> n_3 [arrowhead="dot", label="dot"];
+	c -> n_4 [arrowhead="invdot", label="invdot"];
+	c -> n_5 [arrowhead="odot", label="odot"];
+	c -> n_6 [arrowhead="invodot", label="invodot"];
+	c -> n_7 [arrowhead="none", label="none"];
+	c -> n_8 [arrowhead="tee", label="tee"];
+	c -> n_9 [arrowhead="empty", label="empty"];
+	c -> "n_{10}" [arrowhead="invempty", label="invempty"];
+	c -> "n_{11}" [arrowhead="diamond", label="diamond"];
+	c -> "n_{12}" [arrowhead="odiamond", label="odiamond"];
+	c -> "n_{13}" [arrowhead="ediamond", label="ediamond"];
+	c -> "n_{14}" [arrowhead="crow", label="crow"];
+	c -> "n_{15}" [arrowhead="box", label="box"];
+	c -> "n_{16}" [arrowhead="obox", label="obox"];
+	c -> "n_{17}" [arrowhead="open", label="open"];
+	c -> "n_{18}" [arrowhead="halfopen", label="halfopen"];
+	c -> "n_{19}" [arrowhead="vee", label="vee"];
+	c -> "n_{20}" [arrowhead="circle", label="circle"];
+	c [style="fill=red!80"];
+}

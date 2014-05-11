@@ -647,11 +647,11 @@ class DotConvBase(object):
         else:
             return []
 
-        segret = []
+        return_segments = []
         for pos in segments:
             points = pos.split(' ')
             # check direction
-            arrowstyle = '--'
+            arrow_style = '--'
             i = 0
             if points[i].startswith('s'):
                 p = points[0].split(',')
@@ -661,20 +661,23 @@ class DotConvBase(object):
                 else:
                     points[1] = tmp
                 del points[0]
-                arrowstyle = '<-'
+                arrow_style = '<-'
                 i += 1
             if points[0].startswith('e'):
                 p = points[0].split(',')
                 points.pop()
                 points.append("%s,%s" % (p[1], p[2]))
                 del points[0]
-                arrowstyle = '->'
+                arrow_style = '->'
                 i += 1
             if i > 1:
-                arrowstyle = '<->'
-            segret.append((arrowstyle, points))
+                arrow_style = '<->'
 
-        return segret
+            arrow_style = self.get_output_arrow_styles(arrow_style, edge)
+
+            return_segments.append((arrow_style, points))
+
+        return return_segments
 
     def do_edges(self):
         s = ""
@@ -846,7 +849,8 @@ class DotConvBase(object):
         bbstr = self.main_graph.attr.get('bb', '')
         if bbstr:
             bb = bbstr.split(',')
-            variables['<<bbox>>'] = "(%sbp,%sbp)(%sbp,%sbp)\n" % (smart_float(bb[0]), smart_float(bb[1]), smart_float(bb[2]), smart_float(bb[3]))
+            variables['<<bbox>>'] = "(%sbp,%sbp)(%sbp,%sbp)\n" % (
+                smart_float(bb[0]), smart_float(bb[1]), smart_float(bb[2]), smart_float(bb[3]))
             variables['<<bbox.x0>>'] = bb[0]
             variables['<<bbox.y0>>'] = bb[1]
             variables['<<bbox.x1>>'] = bb[2]
@@ -1084,11 +1088,14 @@ To see what happened, run dot2tex with the --debug option.
             graph.attr['label'] = labelcode % ((wt + 2 * xmargin) * 72, (hp + dp + 2 * ymargin) * 72)
 
         self.main_graph.attr['d2toutputformat'] = self.options.get('format',
-                                                                  DEFAULT_OUTPUT_FORMAT)
+                                                                   DEFAULT_OUTPUT_FORMAT)
         graphcode = str(self.main_graph)
         graphcode = graphcode.replace('<<<', '<<')
         graphcode = graphcode.replace('>>>', '>>')
         return graphcode
+
+    def get_output_arrow_styles(self, arrow_style, edge):
+        return arrow_style
 
 
 PSTRICKS_TEMPLATE = r"""\documentclass{article}
@@ -1533,6 +1540,10 @@ PGF118_TEMPLATE = r"""\documentclass{article}
 
 class Dot2PGFConv(DotConvBase):
     """PGF/TikZ converter backend"""
+    arrows_map_210 = {"dot": "*", "odot": "o", "empty": "open triangle 45", "invempty": "open triangle 45 reversed",
+                      "diamond": "diamond", "odiamond": "open diamond", "ediamond": "open diamond", "box": "square",
+                      "obox": "open square", "vee": "stealth'", "open": "stealth'", "tee": "|",
+                      "crow": "stealth reversed"}
 
     def __init__(self, options=None):
         DotConvBase.__init__(self, options)
@@ -1850,6 +1861,20 @@ class Dot2PGFConv(DotConvBase):
 
         return s
 
+    def get_output_arrow_styles(self, arrow_style, edge):
+        dot_arrow_head = edge.attr.get("arrowhead")
+        dot_arrow_tail = edge.attr.get("arrowtail")
+        output_arrow_style = arrow_style
+        if dot_arrow_head:
+            pgf_arrow_head = self.arrows_map_210.get(dot_arrow_head)
+            if pgf_arrow_head:
+                output_arrow_style = output_arrow_style.replace(">", pgf_arrow_head)
+        if dot_arrow_tail:
+            pgf_arrow_tail = self.arrows_map_210.get(dot_arrow_tail)
+            if pgf_arrow_tail:
+                output_arrow_style = output_arrow_style.replace("<", pgf_arrow_tail)
+        return output_arrow_style
+
     def init_template_vars(self):
         DotConvBase.init_template_vars(self)
         if self.options.get('crop', False):
@@ -1934,7 +1959,6 @@ TIKZ_TEMPLATE = r"""\documentclass{article}
 <<figpostamble>>%
 <<endcodeonlysection>>
 """
-
 
 TIKZ210_TEMPLATE = r"""\documentclass{article}
 % dot2tex template for PGF 2.10
@@ -2038,29 +2062,29 @@ TIKZ118_TEMPLATE = r"""\documentclass{article}
 class Dot2TikZConv(Dot2PGFConv):
     """A backend that utilizes the node and edge mechanism of PGF/TikZ"""
     shape_map = {'doublecircle': 'circle, double',
-                'box': 'rectangle',
-                'rect': 'rectangle',
-                'none': 'draw=none',
-                'plaintext': 'draw=none',
-                'polygon': 'regular polygon, regular polygon sides=7',
-                'triangle': 'regular polygon, regular polygon sides=3',
-                'square': 'regular polygon, regular polygon sides=4',
-                'pentagon': 'regular polygon, regular polygon sides=5',
-                'hexagon': 'regular polygon, regular polygon sides=6',
-                'septagon': 'regular polygon, regular polygon sides=7',
-                'octagon': 'regular polygon, regular polygon sides=8',
-                'point': 'circle, fill',
-                'ellipse': 'ellipse',
-                'oval': 'ellipse',
-                'diamond': 'diamond',
-                'trapezium': 'trapezium',
-                'star': 'star'
+                 'box': 'rectangle',
+                 'rect': 'rectangle',
+                 'none': 'draw=none',
+                 'plaintext': 'draw=none',
+                 'polygon': 'regular polygon, regular polygon sides=7',
+                 'triangle': 'regular polygon, regular polygon sides=3',
+                 'square': 'regular polygon, regular polygon sides=4',
+                 'pentagon': 'regular polygon, regular polygon sides=5',
+                 'hexagon': 'regular polygon, regular polygon sides=6',
+                 'septagon': 'regular polygon, regular polygon sides=7',
+                 'octagon': 'regular polygon, regular polygon sides=8',
+                 'point': 'circle, fill',
+                 'ellipse': 'ellipse',
+                 'oval': 'ellipse',
+                 'diamond': 'diamond',
+                 'trapezium': 'trapezium',
+                 'star': 'star'
 
     }
 
     compass_map = {'n': 'north', 'ne': 'north east', 'e': 'east',
-                  'se': 'south east', 's': 'south', 'sw': 'south west',
-                  'w': 'west', 'nw': 'north west', 'center': 'center'}
+                   'se': 'south east', 's': 'south', 'sw': 'south west',
+                   'w': 'west', 'nw': 'north west', 'center': 'center'}
 
     def __init__(self, options=None):
         # to connect nodes they have to defined. Therefore we have to ensure
