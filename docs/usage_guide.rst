@@ -47,7 +47,7 @@ The same as above, but use neato for graph layout::
 .. _command-line-options:
 
 Command line options
---------------------
+====================
 
 The following options are available:
 
@@ -250,7 +250,7 @@ You can also use the special ``texlbl`` attribute on a graph element, which is i
 
 .. note:: The ``\`` character needs to be escaped with ``\\`` if used in the ``label`` attribute.
 
-Note that only position and alignment information is converted. Any font information is lost. This may result in some odd behavior. Some tweaking may be necessary to get it right.
+Note that only position and alignment information is converted. Any font information is lost. This may result in some odd behavior. Some tweaking may be necessary to get it right. See the section :ref:`vertical-label-alignment` for tips.
 
 .. note:: If you use ``texlbl`` for edges, you have to provide a dummy ``label`` attribute. Otherwise Graphviz will not generate the necessary code for placing edge labels.
 
