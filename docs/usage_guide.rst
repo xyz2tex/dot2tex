@@ -163,6 +163,9 @@ The following options are available:
 --pgf118
     Generate code compatible with PGF 1.18 and earlier. 
 
+--pgf210
+    Generate code compatible with PGF 2.10.
+
 The following options are used by the output :ref:`templates <templates>`.
 
 -e encoding, --encoding encoding

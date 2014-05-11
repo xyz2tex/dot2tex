@@ -392,5 +392,25 @@ class TestNumberFormatting(unittest.TestCase):
         self.assertEqual("100000000000.0000", smart_float(1e11))
 
 
+class PGF210CompatibilityTest(unittest.TestCase):
+    def test_pgf210option(self):
+        source = dot2tex.dot2tex(testgraph, debug=True, pgf210=True)
+        self.failUnless(source.find("dot2tex template for PGF 2.10") >= 0)
+        # self.failIf(source.find("\usetikzlibrary") >= 0)
+        # self.failIf(source.find("line join=bevel") >= 0)
+
+    def test_tikz210option(self):
+        source = dot2tex.dot2tex(testgraph, debug=True, format='tikz', pgf210=True)
+        self.failUnless(source.find("dot2tex template for PGF 2.10") >= 0)
+        #     self.failIf(source.find("\usetikzlibrary") >= 0)
+        #     self.failIf(source.find("line join=bevel") >= 0)
+        #
+        # def test_nopgf210option(self):
+        #     source = dot2tex.dot2tex(testgraph, debug=True, pgf210=False)
+        #     self.failIf(source.find("\usepackage{pgflibrarysnakes}") >= 0)
+        #     self.failUnless(source.find("\usetikzlibrary") >= 0)
+        #     self.failUnless(source.find("line join=bevel") >= 0)
+
+
 if __name__ == '__main__':
     unittest.main()

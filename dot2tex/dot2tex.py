@@ -1375,7 +1375,60 @@ class Dot2PSTricksConv(DotConvBase):
                 self.templatevars['<<graphstyle>>'] = graphstyle
 
 
+PGF_TEMPLATE = r"""\documentclass{article}
+\usepackage[x11names, rgb]{xcolor}
+\usepackage[<<textencoding>>]{inputenc}
+\usepackage{tikz}
+\usetikzlibrary{snakes,arrows,shapes}
+\usepackage{amsmath}
+<<startpreprocsection>>%
+\usepackage[active,auctex]{preview}
+<<endpreprocsection>>%
+<<gvcols>>%
+<<startoutputsection>>
+<<cropcode>>%
+<<endoutputsection>>
+<<docpreamble>>%
+
+\begin{document}
+\pagestyle{empty}
+%
+<<startpreprocsection>>%
+<<preproccode>>
+<<endpreprocsection>>%
+%
+<<startoutputsection>>
+\enlargethispage{100cm}
+% Start of code
+% \begin{tikzpicture}[anchor=mid,>=latex',line join=bevel,<<graphstyle>>]
+\begin{tikzpicture}[>=latex',line join=bevel,<<graphstyle>>]
+  \pgfsetlinewidth{1bp}
+<<figpreamble>>%
+<<drawcommands>>
+<<figpostamble>>%
+\end{tikzpicture}
+% End of code
+<<endoutputsection>>
+%
+\end{document}
+%
+<<start_figonlysection>>
+\begin{tikzpicture}[>=latex,line join=bevel,<<graphstyle>>]
+  \pgfsetlinewidth{1bp}
+<<figpreamble>>%
+<<drawcommands>>
+<<figpostamble>>%
+\end{tikzpicture}
+<<end_figonlysection>>
+<<startcodeonlysection>>
+<<figpreamble>>%
+<<drawcommands>>
+<<figpostamble>>%
+<<endcodeonlysection>>
+"""
+
 PGF210_TEMPLATE = r"""\documentclass{article}
+% dot2tex template for PGF 2.10
 \usepackage[x11names, rgb]{xcolor}
 \usepackage[<<textencoding>>]{inputenc}
 \usepackage{tikz}
@@ -1486,8 +1539,10 @@ class Dot2PGFConv(DotConvBase):
         if not self.template:
             if options.get('pgf118', False):
                 self.template = PGF118_TEMPLATE
-            else:
+            elif options.get('pgf210', False):
                 self.template = PGF210_TEMPLATE
+            else:
+                self.template = PGF_TEMPLATE
         self.styles = dict(dashed='dashed', dotted='dotted',
                            bold='very thick', filled='fill', invis="",
                            rounded='rounded corners', )
@@ -1831,7 +1886,58 @@ class Dot2PGFConv(DotConvBase):
             return r"\tikz \node {" + text + "};"
 
 
+TIKZ_TEMPLATE = r"""\documentclass{article}
+\usepackage[x11names, rgb]{xcolor}
+\usepackage[<<textencoding>>]{inputenc}
+\usepackage{tikz}
+\usetikzlibrary{snakes,arrows,shapes}
+\usepackage{amsmath}
+<<startpreprocsection>>%
+\usepackage[active,auctex]{preview}
+<<endpreprocsection>>%
+<<gvcols>>%
+<<startoutputsection>>
+<<cropcode>>%
+<<endoutputsection>>
+<<docpreamble>>%
+
+\begin{document}
+\pagestyle{empty}
+%
+<<startpreprocsection>>%
+<<preproccode>>
+<<endpreprocsection>>%
+%
+<<startoutputsection>>
+\enlargethispage{100cm}
+% Start of code
+\begin{tikzpicture}[>=latex',line join=bevel,<<graphstyle>>]
+<<figpreamble>>%
+<<drawcommands>>
+<<figpostamble>>%
+\end{tikzpicture}
+% End of code
+<<endoutputsection>>
+%
+\end{document}
+%
+<<start_figonlysection>>
+\begin{tikzpicture}[>=latex,line join=bevel,<<graphstyle>>]
+<<figpreamble>>%
+<<drawcommands>>
+<<figpostamble>>%
+\end{tikzpicture}
+<<end_figonlysection>>
+<<startcodeonlysection>>
+<<figpreamble>>%
+<<drawcommands>>
+<<figpostamble>>%
+<<endcodeonlysection>>
+"""
+
+
 TIKZ210_TEMPLATE = r"""\documentclass{article}
+% dot2tex template for PGF 2.10
 \usepackage[x11names, rgb]{xcolor}
 \usepackage[<<textencoding>>]{inputenc}
 \usepackage{tikz}
@@ -1965,8 +2071,10 @@ class Dot2TikZConv(Dot2PGFConv):
         options['rawdim'] = True
         if options.get('pgf118', False):
             self.template = TIKZ118_TEMPLATE
-        else:
+        elif options.get('pgf210', False):
             self.template = TIKZ210_TEMPLATE
+        else:
+            self.template = TIKZ_TEMPLATE
         DotConvBase.__init__(self, options)
 
         self.styles = dict(dashed='dashed', dotted='dotted',
@@ -2624,6 +2732,8 @@ def create_options_parser():
     parser.add_option('--cache', dest='cache', action='store_true', default=False)
     parser.add_option('--pgf118', dest='pgf118', action='store_true',
                       help="Generate code compatible with PGF 1.18", default=False)
+    parser.add_option('--pgf210', dest='pgf210', action='store_true',
+                      help="Generate code compatible with PGF 2.10", default=False)
     return parser
 
 
