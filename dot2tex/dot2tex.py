@@ -1375,7 +1375,7 @@ class Dot2PSTricksConv(DotConvBase):
                 self.templatevars['<<graphstyle>>'] = graphstyle
 
 
-PGF_TEMPLATE = r"""\documentclass{article}
+PGF210_TEMPLATE = r"""\documentclass{article}
 \usepackage[x11names, rgb]{xcolor}
 \usepackage[<<textencoding>>]{inputenc}
 \usepackage{tikz}
@@ -1487,7 +1487,7 @@ class Dot2PGFConv(DotConvBase):
             if options.get('pgf118', False):
                 self.template = PGF118_TEMPLATE
             else:
-                self.template = PGF_TEMPLATE
+                self.template = PGF210_TEMPLATE
         self.styles = dict(dashed='dashed', dotted='dotted',
                            bold='very thick', filled='fill', invis="",
                            rounded='rounded corners', )
@@ -1831,7 +1831,7 @@ class Dot2PGFConv(DotConvBase):
             return r"\tikz \node {" + text + "};"
 
 
-TIKZ_TEMPLATE = r"""\documentclass{article}
+TIKZ210_TEMPLATE = r"""\documentclass{article}
 \usepackage[x11names, rgb]{xcolor}
 \usepackage[<<textencoding>>]{inputenc}
 \usepackage{tikz}
@@ -1966,7 +1966,7 @@ class Dot2TikZConv(Dot2PGFConv):
         if options.get('pgf118', False):
             self.template = TIKZ118_TEMPLATE
         else:
-            self.template = TIKZ_TEMPLATE
+            self.template = TIKZ210_TEMPLATE
         DotConvBase.__init__(self, options)
 
         self.styles = dict(dashed='dashed', dotted='dotted',
