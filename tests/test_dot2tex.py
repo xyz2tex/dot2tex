@@ -417,22 +417,18 @@ class HeadAndTailLabelTest(unittest.TestCase):
 
     def test_head_label_pgf(self):
         source = dot2tex.dot2tex(self.test_graph, autosize=True, format="pgf")
-        print source
         self.failUnless("HEADLABEL" in source)
 
     def test_head_label_tikz(self):
         source = dot2tex.dot2tex(self.test_graph, autosize=True, format="tikz")
-        print source
         self.failUnless("HEADLABEL" in source)
 
     def test_tail_label_pgf(self):
         source = dot2tex.dot2tex(self.test_graph, autosize=True, format="pgf")
-        print source
         self.failUnless("TAILLABEL" in source)
 
     def test_tail_label_tikz(self):
         source = dot2tex.dot2tex(self.test_graph, autosize=True, format="tikz")
-        print source
         self.failUnless("TAILLABEL" in source)
 
 if __name__ == '__main__':
