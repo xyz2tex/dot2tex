@@ -411,6 +411,29 @@ class PGF210CompatibilityTest(unittest.TestCase):
         #     self.failUnless(source.find("\usetikzlibrary") >= 0)
         #     self.failUnless(source.find("line join=bevel") >= 0)
 
+class HeadAndTailLabelTest(unittest.TestCase):
+    """Tests for https://github.com/kjellmf/dot2tex/issues/12"""
+    test_graph = "digraph { a -> b [headlabel=HEADLABEL,taillabel=TAILLABEL,label=LABEL] }"
+
+    def test_head_label_pgf(self):
+        source = dot2tex.dot2tex(self.test_graph, autosize=True, format="pgf")
+        print source
+        self.failUnless("HEADLABEL" in source)
+
+    def test_head_label_tikz(self):
+        source = dot2tex.dot2tex(self.test_graph, autosize=True, format="tikz")
+        print source
+        self.failUnless("HEADLABEL" in source)
+
+    def test_tail_label_pgf(self):
+        source = dot2tex.dot2tex(self.test_graph, autosize=True, format="pgf")
+        print source
+        self.failUnless("TAILLABEL" in source)
+
+    def test_tail_label_tikz(self):
+        source = dot2tex.dot2tex(self.test_graph, autosize=True, format="tikz")
+        print source
+        self.failUnless("TAILLABEL" in source)
 
 if __name__ == '__main__':
     unittest.main()
