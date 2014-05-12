@@ -8,6 +8,7 @@ Here you can see the full list of changes between each dot2tex release.
 
 (not released yet)
 
+- Graphviz arrow styles are now mapped to corresponding PGF/TikZ arrows.
 - Project is now hosted on GitHub.
 - Numbers are now outputted as floats. Some versions of Graphviz uses scientific notation
   for small numbers. TeX does not handle that well [issue #11].
