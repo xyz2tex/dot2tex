@@ -68,3 +68,26 @@ You can set ``debug=True`` to create a detailed log useful for debugging. To ret
     print logstream.getvalue()
 
 
+.. _positions-output-format:
+
+The ``positions`` output format
+-------------------------------
+
+When you use dot2tex as a module you have access to the special ``positions`` output format if you use ``format=positions``.
+The ``dot2tex`` function will then return dictionary with node name as key and a (x, y) tuple with the
+center position of the node as value:
+
+.. sourcecode:: python
+
+    >>> import dot2tex
+    >>> testgraph = """
+    ... digraph G {
+    ...    a -> b -> c -> a;
+    ... }
+    """
+    >>> dot2tex.dot2tex(testgraph, format='positions')
+    {'a': [54, 162], 'b': [27, 90], 'c': [54, 18]}
+
+
+
+

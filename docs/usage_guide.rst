@@ -194,7 +194,9 @@ The following options are used by the output :ref:`templates <templates>`.
 Output formats
 ==============
 
-The output format is specified with the ``-f fmt`` or  ``--format fmt`` command line option.
+The output format is specified with the ``-f fmt`` or  ``--format fmt`` command line option. The following output formats
+are available form the command line. Additionally there is a special :ref:`positions output format <positions-output-format>` only available when
+using dot2tex as Python module.
 
 .. _output-fomat-pgf:
 
