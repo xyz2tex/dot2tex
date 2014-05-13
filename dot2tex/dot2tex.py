@@ -513,15 +513,15 @@ class DotConvBase(object):
             drawopcolor = drawopcolor.replace(' ', '')
             return drawopcolor
 
-    def do_drawstring(self, drawstring, drawobj):
+    def do_drawstring(self, drawstring, drawobj, texlbl_name="texlbl", use_drawstring_pos=False):
         """Parse and draw drawsting
 
         Just a wrapper around do_draw_op.
         """
         drawoperations, stat = parse_drawstring(drawstring)
-        return self.do_draw_op(drawoperations, drawobj, stat)
+        return self.do_draw_op(drawoperations, drawobj, stat, texlbl_name, use_drawstring_pos)
 
-    def do_draw_op(self, drawoperations, drawobj, stat):
+    def do_draw_op(self, drawoperations, drawobj, stat, texlbl_name="texlbl", use_drawstring_pos=False):
         """Excecute the operations in drawoperations"""
         s = ""
         for drawop in drawoperations:
@@ -557,13 +557,13 @@ class DotConvBase(object):
                 # Todo: Use text from node|edge.label or name
                 # Todo: What about multiline labels?
                 text = drawop[5]
-
+                # head and tail label
                 texmode = self.options.get('texmode', 'verbatim')
                 if drawobj.attr.get('texmode', ''):
                     texmode = drawobj.attr['texmode']
-                if drawobj.attr.get('texlbl', ''):
+                if texlbl_name in drawobj.attr:
                     # the texlbl overrides everything
-                    text = drawobj.attr['texlbl']
+                    text = drawobj.attr[texlbl_name]
                 elif texmode == 'verbatim':
                     # verbatim mode
                     text = escape_texchars(text)
@@ -578,17 +578,25 @@ class DotConvBase(object):
                 if stat['T'] == 1 and \
                                 self.options.get('valignmode', 'center') == 'center':
                     # do this for single line only
-                    # Todo: Make this optional
-                    pos = drawobj.attr.get('lp', None) or \
-                          drawobj.attr.get('pos', None)
                     # force centered alignment
                     drawop[3] = '0'
-                    if pos:
-                        coord = pos.split(',')
-                        if len(coord) == 2:
-                            drawop[1] = coord[0]
-                            drawop[2] = coord[1]
-                        pass
+                    if not use_drawstring_pos:
+                        if texlbl_name == "tailtexlbl":
+                            pos = drawobj.attr.get('tail_lp', None) or \
+                              drawobj.attr.get('pos', None)
+                        elif texlbl_name == "headtexlbl":
+                            pos = drawobj.attr.get('head_lp', None) or \
+                              drawobj.attr.get('pos', None)
+                        else:
+                            pos = drawobj.attr.get('lp', None) or \
+                                  drawobj.attr.get('pos', None)
+
+                        if pos:
+                            coord = pos.split(',')
+                            if len(coord) == 2:
+                                drawop[1] = coord[0]
+                                drawop[2] = coord[1]
+                            pass
                 lblstyle = drawobj.attr.get('lblstyle', None)
                 exstyle = drawobj.attr.get('exstyle', '')
                 if exstyle:
@@ -886,12 +894,12 @@ class DotConvBase(object):
         #code = self.template.replace('<<figcode>>', self.body)
         return code
 
-    def get_label(self, drawobj):
+    def get_label(self, drawobj, label_attribute="label", tex_label_attribute="texlbl"):
         text = ""
         texmode = self.options.get('texmode', 'verbatim')
         if getattr(drawobj, 'texmode', ''):
             texmode = drawobj.texmode
-        text = getattr(drawobj, 'label', None)
+        text = getattr(drawobj, label_attribute, None)
 
         #log.warning('text %s %s',text,str(drawobj))
 
@@ -907,7 +915,7 @@ class DotConvBase(object):
         else:
             text = text.replace("\\\\", "\\")
 
-        if getattr(drawobj, 'texlbl', ''):
+        if getattr(drawobj, tex_label_attribute, ''):
             # the texlbl overrides everything
             text = drawobj.texlbl
         elif texmode == 'verbatim':
@@ -923,8 +931,8 @@ class DotConvBase(object):
     def get_node_preproc_code(self, node):
         return node.attr.get('texlbl', '')
 
-    def get_edge_preproc_code(self, edge):
-        return edge.attr.get('texlbl', '')
+    def get_edge_preproc_code(self, edge, attribute="texlbl"):
+        return edge.attr.get(attribute, '')
 
     def get_graph_preproc_code(self, graph):
         return graph.attr.get('texlbl', '')
@@ -959,16 +967,12 @@ class DotConvBase(object):
         template = replace_tags(template, self.templatevars.keys(),
                                 self.templatevars)
         pp = TeXDimProc(template, self.options)
-        processednodes = {}
-        processededges = {}
-        processedgraphs = {}
-
         usednodes = {}
         usededges = {}
         usedgraphs = {}
+
         # iterate over every element in the graph
         counter = 0
-
         for node in self.main_graph.allnodes:
             name = node.name
             if node.attr.get('fixedsize', '') == 'true' \
@@ -987,16 +991,34 @@ class DotConvBase(object):
             usednodes[name] = node
 
         for edge in dotparsing.flatten(self.main_graph.alledges):
-            if not edge.attr.get('label') and not edge.attr.get('texlbl'):
+            if not edge.attr.get('label') and not edge.attr.get('texlbl') and not edge.attr.get("headlabel") \
+                    and not edge.attr.get("taillabel"):
                 continue
             # Ensure that the edge name is unique.
             name = edge.src.name + edge.dst.name + str(counter)
             label = self.get_label(edge)
-            edge.attr['texlbl'] = label
-            code = self.get_edge_preproc_code(edge)
-            pp.add_snippet(name, code)
-            usededges[name] = edge
+            headlabel = self.get_label(edge, "headlabel", "headtexlbl")
+            taillabel = self.get_label(edge, "taillabel", "tailtexlbl")
+            if label:
+                name = edge.src.name + edge.dst.name + str(counter)
+                edge.attr['texlbl'] = label
+                code = self.get_edge_preproc_code(edge)
+                pp.add_snippet(name, code)
+
+            if headlabel:
+                headlabel_name = name+"headlabel"
+                edge.attr['headtexlbl'] = headlabel
+                code = self.get_edge_preproc_code(edge, "headtexlbl")
+                pp.add_snippet(headlabel_name, code)
+
+            if taillabel:
+                taillabel_name = name+"taillabel"
+                edge.attr['tailtexlbl'] = taillabel
+                code = self.get_edge_preproc_code(edge, "tailtexlbl")
+                pp.add_snippet(taillabel_name, code)
+
             counter += 1
+            usededges[name] = edge
 
         for graph in self.main_graph.allgraphs:
             if not graph.attr.get('label', None) and not graph.attr.get('texlbl', None):
@@ -1076,7 +1098,15 @@ To see what happened, run dot2tex with the --debug option.
             labelcode = '<<<table border="0" cellborder="0" cellpadding="0">' \
                         '<tr><td fixedsize="true" width="%s" height="%s">a</td>' \
                         '</tr></table>>>'
-            edge.attr['label'] = labelcode % ((wt + 2 * xmargin) * 72, (hp + dp + 2 * ymargin) * 72)
+            if "texlbl" in edge.attr:
+                edge.attr['label'] = labelcode % ((wt + 2 * xmargin) * 72, (hp + dp + 2 * ymargin) * 72)
+            if "tailtexlbl" in edge.attr:
+                hp, dp, wt = pp.texdims[name+"taillabel"]
+                edge.attr['taillabel'] = labelcode % ((wt + 2 * xmargin) * 72, (hp + dp + 2 * ymargin) * 72)
+            if "headtexlbl" in edge.attr:
+                hp, dp, wt = pp.texdims[name+"headlabel"]
+                edge.attr['headlabel'] = labelcode % ((wt + 2 * xmargin) * 72, (hp + dp + 2 * ymargin) * 72)
+
 
         for name, item in usedgraphs.items():
             graph = item
@@ -1794,9 +1824,12 @@ class Dot2PGFConv(DotConvBase):
                 topath = getattr(edge, 'topath', None)
                 s += self.draw_edge(edge)
                 if not self.options.get('tikzedgelabels', False) and not topath:
-                    s += self.do_drawstring(label_string + " " + tail_label_string + " " + head_label_string, edge)
+                    s += self.do_drawstring(label_string, edge)
+                    s += self.do_drawstring(tail_label_string, edge, "tailtexlbl")
+                    s += self.do_drawstring(head_label_string, edge, "headtexlbl")
                 else:
-                    s += self.do_drawstring(tail_label_string + " " + head_label_string, edge)
+                    s += self.do_drawstring(tail_label_string, edge, "tailtexlbl")
+                    s += self.do_drawstring(head_label_string, edge, "headtexlbl")
 
         self.body += s
 
@@ -1894,9 +1927,9 @@ class Dot2PGFConv(DotConvBase):
         else:
             return r"\tikz \node {" + text + "};"
 
-    def get_edge_preproc_code(self, edge):
+    def get_edge_preproc_code(self, edge, attribute="texlbl"):
         lblstyle = edge.attr.get('lblstyle', '')
-        text = edge.attr.get('texlbl', '')
+        text = edge.attr.get(attribute, '')
         if lblstyle:
             return "  \\tikz \\node[%s] {%s};\n" % (lblstyle, text)
         else:
@@ -2263,9 +2296,12 @@ class Dot2TikZConv(Dot2PGFConv):
             topath = getattr(edge, 'topath', None)
             s += self.draw_edge(edge)
             if not self.options.get('tikzedgelabels', False) and not topath:
-                s += self.do_drawstring(label_string + " " + tail_label_string + " " + head_label_string, edge)
+                    s += self.do_drawstring(label_string, edge)
+                    s += self.do_drawstring(tail_label_string, edge, "tailtexlbl")
+                    s += self.do_drawstring(head_label_string, edge, "headtexlbl")
             else:
-                s += self.do_drawstring(tail_label_string + " " + head_label_string, edge)
+                s += self.do_drawstring(tail_label_string, edge, "tailtexlbl")
+                s += self.do_drawstring(head_label_string, edge, "headtexlbl")
 
         if edgeoptions:
             s += "\\end{scope}\n"

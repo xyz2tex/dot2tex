@@ -374,10 +374,11 @@ class TestBugs(unittest.TestCase):
     def test_head_and_tail_labels(self):
         """Test for issue 12"""
         graph = "digraph { a -> b [headlabel=HEADLABEL,taillabel=TAILLABEL,label=LABEL] }"
-        code = dot2tex.dot2tex(graph, format="tikz", autosize=True)
+        code = dot2tex.dot2tex(graph, format="pgf", autosize=True)
         self.assertTrue('HEADLABEL' in code)
         self.assertTrue('LABEL' in code)
         self.assertTrue('TAILLABEL' in code)
+
 
 
 class TestNumberFormatting(unittest.TestCase):
