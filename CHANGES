@@ -3,10 +3,10 @@ dot2tex change log
 
 Here you can see the full list of changes between each dot2tex release.
 
-2.9.x
+2.9.0
 -----
 
-(not released yet)
+Released 2009-05-16.
 
 - Added support for preprocessing head and tail label (pgf and tikz).
 - Graphviz arrow styles are now mapped to corresponding PGF/TikZ arrows.

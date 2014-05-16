@@ -5,7 +5,7 @@ Copyright (C) 2006-2014 Kjell Magne Fauske
 
 License: MIT (See LICENSE for details.)
 
-Version: 2.9.0dev
+Version: 2.9.0
 
 URL: https://github.com/kjellmf/dot2tex
 
