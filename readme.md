@@ -79,11 +79,3 @@ Contribute
 - Issue tracker: https://github.com/kjellmf/dot2tex/issues
 - Source code: https://github.com/kjellmf/dot2tex
 
-What's new in version 2.9.0
-===========================
-
-Bugfixes:
-
-- Fixed compatibility issue with Pyparsing 2.0.1
-
-For a full list of changes see CHANGELOG

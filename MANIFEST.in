@@ -1,7 +1,7 @@
 recursive-include docs *
 recursive-exclude docs *.pyc
 recursive-exclude docs *.pyo
-include changelog.txt LICENSE
+include CHANGES LICENSE AUTHORS readme.md
 include examples/*.dot
 include examples/*dtti.tex
 include tests/testgraphs/*.dot
