@@ -1130,7 +1130,7 @@ To see what happened, run dot2tex with the --debug option.
 
 PSTRICKS_TEMPLATE = r"""\documentclass{article}
 % <<bbox>>
-\usepackage[x11names]{xcolor}
+\usepackage[x11names,svgnames]{xcolor}
 \usepackage[<<textencoding>>]{inputenc}
 \usepackage{graphicx}
 \usepackage{pstricks}
@@ -1413,7 +1413,7 @@ class Dot2PSTricksConv(DotConvBase):
 
 
 PGF_TEMPLATE = r"""\documentclass{article}
-\usepackage[x11names, rgb]{xcolor}
+\usepackage[x11names, svgnames, rgb]{xcolor}
 \usepackage[<<textencoding>>]{inputenc}
 \usepackage{tikz}
 \usetikzlibrary{snakes,arrows,shapes}
@@ -1466,7 +1466,7 @@ PGF_TEMPLATE = r"""\documentclass{article}
 
 PGF210_TEMPLATE = r"""\documentclass{article}
 % dot2tex template for PGF 2.10
-\usepackage[x11names, rgb]{xcolor}
+\usepackage[x11names, svgnames, rgb]{xcolor}
 \usepackage[<<textencoding>>]{inputenc}
 \usepackage{tikz}
 \usetikzlibrary{snakes,arrows,shapes}
@@ -1945,7 +1945,7 @@ class Dot2PGFConv(DotConvBase):
 
 
 TIKZ_TEMPLATE = r"""\documentclass{article}
-\usepackage[x11names, rgb]{xcolor}
+\usepackage[x11names, svgnames, rgb]{xcolor}
 \usepackage[<<textencoding>>]{inputenc}
 \usepackage{tikz}
 \usetikzlibrary{snakes,arrows,shapes}
@@ -1995,7 +1995,7 @@ TIKZ_TEMPLATE = r"""\documentclass{article}
 
 TIKZ210_TEMPLATE = r"""\documentclass{article}
 % dot2tex template for PGF 2.10
-\usepackage[x11names, rgb]{xcolor}
+\usepackage[x11names, svgnames, rgb]{xcolor}
 \usepackage[<<textencoding>>]{inputenc}
 \usepackage{tikz}
 \usetikzlibrary{snakes,arrows,shapes}
@@ -2044,7 +2044,7 @@ TIKZ210_TEMPLATE = r"""\documentclass{article}
 """
 
 TIKZ118_TEMPLATE = r"""\documentclass{article}
-\usepackage[x11names, rgb]{xcolor}
+\usepackage[x11names, svgnames, rgb]{xcolor}
 \usepackage[<<textencoding>>]{inputenc}
 \usepackage{tikz}
 \usepackage{pgflibrarysnakes}
@@ -2395,7 +2395,7 @@ class Dot2TikZConv(Dot2PGFConv):
 
 PSTRICKSN_TEMPLATE = r"""\documentclass{article}
 % <<bbox>>
-\usepackage[x11names]{xcolor}
+\usepackage[x11names, svgnames]{xcolor}
 \usepackage[<<textencoding>>]{inputenc}
 \usepackage{graphicx}
 \usepackage{pst-all}
