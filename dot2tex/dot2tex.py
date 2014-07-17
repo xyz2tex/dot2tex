@@ -2822,15 +2822,19 @@ def create_options_parser():
         '--pgf210', dest='pgf210', action='store_true',
         help='Generate code compatible with PGF 2.10', default=False
     )
+    parser.add_argument(
+        'inputfile', action='store',
+        nargs='?', default=None, help='Input dot file'
+    )
     return parser
 
 def process_cmd_line():
     """Set up and parse command line options"""
 
     parser = create_options_parser()
-    (options, args) = parser.parse_args()
+    options = parser.parse_args()
 
-    return options, args, parser
+    return options, parser
 
 
 def _runtests():
@@ -2859,7 +2863,7 @@ def main(run_as_module=False, dotdata=None, options=None):
 
     global log
     if not run_as_module:
-        options, args, parser = process_cmd_line()
+        options, parser = process_cmd_line()
         # configure console logger
         console = logging.StreamHandler()
         console.setLevel(logging.WARNING)
@@ -2901,18 +2905,19 @@ def main(run_as_module=False, dotdata=None, options=None):
         if options.printversion:
             print_version_info()
             sys.exit(0)
-        if len(args) == 0:
+        
+        if options.inputfile is None:
             log.info('Data read from standard input')
             dotdata = sys.stdin.readlines()
-        elif len(args) == 1:
+        else:
             try:
-                log.debug('Attempting to read data from %s', args[0])
-                dotdata = load_dot_file(args[0])
+                log.debug('Attempting to read data from %s', options.inputfile)
+                dotdata = load_dot_file(options.inputfile)
             except:
                 if options.debug:
-                    log.exception('Failed to load file %s', args[0])
+                    log.exception('Failed to load file %s', options.inputfile)
                 else:
-                    log.error('Failed to load file %s', args[0])
+                    log.error('Failed to load file %s', options.inputfile)
                 sys.exit(1)
     else:
         # Make sure dotdata is compatitle with the readlines data
@@ -2947,9 +2952,9 @@ def main(run_as_module=False, dotdata=None, options=None):
     if options.cache and not run_as_module:
         import hashlib, cPickle
 
-        if len(args) == 1 and options.outputfile:
+        if options.inputfile is not None and options.outputfile:
             log.info('Caching enabled')
-            inputfilename = args[0]
+            inputfilename = options.inputfile
             # calculate hash from command line options and dotdata
             m = hashlib.md5()
             m.update(dotdata + "".join(sys.argv))
@@ -2996,7 +3001,7 @@ def main(run_as_module=False, dotdata=None, options=None):
         log.debug('Found d2toptions attribute in graph: %s', extraoptions[0])
         if run_as_module:
             parser = create_options_parser()
-        (options, args) = parser.parse_args(extraoptions[0].split(), options)
+        options = parser.parse_args(extraoptions[0].split(), options)
         if options.debug and nodebug:
             # initalize log handler
             if not run_as_module:
@@ -3068,8 +3073,9 @@ def convert_graph(dotsource, **kwargs):
 
     """
     parser = create_options_parser()
-    (options, args) = parser.parse_args([])
-    if kwargs.get('preproc'):
+
+    options = parser.parse_args([])
+    if kwargs.get('preproc', None):
         kwargs['texpreproc'] = kwargs['preproc']
         del kwargs['preproc']
 
