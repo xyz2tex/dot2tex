@@ -34,7 +34,6 @@ __license__ = 'MIT'
 
 from itertools import izip
 import argparse
-from optparse import OptionParser
 import os.path as path
 import sys, tempfile, os, re
 import logging
@@ -627,8 +626,8 @@ class DotConvBase(object):
             x, y = node.attr.get('pos', '').split(',')
 
             # width and height are in inches. Convert to bp units
-            w = float(node.attr['width']) * INCH2BP
-            h = float(node.attr['height']) * INCH2BP
+            #w = float(node.attr['width']) * INCH2BP
+            #h = float(node.attr['height']) * INCH2BP
 
             s += self.output_node_comment(node)
             s += self.start_node(node)
@@ -1764,7 +1763,7 @@ class Dot2PGFConv(DotConvBase):
             c, x, y, align, w, text, valign = drawop
         else:
             c, x, y, align, w, text = drawop
-            valign = ""
+            #valign = ""
         styles = []
         if align == "-1":
             alignstr = 'right'  # left aligned
@@ -1787,7 +1786,7 @@ class Dot2PGFConv(DotConvBase):
     def draw_bezier(self, drawop, style=None):
         s = ""
         c, points = drawop
-        arrowstyle = '--'
+        #arrowstyle = '--'
 
         pp = []
         for point in points:
@@ -2288,10 +2287,10 @@ class Dot2TikZConv(Dot2PGFConv):
         if edgeoptions:
             s += "\\begin{scope}[%s]\n" % edgeoptions
         for edge in self.edges:
-            general_draw_string = getattr(edge, '_draw_', "")
+            #general_draw_string = getattr(edge, '_draw_', "")
             label_string = getattr(edge, '_ldraw_', "")
-            head_arrow_string = getattr(edge, '_hdraw_', "")
-            tail_arrow_string = getattr(edge, '_tdraw_', "")
+            #head_arrow_string = getattr(edge, '_hdraw_', "")
+            #tail_arrow_string = getattr(edge, '_tdraw_', "")
             tail_label_string = getattr(edge, '_tldraw_', "")
             head_label_string = getattr(edge, '_hldraw_', "")
             topath = getattr(edge, 'topath', None)
@@ -2541,7 +2540,7 @@ class Dot2PSTricksNConv(Dot2PSTricksConv):
         s = ""
         edges = self.get_edge_points(edge)
         for arrowstyle, points in edges:
-            styles = []
+            #styles = []
             psarrow = getattr(edge, 'psarrow', '')
 
             if len(psarrow) == 0:
@@ -2692,7 +2691,7 @@ class TeXDimProc:
             command = 'latex -interaction=nonstopmode %s' % self.tempfilename
         log.debug('Running command: %s' % command)
         sres = os.popen(command)
-        resdata = sres.read()
+        #resdata = sres.read()
         #log.debug('resdata: %s' % resdata)
         errcode = sres.close()
         log.debug('errcode: %s' % errcode)
