@@ -2704,7 +2704,7 @@ def create_options_parser():
     )
     parser.add_argument(
         '-o', '--output', dest='outputfile', action='store',
-        metavar='FILE', default='', help='Write output to FILE'
+        metavar='FILE', default=None, help='Write output to FILE'
     )
     parser.add_argument(
         '-e', '--encoding', dest='encoding', action='store',
@@ -2910,6 +2910,20 @@ def main(run_as_module=False, dotdata=None, options=None):
             log.info('Data read from standard input')
             dotdata = sys.stdin.readlines()
         else:
+            # exit if target file newer than dot source
+            inputfile = options.inputfile
+            outputfile = options.outputfile
+            if outputfile is not None:
+                input_exists = os.access(inputfile, os.F_OK)
+                output_exists = os.access(outputfile, os.F_OK)
+                
+                if input_exists and output_exists:
+                    input_modified_time = os.stat(inputfile)[8]
+                    output_modified_time = os.stat(outputfile)[8]
+                    
+                    if input_modified_time < output_modified_time:
+                        print('skip: input file older than output file.')
+                        sys.exit(0)
             try:
                 log.debug('Attempting to read data from %s', options.inputfile)
                 dotdata = load_dot_file(options.inputfile)
