@@ -1829,7 +1829,7 @@ class Dot2PGFConv(DotConvBase):
             stylestr = ",".join(styles)
             topath = getattr(edge, 'topath', None)
 
-            pstrs = ["%s .. controls %s and %s " % p for p in nsplit(pp, 3)]
+            pstrs = ["%s .. controls %s and %s " % x for x in nsplit(pp, 3)]
             extra = ""
             if self.options.get('tikzedgelabels') or topath:
                 edgelabel = self.get_label(edge)
@@ -2314,7 +2314,7 @@ class Dot2TikZConv(Dot2PGFConv):
                     dst = "%s.%s" % (dst, dst_anchor)
             topath = edge.attr.get('topath')
 
-            pstrs = ["%s .. controls %s and %s " % p for p in nsplit(pp, 3)]
+            pstrs = ["%s .. controls %s and %s " % x for x in nsplit(pp, 3)]
             pstrs[0] = "(%s) ..controls %s and %s " % (src, pp[1], pp[2])
             extra = ""
             if self.options.get('tikzedgelabels') or topath:
