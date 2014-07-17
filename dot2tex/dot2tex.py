@@ -33,6 +33,7 @@ __version__ = '2.9.0'
 __license__ = 'MIT'
 
 from itertools import izip
+import argparse
 from optparse import OptionParser
 import os.path as path
 import sys, tempfile, os, re
@@ -2671,89 +2672,157 @@ class TeXDimProc:
         self.texdimlist = [(float(i[1]) * c, float(i[2]) * c, float(i[3]) * c) for i in texdimdata]
         self.texdims = dict(zip(self.snippets_id, self.texdimlist))
 
-
 def create_options_parser():
-    """Create and and return an options parser"""
-    usage = "Usage: %prog [options] <files>"
-    parser = OptionParser(usage)
-    parser.add_option("-f", "--format",
-                      action="store", dest="format",
-                      choices=('pstricks', 'pgf', 'pst', 'tikz', 'psn'),
-                      help="Set output format to 'v' (pstricks, pgf, pst, tikz, psn) ", metavar="v")
-    parser.add_option('-t', '--texmode', dest='texmode', default='verbatim',
-                      choices=('math', 'verbatim', 'raw'),
-                      help="Set text mode (verbatim, math, raw).")
-    parser.add_option('-d', '--duplicate', dest='duplicate', action='store_true',
-                      default=False, help='Try to duplicate Graphviz graphics')
-    parser.add_option('-s', '--straightedges', dest='straightedges', action='store_true',
-                      default=False, help='Force straight edges')
-    parser.add_option('--template', dest='templatefile', action='store',
-                      metavar="FILE")
-    parser.add_option('-o', '--output', dest='outputfile', action='store',
-                      metavar="FILE", default='', help="Write output to FILE")
-    parser.add_option('-e', '--encoding', dest='encoding', action='store',
-                      choices=('utf8', 'latin1'), default=DEFAULT_TEXTENCODING,
-                      help="Set text encoding to utf8 or latin1")
-    parser.add_option('-V', '--version', dest='printversion', action='store_true',
-                      help="Print version information and exit", default=False),
-    parser.add_option('-w', '--switchdraworder', dest='switchdraworder',
-                      action="store_true", help="Switch draw order", default=False),
-    parser.add_option('-p', '-c', '--preview', '--crop', dest='crop', action='store_true',
-                      help="Use preview.sty to crop graph", default=False),
-    parser.add_option('--margin', dest='margin', action='store',
-                      help="Set preview margin", default="0pt"),
-    parser.add_option('--docpreamble', dest='docpreamble', action='store',
-                      help="Insert TeX code in document preamble", metavar="TEXCODE"),
-    parser.add_option('--figpreamble', dest='figpreamble', action='store',
-                      help="Insert TeX code in figure preamble", metavar="TEXCODE"),
-    parser.add_option('--figpostamble', dest='figpostamble', action='store',
-                      help="Insert TeX code in figure postamble", metavar="TEXCODE"),
-    parser.add_option('--graphstyle', dest='graphstyle', action='store',
-                      help="Insert graph style", metavar="STYLE"),
-    parser.add_option('--gvcols', dest='gvcols', action="store_true",
-                      default=False, help="Include gvcols.tex"),
-    parser.add_option('--figonly', dest='figonly', action="store_true",
-                      help="Output graph with no preamble", default=False)
-    parser.add_option('--codeonly', dest='codeonly', action="store_true",
-                      help="Output only drawing commands", default=False)
-    parser.add_option('--styleonly', dest='styleonly', action="store_true",
-                      help="Use style parameter only", default=False)
-    parser.add_option('--debug', dest='debug', action="store_true",
-                      help="Show additional debugging information", default=False)
-    parser.add_option('--preproc', dest='texpreproc', action="store_true",
-                      help='Preprocess graph through TeX', default=False)
-    parser.add_option('--alignstr', dest='alignstr', action='store')
-    parser.add_option('--valignmode', dest='valignmode', default='center',
-                      choices=('center', 'dot'),
-                      help="Set vertical alginment mode  (center, dot).")
-    parser.add_option('--nominsize', dest='nominsize', action="store_true",
-                      help="No minimum node sizes", default=False)
-    parser.add_option('--usepdflatex', dest='usepdflatex', action="store_true",
-                      help="Use PDFLaTeX for preprocessing", default=False)
-    parser.add_option('--tikzedgelabels', dest='tikzedgelabels', action="store_true",
-                      help="Let TikZ place edge labels", default=False)
-    parser.add_option('--nodeoptions', dest='nodeoptions', action='store',
-                      help="Set options for nodes", metavar="OPTIONS"),
-    parser.add_option('--edgeoptions', dest='edgeoptions', action='store',
-                      help="Set options for edges", metavar="OPTIONS"),
-    parser.add_option('--runtests', dest='runtests',
-                      help="Run testes", action="store_true", default=False)
-
-    parser.add_option("--prog", action="store", dest="prog", default='dot',
-                      choices=('dot', 'neato', 'circo', 'fdp', 'twopi'),
-                      help="Use v to process the graph", metavar="v")
-    parser.add_option("--progoptions", action="store", dest="progoptions",
-                      default="", help="Pass options to graph layout engine", metavar="OPTIONS")
-    parser.add_option('--autosize', dest='autosize',
-                      help="Preprocess graph and then run Graphviz", action="store_true", default=False)
-
-    parser.add_option('--cache', dest='cache', action='store_true', default=False)
-    parser.add_option('--pgf118', dest='pgf118', action='store_true',
-                      help="Generate code compatible with PGF 1.18", default=False)
-    parser.add_option('--pgf210', dest='pgf210', action='store_true',
-                      help="Generate code compatible with PGF 2.10", default=False)
+    """Create and and return an options parser.
+    """
+    description = 'Convert dot files to PGF/TikZ graphics' +\
+        ' for inclusion in LaTeX.'
+    parser = argparse.ArgumentParser(prog='dot2tex', description=description)
+    
+    parser.add_argument(
+        '-f', '--format', action='store', dest='format',
+        choices=('pstricks', 'pgf', 'pst', 'tikz', 'psn'),
+        help="Set output format to 'v' (pstricks, pgf, pst, tikz, psn) ",
+        metavar="v"
+    )
+    parser.add_argument(
+        '-t', '--texmode', dest='texmode', default='verbatim',
+        choices=('math', 'verbatim', 'raw'),
+        help='Set text mode (verbatim, math, raw).'
+    )
+    parser.add_argument(
+        '-d', '--duplicate', dest='duplicate', action='store_true',
+        default=False, help='Try to duplicate Graphviz graphics'
+    )
+    parser.add_argument(
+        '-s', '--straightedges', dest='straightedges', action='store_true',
+        default=False, help='Force straight edges'
+    )
+    parser.add_argument(
+        '--template', dest='templatefile', action='store',
+        metavar='FILE'
+    )
+    parser.add_argument(
+        '-o', '--output', dest='outputfile', action='store',
+        metavar='FILE', default='', help='Write output to FILE'
+    )
+    parser.add_argument(
+        '-e', '--encoding', dest='encoding', action='store',
+        choices=('utf8', 'latin1'), default=DEFAULT_TEXTENCODING,
+        help='Set text encoding to utf8 or latin1'
+    )
+    parser.add_argument(
+        '-V', '--version', dest='printversion', action='store_true',
+        help='Print version information and exit', default=False
+    )
+    parser.add_argument(
+        '-w', '--switchdraworder', dest='switchdraworder',
+        action='store_true', help='Switch draw order', default=False
+    ),
+    parser.add_argument(
+        '-p', '-c', '--preview', '--crop', dest='crop', action='store_true',
+        help='Use preview.sty to crop graph', default=False
+    )
+    parser.add_argument(
+        '--margin', dest='margin', action='store',
+        help='Set preview margin', default='0pt'
+    )
+    parser.add_argument(
+        '--docpreamble', dest='docpreamble', action='store',
+        help='Insert TeX code in document preamble', metavar='TEXCODE'
+    )
+    parser.add_argument(
+        '--figpreamble', dest='figpreamble', action='store',
+        help='Insert TeX code in figure preamble', metavar='TEXCODE'
+    )
+    parser.add_argument(
+        '--figpostamble', dest='figpostamble', action='store',
+        help='Insert TeX code in figure postamble', metavar='TEXCODE'
+    )
+    parser.add_argument(
+        '--graphstyle', dest='graphstyle', action='store',
+        help='Insert graph style', metavar='STYLE'
+    )
+    parser.add_argument(
+        '--gvcols', dest='gvcols', action='store_true',
+        default=False, help='Include gvcols.tex'
+    )
+    parser.add_argument(
+        '--figonly', dest='figonly', action='store_true',
+        help='Output graph with no preamble', default=False
+    )
+    parser.add_argument(
+        '--codeonly', dest='codeonly', action='store_true',
+        help='Output only drawing commands', default=False
+    )
+    parser.add_argument(
+        '--styleonly', dest='styleonly', action='store_true',
+        help='Use style parameter only', default=False)
+    parser.add_argument(
+        '--debug', dest='debug', action='store_true',
+        help='Show additional debugging information', default=False
+    )
+    parser.add_argument(
+        '--preproc', dest='texpreproc', action='store_true',
+        help='Preprocess graph through TeX', default=False
+    )
+    parser.add_argument('--alignstr', dest='alignstr', action='store')
+    parser.add_argument(
+        '--valignmode', dest='valignmode', default='center',
+        choices=('center', 'dot'),
+        help='Set vertical alginment mode  (center, dot).'
+    )
+    parser.add_argument(
+        '--nominsize', dest='nominsize', action='store_true',
+        help='No minimum node sizes', default=False
+    )
+    parser.add_argument(
+        '--usepdflatex', dest='usepdflatex', action='store_true',
+        help='Use PDFLaTeX for preprocessing', default=False
+    )
+    parser.add_argument(
+        '--tikzedgelabels', dest='tikzedgelabels', action='store_true',
+        help='Let TikZ place edge labels', default=False
+    )
+    parser.add_argument(
+        '--nodeoptions', dest='nodeoptions', action='store',
+        help='Set options for nodes', metavar='OPTIONS'
+    )
+    parser.add_argument(
+        '--edgeoptions', dest='edgeoptions', action='store',
+        help='Set options for edges', metavar='OPTIONS'
+    )
+    parser.add_argument(
+        '--runtests', dest='runtests',
+        help="Run testes", action="store_true", default=False
+    )
+    parser.add_argument(
+        "--prog", action="store", dest="prog", default='dot',
+        choices=('dot', 'neato', 'circo', 'fdp', 'twopi'),
+        help='Use v to process the graph', metavar='v'
+    )
+    parser.add_argument(
+        '--progoptions', action='store', dest='progoptions',
+        default='', help='Pass options to graph layout engine',
+        metavar='OPTIONS'
+    )
+    parser.add_argument(
+        '--autosize', dest='autosize',
+        help='Preprocess graph and then run Graphviz',
+        action='store_true', default=False
+    )
+    parser.add_argument(
+        '--cache', dest='cache', action='store_true', default=False
+    )
+    parser.add_argument(
+        '--pgf118', dest='pgf118', action='store_true',
+        help='Generate code compatible with PGF 1.18', default=False
+    )
+    parser.add_argument(
+        '--pgf210', dest='pgf210', action='store_true',
+        help='Generate code compatible with PGF 2.10', default=False
+    )
     return parser
-
 
 def process_cmd_line():
     """Set up and parse command line options"""
