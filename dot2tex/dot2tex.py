@@ -1206,22 +1206,6 @@ class Dot2PSTricksConv(DotConvBase):
         DotConvBase.do_graph(self)
         self.body += '}\n'
 
-    def start_fig(self):
-        # get bounding box
-        bbstr = self.main_graph.bb
-        if bbstr:
-            bb = bbstr.split(',')
-        s = "\\begin{pspicture}[linewidth=1bp](%sbp,%sbp)(%sbp,%sbp)\n" % \
-            (smart_float(bb[0]), smart_float(bb[1]), smart_float(bb[2]), smart_float(bb[3]))
-        # Set line style to mitre
-        s += "  \pstVerb{2 setlinejoin} % set line join style to 'mitre'\n"
-        #return s
-        return ""
-
-    def end_fig(self):
-        #return '\end{pspicture}\n'
-        return ""
-
     def draw_ellipse(self, drawop, style=None):
         op, x, y, w, h = drawop
         s = ""
@@ -1595,17 +1579,6 @@ class Dot2PGFConv(DotConvBase):
             dashed='\pgfsetdash{{3pt}{3pt}}{0pt}',
             dotted='\pgfsetdash{{\pgflinewidth}{2pt}}{0pt}',
             bold='\pgfsetlinewidth{1.2pt}')
-
-    def start_fig(self):
-        # get bounding box
-        # get bounding box
-        s = ""
-
-        return s
-
-    def end_fig(self):
-        #return '\end{tikzpicture}'
-        return ""
 
     def start_node(self, node):
         # Todo: Should find a more elgant solution
