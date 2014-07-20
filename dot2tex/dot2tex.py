@@ -2706,6 +2706,10 @@ def create_options_parser():
         metavar='FILE', default=None, help='Write output to FILE'
     )
     parser.add_argument(
+        '--force', dest='force', action='store_true', default=False,
+        help='Force recompilation, even if output file is newer than input file'
+    )
+    parser.add_argument(
         '-e', '--encoding', dest='encoding', action='store',
         choices=('utf8', 'latin1'), default=DEFAULT_TEXTENCODING,
         help='Set text encoding to utf8 or latin1'
@@ -2912,7 +2916,8 @@ def main(run_as_module=False, dotdata=None, options=None):
             # exit if target file newer than dot source
             inputfile = options.inputfile
             outputfile = options.outputfile
-            if outputfile is not None:
+            
+            if outputfile is not None and options.force is False:
                 input_exists = os.access(inputfile, os.F_OK)
                 output_exists = os.access(outputfile, os.F_OK)
                 
