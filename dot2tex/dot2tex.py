@@ -187,7 +187,7 @@ def create_xdot(dotdata, prog='dot', options=''):
     if progs is None:
         log.error('Could not locate Graphviz binaries')
         return None
-    if not progs.has_key(prog):
+    if not prog in progs:
         log.error('Invalid prog=%s', prog)
         raise NameError('The %s program is not recognized. Valid values are %s' % (prog, progs.keys()))
 
@@ -243,6 +243,7 @@ def parse_drawstring(drawstring):
     """Parse drawstring and returns a list of draw operations"""
     # The draw string parser is a bit clumsy and slow
     def doeE(c, s):
+        """Parse ellipse"""
         # E x0 y0 w h  Filled ellipse ((x-x0)/w)^2 + ((y-y0)/h)^2 = 1
         # e x0 y0 w h  Unfilled ellipse ((x-x0)/w)^2 + ((y-y0)/h)^2 = 1
         tokens = s.split()[0:4]
@@ -253,6 +254,7 @@ def parse_drawstring(drawstring):
         return didx, (c, points[0], points[1], points[2], points[3])
 
     def doPLB(c, s):
+        """Parse polygon, polyline og B-spline"""
         # P n x1 y1 ... xn yn  Filled polygon using the given n points
         # p n x1 y1 ... xn yn  Unfilled polygon using the given n points
         # L n x1 y1 ... xn yn  Polyline using the given n points
@@ -266,6 +268,7 @@ def parse_drawstring(drawstring):
         return didx, (c, npoints)
 
     def doCS(c, s):
+        """Parse fill or pen color"""
         # C n -c1c2...cn  Set fill color.
         # c n -c1c2...cn  Set pen color.
         # Graphviz uses the following color formats:
@@ -338,9 +341,10 @@ def parse_drawstring(drawstring):
     return cmdlist, stat
 
 
-def get_graphlist(gg, l=[]):
+def get_graphlist(gg, l=None):
     """Traverse a graph with subgraphs and return them as a list"""
     if not l:
+        l = []
         outer = True
     else:
         outer = False
@@ -357,9 +361,10 @@ class EndOfGraphElement(object):
         pass
 
 
-def get_all_graph_elements(graph, l=[]):
+def get_all_graph_elements(graph, l=None):
     """Return all nodes and edges, including elements in subgraphs"""
     if not l:
+        l = []
         outer = True
         l.append(graph)
     else:
@@ -1206,7 +1211,6 @@ class Dot2PSTricksConv(DotConvBase):
         bbstr = self.main_graph.bb
         if bbstr:
             bb = bbstr.split(',')
-            #fillcolor=black,
         s = "\\begin{pspicture}[linewidth=1bp](%sbp,%sbp)(%sbp,%sbp)\n" % \
             (smart_float(bb[0]), smart_float(bb[1]), smart_float(bb[2]), smart_float(bb[3]))
         # Set line style to mitre
@@ -1326,12 +1330,12 @@ class Dot2PSTricksConv(DotConvBase):
             return ""
 
     def filter_styles(self, style):
-        fstyles = []
+        filtered_styles = []
         for item in style.split(','):
             keyval = item.strip()
             if keyval.find('setlinewidth') < 0:
-                fstyles.append(keyval)
-        return ', '.join(fstyles)
+                filtered_styles.append(keyval)
+        return ', '.join(filtered_styles)
 
     def start_node(self, node):
         self.pencolor = ""
@@ -1384,7 +1388,7 @@ class Dot2PSTricksConv(DotConvBase):
             if arrowstyle:
                 styles.append('arrows=%s' % arrowstyle)
             if edgestyle:
-                edgestyles = [self.styles.get(key.strip(), key.strip()) \
+                edgestyles = [self.styles.get(key.strip(), key.strip())
                               for key in edgestyle.split(',') if key]
                 styles.extend(edgestyles)
             if styles:
@@ -1702,12 +1706,12 @@ class Dot2PGFConv(DotConvBase):
             return ""
 
     def filter_styles(self, style):
-        fstyles = []
+        filtered_styles = []
         for item in style.split(','):
             keyval = item.strip()
             if keyval.find('setlinewidth') < 0 and not keyval == 'filled':
-                fstyles.append(keyval)
-        return ', '.join(fstyles)
+                filtered_styles.append(keyval)
+        return ', '.join(filtered_styles)
 
     def draw_ellipse(self, drawop, style=None):
         op, x, y, w, h = drawop
@@ -2641,9 +2645,9 @@ class TeXDimProc:
         self.dimext_re = re.compile(dimext, re.MULTILINE | re.VERBOSE)
         pass
 
-    def add_snippet(self, id, code):
+    def add_snippet(self, snippet_id, code):
         """A a snippet of code to be processed"""
-        self.snippets_id.append(id)
+        self.snippets_id.append(snippet_id)
         self.snippets_code.append(code)
 
     def process(self):
@@ -2909,7 +2913,6 @@ def main(run_as_module=False, dotdata=None, options=None):
                 raise
             else:
                 sys.exit(1)
-
 
     # I'm not quite sure why this is necessary, but some files
     # produces data with line endings that confuses pydot/pyparser.
