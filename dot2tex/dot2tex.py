@@ -262,7 +262,7 @@ def parse_drawstring(drawstring):
         # b n x1 y1 ... xn yn  Filled B-spline using the given n control points
         tokens = s.split()
         n = int(tokens[0])
-        points = map(int, tokens[1:n * 2 + 1])
+        points = map(float, tokens[1:n * 2 + 1])
         didx = sum(map(len, tokens[1:n * 2 + 1])) + n * 2 + 2
         npoints = nsplit(points, 2)
         return didx, (c, npoints)
