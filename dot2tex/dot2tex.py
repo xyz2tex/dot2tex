@@ -249,7 +249,7 @@ def parse_drawstring(drawstring):
         tokens = s.split()[0:4]
         if not tokens:
             return None
-        points = map(int, tokens)
+        points = map(float, tokens)
         didx = sum(map(len, tokens)) + len(points) + 1
         return didx, (c, points[0], points[1], points[2], points[3])
 
