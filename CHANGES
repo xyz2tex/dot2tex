@@ -3,6 +3,14 @@ dot2tex change log
 
 Here you can see the full list of changes between each dot2tex release.
 
+2.9.1
+-----
+
+Not released yet.
+
+- All xdot coordinates are now parsed as float (issue #31).
+- Added the svgnames option when loading xcolor in the default templates (issue #25).
+
 2.9.0
 -----
 
