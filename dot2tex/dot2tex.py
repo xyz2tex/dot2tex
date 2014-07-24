@@ -2870,7 +2870,7 @@ def main(run_as_module=False, dotdata=None, options=None):
 
     s = ""
     # look for a line containing an \input
-    m = re.search(r"^\s*\\input\{(?P<filename>.+?)\}\s*$",
+    m = re.search(r"^\s*\\input\{(?P<filename>.+?)\}",
                   "".join(dotdata), re.MULTILINE)
     if m:
         filename = m.group(1)
