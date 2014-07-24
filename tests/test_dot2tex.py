@@ -104,7 +104,7 @@ class BuggyGraphTests(unittest.TestCase):
                                  figonly=True, format='tikz')
         self.failUnless('$1$' in source)
 
-    #http://code.google.com/p/dot2tex/issues/detail?id=16
+    # http://code.google.com/p/dot2tex/issues/detail?id=16
     def test_name_with_parantheses(self):
         testgraph = """
         digraph { { "F(K)/R-1"}}
@@ -223,7 +223,7 @@ class GraphvizInterfaceTests(unittest.TestCase):
     def test_invalid_program(self):
         """Invoking create_xdot with an invalid prog parameter should raise an exception"""
         from dot2tex.dot2tex import create_xdot
-        #xdot_data = create_xdot(testgraph, prog="dummy")
+        # xdot_data = create_xdot(testgraph, prog="dummy")
         self.assertRaises(NameError, create_xdot, testgraph, prog="dummy")
 
 
@@ -380,7 +380,6 @@ class TestBugs(unittest.TestCase):
         self.assertTrue('TAILLABEL' in code)
 
 
-
 class TestNumberFormatting(unittest.TestCase):
     def test_numbers(self):
         self.assertEqual("2.0", smart_float(2))
@@ -403,14 +402,15 @@ class PGF210CompatibilityTest(unittest.TestCase):
     def test_tikz210option(self):
         source = dot2tex.dot2tex(testgraph, debug=True, format='tikz', pgf210=True)
         self.failUnless(source.find("dot2tex template for PGF 2.10") >= 0)
-        #     self.failIf(source.find("\usetikzlibrary") >= 0)
-        #     self.failIf(source.find("line join=bevel") >= 0)
+        # self.failIf(source.find("\usetikzlibrary") >= 0)
+        # self.failIf(source.find("line join=bevel") >= 0)
         #
         # def test_nopgf210option(self):
         #     source = dot2tex.dot2tex(testgraph, debug=True, pgf210=False)
         #     self.failIf(source.find("\usepackage{pgflibrarysnakes}") >= 0)
         #     self.failUnless(source.find("\usetikzlibrary") >= 0)
         #     self.failUnless(source.find("line join=bevel") >= 0)
+
 
 class HeadAndTailLabelTest(unittest.TestCase):
     """Tests for https://github.com/kjellmf/dot2tex/issues/12"""
@@ -431,6 +431,49 @@ class HeadAndTailLabelTest(unittest.TestCase):
     def test_tail_label_tikz(self):
         source = dot2tex.dot2tex(self.test_graph, autosize=True, format="tikz")
         self.failUnless("TAILLABEL" in source)
+
+
+class IncludeTest(unittest.TestCase):
+    """Tests for issue #28 https://github.com/kjellmf/dot2tex/issues/28"""
+
+    def test_include_1(self):
+        test_graph = """
+
+    \input{dummyfilename.dot}
+
+    """""
+        self.assertRaises(IOError, dot2tex.dot2tex, test_graph)
+
+    def test_include_2(self):
+        test_graph = """
+
+    \input{dummyfilename.dot} % comment
+
+    """""
+        self.assertRaises(IOError, dot2tex.dot2tex, test_graph)
+
+    def test_include_3(self):
+        test_graph = """
+
+
+    \input{dummyfilename.dot} // comment
+
+    """""
+        self.assertRaises(IOError, dot2tex.dot2tex, test_graph)
+
+    def test_include_4(self):
+        test_graph = """
+
+
+    digraph {
+            "objects" [label="sdfsdf", texlbl="\input{dymmyfilename.dot}"];
+        }
+
+    """""
+        try:
+            code = dot2tex.dot2tex(test_graph)
+        except IOError:
+            self.fail("Tried to load external dot file")
 
 if __name__ == '__main__':
     unittest.main()
