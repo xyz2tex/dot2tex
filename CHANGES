@@ -8,6 +8,9 @@ Here you can see the full list of changes between each dot2tex release.
 
 Not released yet.
 
+- Preprocessing head and tail labels now works in the ``duplicate`` mode.
+- Added support for preprocessing head and tail labels (pstricks).
+- Relaxed syntax for including external dot files. Comments are now allowed after ``\input{}``.
 - All xdot coordinates are now parsed as float (issue #31).
 - Added the svgnames option when loading xcolor in the default templates (issue #25).
 
