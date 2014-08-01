@@ -586,6 +586,10 @@ class DotConvBase(object):
                     # force centered alignment
                     drawop[3] = '0'
                     if not use_drawstring_pos:
+                         # Why ever use info from drawstring for labels positions?
+                         # It seems to be never used in code anyway.
+                         # Also, code of callers seems to be possibly rather easyly modified
+                         # for always use info from attrs.
                         if texlbl_name == "tailtexlbl":
                             pos = drawobj.attr.get('tail_lp', None) or \
                               drawobj.attr.get('pos', None)
