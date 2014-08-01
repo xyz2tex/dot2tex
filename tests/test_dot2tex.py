@@ -406,7 +406,7 @@ class PGF210CompatibilityTest(unittest.TestCase):
         # self.failIf(source.find("line join=bevel") >= 0)
         #
         # def test_nopgf210option(self):
-        #     source = dot2tex.dot2tex(testgraph, debug=True, pgf210=False)
+        # source = dot2tex.dot2tex(testgraph, debug=True, pgf210=False)
         #     self.failIf(source.find("\usepackage{pgflibrarysnakes}") >= 0)
         #     self.failUnless(source.find("\usetikzlibrary") >= 0)
         #     self.failUnless(source.find("line join=bevel") >= 0)
@@ -474,6 +474,38 @@ class IncludeTest(unittest.TestCase):
             code = dot2tex.dot2tex(test_graph)
         except IOError:
             self.fail("Tried to load external dot file")
+
+
+class Issue23Tests(unittest.TestCase):
+    # https://github.com/kjellmf/dot2tex/issues/23
+
+    def test_multi_line_preamble(self):
+        test_graph = """
+        digraph
+            {
+              d2tdocpreamble = "
+              % My preamble
+              \usepackage{amssymb}";
+              {
+                A -> B -> C;
+              }
+            }
+        """
+        code = dot2tex.dot2tex(test_graph, format="tikz")
+        self.assertIn(r"% My preamble", code)
+
+    def test_single_line_preamble(self):
+        test_graph = """
+        digraph
+            {
+              d2tdocpreamble = "\usepackage{amssymb}  \usetikzlibrary{arrows, automata}";
+              {
+                A -> B -> C;
+              }
+            }
+        """
+        code = dot2tex.dot2tex(test_graph, format="tikz")
+        self.assertIn(r"\usetikzlibrary{arrows, automata}", code)
 
 if __name__ == '__main__':
     unittest.main()
