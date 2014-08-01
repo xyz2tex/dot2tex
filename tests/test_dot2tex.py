@@ -439,6 +439,33 @@ class HeadAndTailLabelTest(unittest.TestCase):
     def test_tail_label_pstricks(self):
         source = dot2tex.dot2tex(self.test_graph, autosize=True, format="pstricks")
         self.failUnless("TAILLABEL" in source)
+        
+    def test_head_label_pgf_duplicate(self):
+        source = dot2tex.dot2tex(self.test_graph, autosize=True, format="pgf", duplicate=True)
+        self.failUnless("HEADLABEL" in source)
+        
+    def test_head_label_tikz_duplicate(self):
+        source = dot2tex.dot2tex(self.test_graph, autosize=True, format="tikz", duplicate=True)
+        self.failUnless("HEADLABEL" in source)
+        
+    def test_head_label_pstricks_duplicate(self):
+        source = dot2tex.dot2tex(self.test_graph, autosize=True, format="pstricks", duplicate=True)
+        self.failUnless("HEADLABEL" in source)
+        
+    def test_tail_label_pgf_duplicate(self):
+        source = dot2tex.dot2tex(self.test_graph, autosize=True, format="pgf", duplicate=True)
+        self.failUnless("TAILLABEL" in source)
+        
+    def test_tail_label_tikz_duplicate(self):
+        source = dot2tex.dot2tex(self.test_graph, autosize=True, format="tikz", duplicate=True)
+        self.failUnless("TAILLABEL" in source)
+        
+    def test_tail_label_pstricks_duplicate(self):
+        source = dot2tex.dot2tex(self.test_graph, autosize=True, format="pstricks", duplicate=True)
+        self.failUnless("TAILLABEL" in source)
+
+
+
 
 
 class IncludeTest(unittest.TestCase):
