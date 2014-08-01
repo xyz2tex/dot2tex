@@ -706,7 +706,7 @@ class DotConvBase(object):
             # Note that the order of the draw strings should be the same
             # as in the xdot output.
             drawstring = general_draw_string + " " + head_arrow_string + " " + tail_arrow_string \
-                         + " " + label_string + " " + tail_label_string + " " + head_label_string
+                         + " " + label_string
             drawop, stat = parse_drawstring(drawstring)
             if not drawstring.strip():
                 continue
@@ -714,10 +714,14 @@ class DotConvBase(object):
             if self.options.get('duplicate', False):
                 s += self.start_edge()
                 s += self.do_draw_op(drawop, edge, stat)
+                s += self.do_drawstring(tail_label_string, edge, "tailtexlbl")
+                s += self.do_drawstring(head_label_string, edge, "headtexlbl")
                 s += self.end_edge()
             else:
                 s += self.draw_edge(edge)
-                s += self.do_drawstring(label_string + " " + tail_label_string + " " + head_label_string, edge)
+                s += self.do_drawstring(label_string, edge)
+                s += self.do_drawstring(tail_label_string, edge, "tailtexlbl")
+                s += self.do_drawstring(head_label_string, edge, "headtexlbl")
         self.body += s
 
     def do_graph(self):
@@ -1788,7 +1792,7 @@ class Dot2PGFConv(DotConvBase):
             # Note that the order of the draw strings should be the same
             # as in the xdot output.
             drawstring = general_draw_string + " " + head_arrow_string + " " + tail_arrow_string \
-                         + " " + label_string + " " + tail_label_string + " " + head_label_string
+                         + " " + label_string
             draw_operations, stat = parse_drawstring(drawstring)
             if not drawstring.strip():
                 continue
@@ -1796,6 +1800,8 @@ class Dot2PGFConv(DotConvBase):
             if self.options.get('duplicate', False):
                 s += self.start_edge()
                 s += self.do_draw_op(draw_operations, edge, stat)
+                s += self.do_drawstring(tail_label_string, edge, "tailtexlbl")
+                s += self.do_drawstring(head_label_string, edge, "headtexlbl")
                 s += self.end_edge()
             else:
                 topath = getattr(edge, 'topath', None)
