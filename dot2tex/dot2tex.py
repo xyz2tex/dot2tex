@@ -587,14 +587,14 @@ class DotConvBase(object):
                     drawop[3] = '0'
                     if not use_drawstring_pos:
                         if texlbl_name == "tailtexlbl":
-                            pos = drawobj.attr.get('tail_lp', None) or \
-                              drawobj.attr.get('pos', None)
+                            pos = drawobj.attr.get('tail_lp') or \
+                              drawobj.attr.get('pos')
                         elif texlbl_name == "headtexlbl":
-                            pos = drawobj.attr.get('head_lp', None) or \
-                              drawobj.attr.get('pos', None)
+                            pos = drawobj.attr.get('head_lp') or \
+                              drawobj.attr.get('pos')
                         else:
-                            pos = drawobj.attr.get('lp', None) or \
-                                  drawobj.attr.get('pos', None)
+                            pos = drawobj.attr.get('lp') or \
+                                  drawobj.attr.get('pos')
 
                         if pos:
                             coord = pos.split(',')
@@ -602,7 +602,7 @@ class DotConvBase(object):
                                 drawop[1] = coord[0]
                                 drawop[2] = coord[1]
                             pass
-                lblstyle = drawobj.attr.get('lblstyle', None)
+                lblstyle = drawobj.attr.get('lblstyle')
                 exstyle = drawobj.attr.get('exstyle', '')
                 if exstyle:
                     if lblstyle:
@@ -948,7 +948,7 @@ class DotConvBase(object):
 
     def get_margins(self, element):
         """Return element margins"""
-        margins = element.attr.get('margin', None)
+        margins = element.attr.get('margin')
 
         if margins:
             margins = margins.split(',')
@@ -1030,7 +1030,7 @@ class DotConvBase(object):
             usededges[name] = edge
 
         for graph in self.main_graph.allgraphs:
-            if not graph.attr.get('label', None) and not graph.attr.get('texlbl', None):
+            if not graph.attr.get('label') and not graph.attr.get('texlbl'):
                 continue
             # Make sure that the name is unique
             name = graph.name + str(counter)
@@ -2183,7 +2183,7 @@ class Dot2TikZConv(Dot2PGFConv):
 
     def do_nodes(self):
         s = ""
-        nodeoptions = self.options.get('nodeoptions', None)
+        nodeoptions = self.options.get('nodeoptions')
         if nodeoptions:
             s += "\\begin{scope}[%s]\n" % nodeoptions
         for node in self.nodes:
@@ -2266,7 +2266,7 @@ class Dot2TikZConv(Dot2PGFConv):
 
     def do_edges(self):
         s = ""
-        edgeoptions = self.options.get('edgeoptions', None)
+        edgeoptions = self.options.get('edgeoptions')
         if edgeoptions:
             s += "\\begin{scope}[%s]\n" % edgeoptions
         for edge in self.edges:
@@ -2336,7 +2336,7 @@ class Dot2TikZConv(Dot2PGFConv):
                 dst_anchor = self.compass_map.get(edge.dst_port.split(':')[-1], '')
                 if dst_anchor:
                     dst = "%s.%s" % (dst, dst_anchor)
-            topath = edge.attr.get('topath', None)
+            topath = edge.attr.get('topath')
 
             pstrs = ["%s .. controls %s and %s " % p for p in nsplit(pp, 3)]
             pstrs[0] = "(%s) ..controls %s and %s " % (src, pp[1], pp[2])
@@ -2492,7 +2492,7 @@ class Dot2PSTricksNConv(Dot2PSTricksConv):
                 if style == "bold":
                     psshadeoption = "linewidth=2pt," + psshadeoption
 
-            pos = getattr(node, 'pos', None)
+            pos = getattr(node, 'pos')
             if not pos:
                 continue
             x, y = pos.split(',')
@@ -3025,7 +3025,7 @@ def convert_graph(dotsource, **kwargs):
     """
     parser = create_options_parser()
     (options, args) = parser.parse_args([])
-    if kwargs.get('preproc', None):
+    if kwargs.get('preproc'):
         kwargs['texpreproc'] = kwargs['preproc']
         del kwargs['preproc']
 
