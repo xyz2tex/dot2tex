@@ -401,7 +401,7 @@ class DotConvBase(object):
             self.template = options['template']
 
         self.options = options or {}
-        if options.get('texpreproc', False) or options.get('autosize', False):
+        if options.get('texpreproc') or options.get('autosize'):
             self.dopreproc = True
         else:
             self.dopreproc = False
@@ -534,7 +534,7 @@ class DotConvBase(object):
             style = getattr(drawobj, 'style', None)
             # styles are not passed to the draw operations in the
             # duplicate mode
-            if style and not self.options.get('duplicate', False):
+            if style and not self.options.get('duplicate'):
                 # map Graphviz styles to backend styles
                 style = self.filter_styles(style)
                 styles = [self.styles.get(key.strip(), key.strip())
@@ -711,7 +711,7 @@ class DotConvBase(object):
             if not drawstring.strip():
                 continue
             s += self.output_edge_comment(edge)
-            if self.options.get('duplicate', False):
+            if self.options.get('duplicate'):
                 s += self.start_edge()
                 s += self.do_draw_op(drawop, edge, stat)
                 s += self.do_drawstring(tail_label_string, edge, "tailtexlbl")
@@ -815,7 +815,7 @@ class DotConvBase(object):
         if True:
             self.nodes = list(main_graph.allnodes)
             self.edges = list(main_graph.alledges)
-            if not self.options.get('switchdraworder', False):
+            if not self.options.get('switchdraworder'):
                 self.do_edges()  # tmp
                 self.do_nodes()
             else:
@@ -827,13 +827,13 @@ class DotConvBase(object):
 
     def clean_template(self, template):
         """Remove preprocsection or outputsection"""
-        if not self.dopreproc and self.options.get('codeonly', False):
+        if not self.dopreproc and self.options.get('codeonly'):
             r = re.compile('<<startcodeonlysection>>(.*?)<<endcodeonlysection>>',
                            re.DOTALL | re.MULTILINE)
             m = r.search(template)
             if m:
                 return m.group(1).strip()
-        if not self.dopreproc and self.options.get('figonly', False):
+        if not self.dopreproc and self.options.get('figonly'):
             r = re.compile('<<start_figonlysection>>(.*?)<<end_figonlysection>>',
                            re.DOTALL | re.MULTILINE)
             m = r.search(template)
@@ -889,7 +889,7 @@ class DotConvBase(object):
         variables['<<margin>>'] = self.options.get('margin', '0pt')
         variables['<<startpreprocsection>>'] = variables['<<endpreprocsection>>'] = ''
         variables['<<startoutputsection>>'] = variables['<<endoutputsection>>'] = ''
-        if self.options.get('gvcols', False):
+        if self.options.get('gvcols'):
             variables['<<gvcols>>'] = "\input{gvcols.tex}"
         else:
             variables['<<gvcols>>'] = ""
@@ -1058,7 +1058,7 @@ To see what happened, run dot2tex with the --debug option.
                 continue
             node = item
             hp, dp, wt = pp.texdims[name]
-            if self.options.get('rawdim', False):
+            if self.options.get('rawdim'):
                 # use dimensions from preview.sty directly
                 node.attr['width'] = wt
                 node.attr['height'] = hp + dp
@@ -1071,7 +1071,7 @@ To see what happened, run dot2tex with the --debug option.
             ht = hp + dp
             minwidth = float(item.attr.get('width') or DEFAULT_NODE_WIDTH)
             minheight = float(item.attr.get('height') or DEFAULT_NODE_HEIGHT)
-            if self.options.get('nominsize', False):
+            if self.options.get('nominsize'):
                 width = wt + 2 * xmargin
                 height = ht + 2 * ymargin
             else:
@@ -1383,7 +1383,7 @@ class Dot2PSTricksConv(DotConvBase):
                 stylestr = ",".join(styles)
             else:
                 stylestr = ""
-            if not self.options.get('straightedges', False):
+            if not self.options.get('straightedges'):
                 s += "  \psbezier[%s]%s\n" % (stylestr, "".join(pp))
             else:
                 s += "  \psline[%s]%s%s\n" % (stylestr, pp[0], pp[-1])
@@ -1570,9 +1570,9 @@ class Dot2PGFConv(DotConvBase):
     def __init__(self, options=None):
         DotConvBase.__init__(self, options)
         if not self.template:
-            if options.get('pgf118', False):
+            if options.get('pgf118'):
                 self.template = PGF118_TEMPLATE
-            elif options.get('pgf210', False):
+            elif options.get('pgf210'):
                 self.template = PGF210_TEMPLATE
             else:
                 self.template = PGF_TEMPLATE
@@ -1797,7 +1797,7 @@ class Dot2PGFConv(DotConvBase):
             if not drawstring.strip():
                 continue
             s += self.output_edge_comment(edge)
-            if self.options.get('duplicate', False):
+            if self.options.get('duplicate'):
                 s += self.start_edge()
                 s += self.do_draw_op(draw_operations, edge, stat)
                 s += self.do_drawstring(tail_label_string, edge, "tailtexlbl")
@@ -1806,7 +1806,7 @@ class Dot2PGFConv(DotConvBase):
             else:
                 topath = getattr(edge, 'topath', None)
                 s += self.draw_edge(edge)
-                if not self.options.get('tikzedgelabels', False) and not topath:
+                if not self.options.get('tikzedgelabels') and not topath:
                     s += self.do_drawstring(label_string, edge)
                     s += self.do_drawstring(tail_label_string, edge, "tailtexlbl")
                     s += self.do_drawstring(head_label_string, edge, "headtexlbl")
@@ -1855,7 +1855,7 @@ class Dot2PGFConv(DotConvBase):
 
             pstrs = ["%s .. controls %s and %s " % p for p in nsplit(pp, 3)]
             extra = ""
-            if self.options.get('tikzedgelabels', False) or topath:
+            if self.options.get('tikzedgelabels') or topath:
                 edgelabel = self.get_label(edge)
                 #log.warning('label: %s', edgelabel)
                 lblstyle = getattr(edge, 'lblstyle', '')
@@ -1870,7 +1870,7 @@ class Dot2PGFConv(DotConvBase):
             if topath:
                 s += "  \draw [%s] %s to[%s]%s %s;\n" % (stylestr, src,
                                                          topath, extra, dst)
-            elif not self.options.get('straightedges', False):
+            elif not self.options.get('straightedges'):
                 s += "  \draw [%s] %s ..%s %s;\n" % (stylestr, " .. ".join(pstrs), extra, pp[-1])
             else:
                 s += "  \draw [%s] %s --%s %s;\n" % (stylestr, pp[0], extra, pp[-1])
@@ -1893,7 +1893,7 @@ class Dot2PGFConv(DotConvBase):
 
     def init_template_vars(self):
         DotConvBase.init_template_vars(self)
-        if self.options.get('crop', False):
+        if self.options.get('crop'):
             cropcode = "\usepackage[active,tightpage]{preview}\n" + \
                        "\PreviewEnvironment{tikzpicture}\n" + \
                        "\setlength\PreviewBorder{%s}" % self.options.get('margin', '0pt')
@@ -2109,9 +2109,9 @@ class Dot2TikZConv(Dot2PGFConv):
         options['switchdraworder'] = True
         options['flattengraph'] = True
         options['rawdim'] = True
-        if options.get('pgf118', False):
+        if options.get('pgf118'):
             self.template = TIKZ118_TEMPLATE
-        elif options.get('pgf210', False):
+        elif options.get('pgf210'):
             self.template = TIKZ210_TEMPLATE
         else:
             self.template = TIKZ_TEMPLATE
@@ -2278,7 +2278,7 @@ class Dot2TikZConv(Dot2PGFConv):
             head_label_string = getattr(edge, '_hldraw_', "")
             topath = getattr(edge, 'topath', None)
             s += self.draw_edge(edge)
-            if not self.options.get('tikzedgelabels', False) and not topath:
+            if not self.options.get('tikzedgelabels') and not topath:
                     s += self.do_drawstring(label_string, edge)
                     s += self.do_drawstring(tail_label_string, edge, "tailtexlbl")
                     s += self.do_drawstring(head_label_string, edge, "headtexlbl")
@@ -2341,7 +2341,7 @@ class Dot2TikZConv(Dot2PGFConv):
             pstrs = ["%s .. controls %s and %s " % p for p in nsplit(pp, 3)]
             pstrs[0] = "(%s) ..controls %s and %s " % (src, pp[1], pp[2])
             extra = ""
-            if self.options.get('tikzedgelabels', False) or topath:
+            if self.options.get('tikzedgelabels') or topath:
                 edgelabel = self.get_label(edge)
                 #log.warning('label: %s', edgelabel)
                 lblstyle = getattr(edge, 'lblstyle', '')
@@ -2361,7 +2361,7 @@ class Dot2TikZConv(Dot2PGFConv):
             if topath:
                 s += "  \draw [%s] (%s) to[%s]%s (%s);\n" % (stylestr, src,
                                                              topath, extra, dst)
-            elif not self.options.get('straightedges', False):
+            elif not self.options.get('straightedges'):
                 s += "  \draw [%s] %s ..%s (%s);\n" % (stylestr,
                                                        " .. ".join(pstrs), extra, dst)
             else:
@@ -2668,7 +2668,7 @@ class TeXDimProc:
         logfilename = os.path.splitext(self.tempfilename)[0] + '.log'
         tmpdir = os.getcwd()
         os.chdir(os.path.split(logfilename)[0])
-        if self.options.get('usepdflatex', False):
+        if self.options.get('usepdflatex'):
             command = 'pdflatex -interaction=nonstopmode %s' % self.tempfilename
         else:
             command = 'latex -interaction=nonstopmode %s' % self.tempfilename
