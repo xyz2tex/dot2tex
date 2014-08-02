@@ -183,7 +183,7 @@ def create_xdot(dotdata, prog='dot', options=''):
     # The following code is from the pydot module written by Ero Carrera
     progs = dotparsing.find_graphviz()
 
-    #prog = 'dot'
+    # prog = 'dot'
     if progs is None:
         log.error('Could not locate Graphviz binaries')
         return None
@@ -272,7 +272,7 @@ def parse_drawstring(drawstring):
         # C n -c1c2...cn  Set fill color.
         # c n -c1c2...cn  Set pen color.
         # Graphviz uses the following color formats:
-        #   "#%2x%2x%2x"    Red-Green-Blue (RGB)
+        # "#%2x%2x%2x"    Red-Green-Blue (RGB)
         #   "#%2x%2x%2x%2x" Red-Green-Blue-Alpha (RGBA)
         #   H[, ]+S[, ]+V   Hue-Saturation-Value (HSV) 0.0 <= H,S,V <= 1.0
         #   string  color name
@@ -299,7 +299,7 @@ def parse_drawstring(drawstring):
         # T x y j w n -c1c2...cn
         # Text drawn using the baseline point (x,y). The text consists of the
         # n characters following '-'. The text should be left-aligned
-        #(centered, right-aligned) on the point if j is -1 (0, 1), respectively.
+        # (centered, right-aligned) on the point if j is -1 (0, 1), respectively.
         # The value w gives the width of the text as computed by the library.
         tokens = s.split()
         x, y, j, w = tokens[0:4]
@@ -482,7 +482,7 @@ class DotConvBase(object):
     def convert_color(self, drawopcolor, pgf=False):
         """Convert color to a format usable by LaTeX and XColor"""
         # Graphviz uses the following color formats:
-        #   "#%2x%2x%2x"    Red-Green-Blue (RGB)
+        # "#%2x%2x%2x"    Red-Green-Blue (RGB)
         #   "#%2x%2x%2x%2x" Red-Green-Blue-Alpha (RGBA)
         #   H[, ]+S[, ]+V   Hue-Saturation-Value (HSV) 0.0 <= H,S,V <= 1.0
         #   string  color name
@@ -588,10 +588,10 @@ class DotConvBase(object):
                     if not use_drawstring_pos:
                         if texlbl_name == "tailtexlbl":
                             pos = drawobj.attr.get('tail_lp') or \
-                              drawobj.attr.get('pos')
+                                  drawobj.attr.get('pos')
                         elif texlbl_name == "headtexlbl":
                             pos = drawobj.attr.get('head_lp') or \
-                              drawobj.attr.get('pos')
+                                  drawobj.attr.get('pos')
                         else:
                             pos = drawobj.attr.get('lp') or \
                                   drawobj.attr.get('pos')
@@ -636,14 +636,13 @@ class DotConvBase(object):
 
             s += self.output_node_comment(node)
             s += self.start_node(node)
-            #drawoperations = parse_drawstring(drawstring)
             s += self.do_drawstring(drawstring, node)
             s += self.end_node(node)
         self.body += s
 
     def get_edge_points(self, edge):
         # edge BNF
-        #   <edge>   :: <spline> (';' <spline>)*
+        # <edge>   :: <spline> (';' <spline>)*
         #   <spline> :: <endp>? <startp>? <point> <triple>+
         #   <point>  :: <x> ',' <y>
         #   <triple> :: <point> <point> <point>
@@ -749,11 +748,11 @@ class DotConvBase(object):
         # the graph attribute will be used. Command line option should have
         # precedence.
         self.options['alignstr'] = self.options.get('alignstr', '') \
-            or getattr(self.main_graph, 'd2talignstr', '')
+                                   or getattr(self.main_graph, 'd2talignstr', '')
 
         # Todo: bad!
         self.options['valignmode'] = getattr(self.main_graph, 'd2tvalignmode', '') \
-            or self.options.get('valignmode', 'center')
+                                     or self.options.get('valignmode', 'center')
 
     def convert(self, dotdata):
         # parse data processed by dot.
@@ -876,16 +875,16 @@ class DotConvBase(object):
         variables['<<drawcommands>>'] = self.body.strip()
         variables['<<textencoding>>'] = self.textencoding
         docpreamble = self.options.get('docpreamble', '') \
-            or getattr(self.main_graph, 'd2tdocpreamble', '')
-        ##        if docpreamble:
+                      or getattr(self.main_graph, 'd2tdocpreamble', '')
+        # #        if docpreamble:
         ##            docpreamble = docpreamble.replace('\\n','\n')
         variables['<<docpreamble>>'] = docpreamble
         variables['<<figpreamble>>'] = self.options.get('figpreamble', '') \
-            or getattr(self.main_graph, 'd2tfigpreamble', '%')
+                                       or getattr(self.main_graph, 'd2tfigpreamble', '%')
         variables['<<figpostamble>>'] = self.options.get('figpostamble', '') \
-            or getattr(self.main_graph, 'd2tfigpostamble', '')
+                                        or getattr(self.main_graph, 'd2tfigpostamble', '')
         variables['<<graphstyle>>'] = self.options.get('graphstyle', '') \
-            or getattr(self.main_graph, 'd2tgraphstyle', '')
+                                      or getattr(self.main_graph, 'd2tgraphstyle', '')
         variables['<<margin>>'] = self.options.get('margin', '0pt')
         variables['<<startpreprocsection>>'] = variables['<<endpreprocsection>>'] = ''
         variables['<<startoutputsection>>'] = variables['<<endoutputsection>>'] = ''
@@ -900,7 +899,6 @@ class DotConvBase(object):
         template = self.clean_template(self.template)
         code = replace_tags(template, self.templatevars.keys(),
                             self.templatevars)
-        #code = self.template.replace('<<figcode>>', self.body)
         return code
 
     def get_label(self, drawobj, label_attribute="label", tex_label_attribute="texlbl"):
@@ -910,7 +908,7 @@ class DotConvBase(object):
             texmode = drawobj.texmode
         text = getattr(drawobj, label_attribute, None)
 
-        #log.warning('text %s %s',text,str(drawobj))
+        # log.warning('text %s %s',text,str(drawobj))
 
         if text is None or text.strip() == '\N':
             if not isinstance(drawobj, dotparsing.DotEdge):
@@ -970,7 +968,7 @@ class DotConvBase(object):
     # Todo: Add support for head and tail labels!
     # Todo: Support rect nodes if possible.
     def do_preview_preproc(self):
-        #setDotAttr(self.maingraph)
+        # setDotAttr(self.maingraph)
         self.init_template_vars()
         template = self.clean_template(self.template)
         template = replace_tags(template, self.templatevars.keys(),
@@ -1015,13 +1013,13 @@ class DotConvBase(object):
                 pp.add_snippet(name, code)
 
             if headlabel:
-                headlabel_name = name+"headlabel"
+                headlabel_name = name + "headlabel"
                 edge.attr['headtexlbl'] = headlabel
                 code = self.get_edge_preproc_code(edge, "headtexlbl")
                 pp.add_snippet(headlabel_name, code)
 
             if taillabel:
-                taillabel_name = name+"taillabel"
+                taillabel_name = name + "taillabel"
                 edge.attr['tailtexlbl'] = taillabel
                 code = self.get_edge_preproc_code(edge, "tailtexlbl")
                 pp.add_snippet(taillabel_name, code)
@@ -1084,7 +1082,7 @@ To see what happened, run dot2tex with the --debug option.
                     height = minheight
                 else:
                     height = ht + 2 * ymargin
-                    # Treat shapes with equal width and height differently
+            # Treat shapes with equal width and height differently
             # Warning! Rectangles will not always fit inside a circle
             #          Should use the diagonal.
             if item.attr.get('shape', '') in ['circle', 'Msquare', 'doublecircle', 'Mcircle']:
@@ -1110,12 +1108,11 @@ To see what happened, run dot2tex with the --debug option.
             if "texlbl" in edge.attr:
                 edge.attr['label'] = labelcode % ((wt + 2 * xmargin) * 72, (hp + dp + 2 * ymargin) * 72)
             if "tailtexlbl" in edge.attr:
-                hp, dp, wt = pp.texdims[name+"taillabel"]
+                hp, dp, wt = pp.texdims[name + "taillabel"]
                 edge.attr['taillabel'] = labelcode % ((wt + 2 * xmargin) * 72, (hp + dp + 2 * ymargin) * 72)
             if "headtexlbl" in edge.attr:
-                hp, dp, wt = pp.texdims[name+"headlabel"]
+                hp, dp, wt = pp.texdims[name + "headlabel"]
                 edge.attr['headlabel'] = labelcode % ((wt + 2 * xmargin) * 72, (hp + dp + 2 * ymargin) * 72)
-
 
         for name, item in usedgraphs.items():
             graph = item
@@ -1213,7 +1210,6 @@ class Dot2PSTricksConv(DotConvBase):
     def draw_ellipse(self, drawop, style=None):
         op, x, y, w, h = drawop
         s = ""
-        #s =  "  %% Node: %s\n" % node.name
         if op == 'E':
             if style:
                 style = style.replace('filled', '')
@@ -1387,7 +1383,7 @@ class Dot2PSTricksConv(DotConvBase):
                 s += "  \psbezier[%s]%s\n" % (stylestr, "".join(pp))
             else:
                 s += "  \psline[%s]%s%s\n" % (stylestr, pp[0], pp[-1])
-                #s += "  \psbezier[%s]{%s}%s\n" % (stylestr, arrowstyle,"".join(pp))
+                # s += "  \psbezier[%s]{%s}%s\n" % (stylestr, arrowstyle,"".join(pp))
                 ##        if edge.label:
                 ##            x,y = edge.lp.split(',')
                 ##            #s += "\\rput(%s,%s){%s}\n" % (x,y,edge.label)
@@ -1585,7 +1581,7 @@ class Dot2PGFConv(DotConvBase):
             bold='\pgfsetlinewidth{1.2pt}')
 
     def start_node(self, node):
-        # Todo: Should find a more elgant solution
+        # Todo: Should find a more elegant solution
         self.pencolor = ""
         self.fillcolor = ""
         self.color = ""
@@ -1595,8 +1591,8 @@ class Dot2PGFConv(DotConvBase):
         return "\\end{scope}\n"
 
     def start_edge(self):
-        # Todo: Should find a more elgant solution
-        #self.pencolor = "";
+        # Todo: Should find a more elegant solution
+        # self.pencolor = "";
         #self.fillcolor = ""
         #self.color = ""
         return "\\begin{scope}\n"
@@ -1605,7 +1601,7 @@ class Dot2PGFConv(DotConvBase):
         return "\\end{scope}\n"
 
     def start_graph(self, graph):
-        # Todo: Should find a more elgant solution
+        # Todo: Should find a more elegant solution
         self.pencolor = ""
         self.fillcolor = ""
         self.color = ""
@@ -1613,14 +1609,9 @@ class Dot2PGFConv(DotConvBase):
 
     def end_graph(self, graph):
         return "\\end{scope}\n"
-        #return "\\end{scope}"
 
     def set_color(self, drawop):
         c, color = drawop
-        # Todo: Should find a more elgant solution
-        #self.pencolor = "";
-        #self.fillcolor = ""
-        #self.color = ""
         res = self.convert_color(color, True)
         opacity = None
         if len(res) == 2:
@@ -1629,8 +1620,6 @@ class Dot2PGFConv(DotConvBase):
             ccolor = res
         s = ""
         if c == 'cC':
-            #self.pencolor = color
-            #self.fillcolor = color
             if self.color != color:
                 self.color = color
                 self.pencolor = color
@@ -1640,7 +1629,6 @@ class Dot2PGFConv(DotConvBase):
                     s += "  \definecolor{newcol}%s;\n" % ccolor
                     ccolor = 'newcol'
                 s += "  \pgfsetcolor{%s}\n" % ccolor
-                #s += "  \pgfsetfillcolor{%s}\n" % ccolor
         elif c == 'c':
             # set pen color
             if self.pencolor != color:
@@ -1693,7 +1681,6 @@ class Dot2PGFConv(DotConvBase):
     def draw_ellipse(self, drawop, style=None):
         op, x, y, w, h = drawop
         s = ""
-        #s =  "  %% Node: %s\n" % node.name
         if op == 'E':
             if self.opacity is not None:
                 # Todo: Need to know the state of the current node
@@ -1729,10 +1716,6 @@ class Dot2PGFConv(DotConvBase):
     def draw_polyline(self, drawop, style=None):
         op, points = drawop
         pp = ['(%sbp,%sbp)' % (smart_float(p[0]), smart_float(p[1])) for p in points]
-        ##if style:
-        ##            stylestr = " [%s]" % style
-        ##        else:
-        ##            stylestr = ''
         stylestr = ''
         return "  \draw%s %s;\n" % (stylestr, " -- ".join(pp))
 
@@ -1744,7 +1727,6 @@ class Dot2PGFConv(DotConvBase):
             c, x, y, align, w, text, valign = drawop
         else:
             c, x, y, align, w, text = drawop
-            valign = ""
         styles = []
         if align == "-1":
             alignstr = 'right'  # left aligned
@@ -1754,10 +1736,6 @@ class Dot2PGFConv(DotConvBase):
             alignstr = ""  # centered (default)
         styles.append(alignstr)
         styles.append(style)
-        ##        if alignstr:
-        ##            alignstr = "[" + alignstr+", anchor=mid" + "]"
-        ##        else:
-        ##            alignstr = "[anchor=mid]"
         lblstyle = ",".join([i for i in styles if i])
         if lblstyle:
             lblstyle = '[' + lblstyle + ']'
@@ -1767,8 +1745,6 @@ class Dot2PGFConv(DotConvBase):
     def draw_bezier(self, drawop, style=None):
         s = ""
         c, points = drawop
-        arrowstyle = '--'
-
         pp = []
         for point in points:
             pp.append("(%sbp,%sbp)" % (smart_float(point[0]), smart_float(point[1])))
@@ -1822,7 +1798,7 @@ class Dot2PGFConv(DotConvBase):
             return ""
         edges = self.get_edge_points(edge)
         for arrowstyle, points in edges:
-            #arrowstyle, points = self.get_edge_points(edge)
+            # arrowstyle, points = self.get_edge_points(edge)
             # PGF uses the fill style when drawing some arrowheads. We have to
             # ensure that the fill color is the same as the pen color.
             color = getattr(edge, 'color', '')
@@ -1843,7 +1819,6 @@ class Dot2PGFConv(DotConvBase):
 
             styles = []
             if arrowstyle != '--':
-                #styles.append(arrowstyle)
                 styles = [arrowstyle]
 
             if edgestyle:
@@ -2128,13 +2103,13 @@ class Dot2TikZConv(Dot2PGFConv):
     def set_options(self):
         Dot2PGFConv.set_options(self)
         self.options['tikzedgelabels'] = self.options.get('tikzedgelabels', '') \
-            or getboolattr(self.main_graph, 'd2ttikzedgelabels', '')
+                                         or getboolattr(self.main_graph, 'd2ttikzedgelabels', '')
         self.options['styleonly'] = self.options.get('styleonly', '') \
-            or getboolattr(self.main_graph, 'd2tstyleonly', '')
+                                    or getboolattr(self.main_graph, 'd2tstyleonly', '')
         self.options['nodeoptions'] = self.options.get('nodeoptions', '') \
-            or getattr(self.main_graph, 'd2tnodeoptions', '')
+                                      or getattr(self.main_graph, 'd2tnodeoptions', '')
         self.options['edgeoptions'] = self.options.get('edgeoptions', '') \
-            or getattr(self.main_graph, 'd2tedgeoptions', '')
+                                      or getattr(self.main_graph, 'd2tedgeoptions', '')
 
     def output_node_comment(self, node):
         # With the node syntax comments are unnecessary
@@ -2163,7 +2138,7 @@ class Dot2TikZConv(Dot2PGFConv):
 
         shape = node.attr.get('shape', 'ellipse')
         shape = self.shape_map.get(shape, shape)
-        #s += "%% %s\n" % (shape)
+        # s += "%% %s\n" % (shape)
         label = node.attr.get('texlbl', '')
         style = node.attr.get('style', " ") or " "
         if lblstyle:
@@ -2279,9 +2254,9 @@ class Dot2TikZConv(Dot2PGFConv):
             topath = getattr(edge, 'topath', None)
             s += self.draw_edge(edge)
             if not self.options.get('tikzedgelabels') and not topath:
-                    s += self.do_drawstring(label_string, edge)
-                    s += self.do_drawstring(tail_label_string, edge, "tailtexlbl")
-                    s += self.do_drawstring(head_label_string, edge, "headtexlbl")
+                s += self.do_drawstring(label_string, edge)
+                s += self.do_drawstring(tail_label_string, edge, "tailtexlbl")
+                s += self.do_drawstring(head_label_string, edge, "headtexlbl")
             else:
                 s += self.do_drawstring(tail_label_string, edge, "tailtexlbl")
                 s += self.do_drawstring(head_label_string, edge, "headtexlbl")
@@ -2312,7 +2287,7 @@ class Dot2TikZConv(Dot2PGFConv):
 
             styles = []
             if arrowstyle != '--':
-                #styles.append(arrowstyle)
+                # styles.append(arrowstyle)
                 styles = [arrowstyle]
 
             if edgestyle:
@@ -2343,7 +2318,7 @@ class Dot2TikZConv(Dot2PGFConv):
             extra = ""
             if self.options.get('tikzedgelabels') or topath:
                 edgelabel = self.get_label(edge)
-                #log.warning('label: %s', edgelabel)
+                # log.warning('label: %s', edgelabel)
                 lblstyle = getattr(edge, 'lblstyle', '')
                 exstyle = getattr(edge, 'exstyle', '')
                 if exstyle:
@@ -2675,7 +2650,7 @@ class TeXDimProc:
         log.debug('Running command: %s' % command)
         sres = os.popen(command)
         resdata = sres.read()
-        #log.debug('resdata: %s' % resdata)
+        # log.debug('resdata: %s' % resdata)
         errcode = sres.close()
         log.debug('errcode: %s' % errcode)
         f = open(logfilename, 'r')
@@ -2805,7 +2780,7 @@ def load_dot_file(filename):
     return dotdata
 
 
-## Program interface
+# # Program interface
 
 def main(run_as_module=False, dotdata=None, options=None):
     """Run dot2tex and convert graph
