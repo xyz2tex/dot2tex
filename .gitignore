@@ -24,5 +24,9 @@ _*
 *.table
 *.gnuplot
 Thumbs.db
+.DS_Store
 tests/tmp/*
 tests/exrender/*
+build/*
+dist/*
+
