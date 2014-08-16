@@ -389,7 +389,7 @@ class TestNumberFormatting(unittest.TestCase):
         self.assertEqual("2.1", smart_float(2.1))
         self.assertEqual("2.11119", smart_float(2.11119))
         self.assertEqual("2.1", smart_float(2.100))
-        self.assertEqual("100000000000.0000", smart_float(1e11))
+        self.assertEqual("1000000000000.0000", smart_float(1e12))
 
 
 class PGF210CompatibilityTest(unittest.TestCase):
@@ -407,7 +407,7 @@ class PGF210CompatibilityTest(unittest.TestCase):
         #
         # def test_nopgf210option(self):
         # source = dot2tex.dot2tex(testgraph, debug=True, pgf210=False)
-        #     self.failIf(source.find("\usepackage{pgflibrarysnakes}") >= 0)
+        # self.failIf(source.find("\usepackage{pgflibrarysnakes}") >= 0)
         #     self.failUnless(source.find("\usetikzlibrary") >= 0)
         #     self.failUnless(source.find("line join=bevel") >= 0)
 
@@ -439,33 +439,30 @@ class HeadAndTailLabelTest(unittest.TestCase):
     def test_tail_label_pstricks(self):
         source = dot2tex.dot2tex(self.test_graph, autosize=True, format="pstricks")
         self.failUnless("TAILLABEL" in source)
-        
+
     def test_head_label_pgf_duplicate(self):
         source = dot2tex.dot2tex(self.test_graph, autosize=True, format="pgf", duplicate=True)
         self.failUnless("HEADLABEL" in source)
-        
+
     def test_head_label_tikz_duplicate(self):
         source = dot2tex.dot2tex(self.test_graph, autosize=True, format="tikz", duplicate=True)
         self.failUnless("HEADLABEL" in source)
-        
+
     def test_head_label_pstricks_duplicate(self):
         source = dot2tex.dot2tex(self.test_graph, autosize=True, format="pstricks", duplicate=True)
         self.failUnless("HEADLABEL" in source)
-        
+
     def test_tail_label_pgf_duplicate(self):
         source = dot2tex.dot2tex(self.test_graph, autosize=True, format="pgf", duplicate=True)
         self.failUnless("TAILLABEL" in source)
-        
+
     def test_tail_label_tikz_duplicate(self):
         source = dot2tex.dot2tex(self.test_graph, autosize=True, format="tikz", duplicate=True)
         self.failUnless("TAILLABEL" in source)
-        
+
     def test_tail_label_pstricks_duplicate(self):
         source = dot2tex.dot2tex(self.test_graph, autosize=True, format="pstricks", duplicate=True)
         self.failUnless("TAILLABEL" in source)
-
-
-
 
 
 class IncludeTest(unittest.TestCase):
@@ -527,7 +524,7 @@ class Issue23Tests(unittest.TestCase):
             }
         """
         code = dot2tex.dot2tex(test_graph, format="tikz")
-        self.assertIn(r"% My preamble", code)
+        self.assertTrue(r"% My preamble" in code)
 
     def test_single_line_preamble(self):
         test_graph = """
@@ -540,7 +537,8 @@ class Issue23Tests(unittest.TestCase):
             }
         """
         code = dot2tex.dot2tex(test_graph, format="tikz")
-        self.assertIn(r"\usetikzlibrary{arrows, automata}", code)
+        self.assertTrue(r"\usetikzlibrary{arrows, automata}" in code)
+
 
 if __name__ == '__main__':
     unittest.main()
