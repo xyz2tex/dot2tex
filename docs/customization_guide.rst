@@ -29,7 +29,7 @@ The following example shows how interesting visual results can be achieved with 
 
 The ``snake`` styles only work on straight lines. We therefore have to use the ``-s`` option. ``fdp`` is used to lay out the graph::
 
-    $ fdp -TXdot ball.dot | dot2tex -fpgf -s > balls.tex
+    $ fdp -Txdot ball.dot | dot2tex -ftikz -s > balls.tex
 
 The resulting graph is shown below.
 
