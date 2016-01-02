@@ -21,7 +21,6 @@ import string
 from exceptions import KeyError, AttributeError
 
 import pyparsing
-from pyparsing import __version__ as pyparsing_version
 
 from pyparsing import (Literal, CaselessLiteral, Word, OneOrMore, Forward, Group, Optional, Combine, restOfLine,
                        cStyleComment, nums, alphanums,
@@ -58,7 +57,7 @@ def needs_quotes(s):
     if not res:
         res = id_re_num.search(s)
         if not res:
-            #res = id_re_dbl_quoted.match(s)
+            # res = id_re_dbl_quoted.match(s)
             if not res:
                 res = id_re_html.match(s)
             pass
@@ -77,7 +76,7 @@ def quote_if_necessary(s):
         return s
     tmp = s
     if needs_quotes(tmp):
-        tmp = '"%s"' % s  #.replace('"','\\"')
+        tmp = '"%s"' % s  # .replace('"','\\"')
     tmp = tmp.replace('<<', '<')
     tmp = tmp.replace('>>', '>')
     return tmp
@@ -219,7 +218,7 @@ def find_graphviz():
             path = os.path.join(path, "bin")
             progs = __find_executables(path)
             if progs is not None:
-                #print "Used Windows registry"
+                # print "Used Windows registry"
                 return progs
 
         except ImportError:
@@ -251,13 +250,13 @@ def find_graphviz():
             path = os.path.join(os.environ['PROGRAMFILES'], 'ATT', 'GraphViz', 'bin')
 
         else:
-            #Just in case, try the default...
+            # Just in case, try the default...
             path = r"C:\Program Files\att\Graphviz\bin"
 
         progs = __find_executables(path)
 
         if progs is not None:
-            #print "Used default install location"
+            # print "Used default install location"
             return progs
 
     for path in (
@@ -267,7 +266,7 @@ def find_graphviz():
             '/Applications/Graphviz.app/Contents/MacOS/'):
         progs = __find_executables(path)
         if progs is not None:
-            #print "Used path"
+            # print "Used path"
             return progs
 
     # Failed to find GraphViz
@@ -412,7 +411,7 @@ class DotDataParser(object):
 
         identifier = Word(alphanums + "_").setName("identifier")
 
-        #double_quoted_string = QuotedString('"', multiline=True,escChar='\\',
+        # double_quoted_string = QuotedString('"', multiline=True,escChar='\\',
         #    unquoteResults=True) # dblQuotedString
         double_quoted_string = Regex(r'\"(?:\\\"|\\\\|[^"])*\"', re.MULTILINE)
         double_quoted_string.setParseAction(removeQuotes)
@@ -428,8 +427,8 @@ class DotDataParser(object):
         try:
             html_text = pyparsing.nestedExpr(opener, closer,
                                              ((CharsNotIn(
-                                                 opener + closer).setParseAction(lambda t: t[0]))
-                                             )).setParseAction(parse_html)
+                                                     opener + closer).setParseAction(lambda t: t[0]))
+                                              )).setParseAction(parse_html)
         except:
             log.debug('nestedExpr not available.')
             log.warning('Old version of pyparsing detected. Version 1.4.8 or '
@@ -438,7 +437,7 @@ class DotDataParser(object):
             html_text = Combine(Literal("<<") + OneOrMore(CharsNotIn(",]")))
 
         ID = (alphastring_ | html_text |
-              quoted_string |  #.setParseAction(strip_quotes) |
+              quoted_string |  # .setParseAction(strip_quotes) |
               identifier).setName("ID")
 
         float_number = Combine(Optional(minus) +
@@ -475,7 +474,7 @@ class DotDataParser(object):
         edge_stmt = edge_point + edgeRHS + Optional(attr_list)
 
         subgraph = (Optional(subgraph_, '') + Optional(ID, '') + Group(graph_stmt)).setName("subgraph").setResultsName(
-            'ssubgraph')
+                'ssubgraph')
 
         edge_point <<= (subgraph | graph_stmt | node_id)
 
@@ -501,7 +500,7 @@ class DotDataParser(object):
         attr_stmt.setParseAction(self._proc_default_attr_stmt)
         attr_list.setParseAction(self._proc_attr_list_combine)
         subgraph.setParseAction(self._proc_subgraph_stmt)
-        #graph_stmt.setParseAction(self._proc_graph_stmt)
+        # graph_stmt.setParseAction(self._proc_graph_stmt)
         graphparser.setParseAction(self._main_graph_stmt)
         return graphparser
 
@@ -562,7 +561,7 @@ class DotDataParser(object):
                 graph.allitems.append(defattr)
             elif cmd == ADD_SUBGRAPH:
                 cmd, name, elements = element
-                #print "Adding subgraph"
+                # print "Adding subgraph"
                 if subgraph:
                     prev_subgraph = subgraph
                 subgraph = graph.add_subgraph(name)
@@ -590,17 +589,17 @@ class DotDataParser(object):
             except:
                 log.warning('Old version of pyparsing. Parser may not work correctly')
             ndata = data.replace('\\\n', '')
-            #lines = data.splitlines()
-            #lines = [l.rstrip('\\') for l in lines]
+            # lines = data.splitlines()
+            # lines = [l.rstrip('\\') for l in lines]
             tokens = self.dotparser.parseString(ndata)
             self.build_top_graph(tokens[0])
             return self.graph
 
         except ParseException, err:
-            #print err.line
-            #print " "*(err.column-1) + "^"
-            #print err
-            #return None
+            # print err.line
+            # print " "*(err.column-1) + "^"
+            # print err
+            # return None
             raise
 
     def parse_dot_data_debug(self, data):
@@ -817,7 +816,7 @@ class DotGraph(object):
         if edgekey in self._alledges:
             edgs = self._alledges[edgekey]
             if not self.strict:
-                #edge.parent = edge_parent
+                # edge.parent = edge_parent
                 if edgekey in self._edges:
                     self._edges[edgekey].append(edge)
                 edgs.append(edge)
@@ -827,7 +826,7 @@ class DotGraph(object):
                 ##                return edgs[0]
         else:
             ##            edge.parent = edge_parent
-            #edge.attr.update(self.default_edge_attr)
+            # edge.attr.update(self.default_edge_attr)
             self._alledges[edgekey] = [edge]
             self._edges[edgekey] = [edge]
         return edge
@@ -860,7 +859,6 @@ class DotGraph(object):
 
     def add_default_graph_attr(self, **kwds):
         self.attr.update(kwds)
-
 
     ##            #nodecls = self._allnodes[name]
     ##            #nodeparent = nodecls.parent
@@ -973,7 +971,7 @@ class DotGraph(object):
     def set_attr(self, **kwds):
         """Set graph attributes"""
         self.attr.update(kwds)
-        #self.set_default_graph_attr(kwds)
+        # self.set_default_graph_attr(kwds)
 
     nodes = property(lambda self: self._nodes.itervalues())
     allnodes = property(lambda self: self._allnodes.itervalues())
@@ -1037,7 +1035,7 @@ class DotEdge(object):
         self.dst = dst
         self.src_port = src_port
         self.dst_port = dst_port
-        #self.parent = parent_graph
+        # self.parent = parent_graph
         self.attr = {}
         if directed:
             self.conn = "->"
@@ -1075,6 +1073,7 @@ class DotSubGraph(DotGraph):
     def __init__(self, name='subgG', strict=True, directed=False, **kwds):
         DotGraph.__init__(self, name, strict, directed, **kwds)
 
+
 testgraph = r"""
 /* Test that the various id types are parsed correctly */
 digraph G {
@@ -1090,11 +1089,6 @@ if __name__ == '__main__':
     print "Creating parser"
     gp = DotDataParser()
     tok = gp.parse_dot_data_debug(testgraph)
-    #dg = parse_dot_data(testgraph)
+    # dg = parse_dot_data(testgraph)
     pprint.pprint(tok)
     print gp.graph
-
-
-
-
-
