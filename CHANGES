@@ -3,10 +3,20 @@ dot2tex change log
 
 Here you can see the full list of changes between each dot2tex release.
 
+2.10.dev
+--------
+
+Not released
+
+- Convert input file to output file only if latter is outdated. Can be overridden by the new
+  --force command line option.
+- Replace deprecated opt parse with argparse.
+- Python 2.7.x is now a requirement (due to the use of the argparse module)
+
 2.9.1
 -----
 
-Not released yet.
+Not released
 
 - Preprocessing head and tail labels now works in the ``duplicate`` mode.
 - Added support for preprocessing head and tail labels (pstricks).
@@ -51,7 +61,7 @@ Released 2014-05-16.
 - ``stdout`` is now properly restored after parsing dot data. Thanks to Nicolas Thiery
   for the patch.
 - Parentheses, ``()``,  in tikz node names are now replaced with ``{}``. Parentheses are not valid
-  characters in node names. Tanks DamienJadeDuff for reporting this.
+  characters in node names. Thanks DamienJadeDuff for reporting this.
 
 2.8.7
 -----
