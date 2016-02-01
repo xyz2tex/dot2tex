@@ -2900,10 +2900,8 @@ def main(run_as_module=False, dotdata=None, options=None):
     log.info("Dot2tex version % s" % __version__)
     log.info("System information:\n"
              "  Python: %s \n"
-             "  Platform: %s\n"
-             "  Pyparsing: %s",
-             sys.version_info, platform.platform(),
-             dotparsing.pyparsing_version)
+             "  Platform: %s\n",
+             sys.version_info, platform.platform())
     log.info('dot2tex called with: %s' % sys.argv)
     log.info('Program started in %s' % os.getcwd())
     if not run_as_module:
