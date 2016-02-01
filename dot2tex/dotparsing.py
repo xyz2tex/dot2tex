@@ -21,7 +21,7 @@ import string
 from exceptions import KeyError, AttributeError
 
 import pyparsing
-
+from pyparsing import __version__ as pyparsing_version
 from pyparsing import (Literal, CaselessLiteral, Word, OneOrMore, Forward, Group, Optional, Combine, restOfLine,
                        cStyleComment, nums, alphanums,
                        ParseException, CharsNotIn, Suppress, Regex, removeQuotes)
