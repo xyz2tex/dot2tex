@@ -38,11 +38,10 @@ import os.path as path
 import sys, tempfile, os, re
 import logging
 import warnings
+import subprocess
+import shlex
 
 import dotparsing
-
-# Silence DeprecationWarnings about os.popen3 in Python 2.6
-warnings.filterwarnings('ignore', category=DeprecationWarning, message=r'os\.popen3')
 
 # initialize logging module
 log = logging.getLogger("dot2tex")
@@ -199,24 +198,15 @@ def create_xdot(dotdata, prog='dot', options=''):
     progpath = '"%s"' % progs[prog].strip()
     cmd = progpath + ' -T' + output_format + ' ' + options + ' ' + tmp_name
     log.debug('Creating xdot data with: %s', cmd)
-    stdin, stdout, stderr = os.popen3(cmd, 't')
-    stdin.close()
-    try:
-        data = stdout.read()
-    finally:
-        stdout.close()
-
-    try:
-        error_data = stderr.read()
-        if error_data:
-            if 'Error:' in error_data:
-                log.error("Graphviz returned with the following message: %s", error_data)
-            else:
-                # Graphviz raises a lot of warnings about too small labels,
-                # we therefore log them using log.debug to "hide" them 
-                log.debug('Graphviz STDERR %s', error_data)
-    finally:
-        stderr.close()
+    process = subprocess.Popen(shlex.split(cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    data, error_data = process.communicate()
+    if len(error_data):
+        if 'Error:' in error_data:
+            log.error("Graphviz returned with the following message: %s", error_data)
+        else:
+            # Graphviz raises a lot of warnings about too small labels,
+            # we therefore log them using log.debug to "hide" them
+            log.debug('Graphviz STDERR %s', error_data)
 
     os.unlink(tmp_name)
     return data
@@ -2649,9 +2639,8 @@ class TeXDimProc:
         else:
             command = 'latex -interaction=nonstopmode %s' % self.tempfilename
         log.debug('Running command: %s' % command)
-        sres = os.popen(command)
-
-        errcode = sres.close()
+        process = subprocess.Popen(shlex.split(command))
+        errcode = process.wait()
         log.debug('errcode: %s' % errcode)
         f = open(logfilename, 'r')
         logdata = f.read()
