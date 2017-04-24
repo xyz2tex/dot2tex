@@ -2798,7 +2798,7 @@ def create_options_parser():
     )
     parser.add_argument(
             '--runtests', dest='runtests',
-            help="Run testes", action="store_true", default=False
+            help="Run tests", action="store_true", default=False
     )
     parser.add_argument(
             "--prog", action="store", dest="prog", default='dot',
