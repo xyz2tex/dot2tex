@@ -213,7 +213,7 @@ def create_xdot(dotdata, prog='dot', options=''):
                 log.error("Graphviz returned with the following message: %s", error_data)
             else:
                 # Graphviz raises a lot of warnings about too small labels,
-                # we therefore log them using log.debug to "hide" them 
+                # we therefore log them using log.debug to "hide" them
                 log.debug('Graphviz STDERR %s', error_data)
     finally:
         stderr.close()
@@ -2068,8 +2068,8 @@ class Dot2TikZConv(Dot2PGFConv):
                  'oval': 'ellipse',
                  'diamond': 'diamond',
                  'trapezium': 'trapezium',
-                 'star': 'star'
-
+                 'star': 'star',
+                 'circle': 'circle',
                  }
 
     compass_map = {'n': 'north', 'ne': 'north east', 'e': 'east',
@@ -2473,7 +2473,7 @@ class Dot2PSTricksNConv(Dot2PSTricksConv):
             x, y = pos.split(',')
             label = self.get_label(node)
             pos = "%sbp,%sbp" % (smart_float(x), smart_float(y))
-            # TODO style 
+            # TODO style
 
             sn = ""
             sn += self.output_node_comment(node)
@@ -2558,7 +2558,7 @@ class Dot2PSTricksNConv(Dot2PSTricksConv):
 
 class PositionsDotConv(Dot2PGFConv):
     """A converter that returns a dictionary with node positions
-    
+
     Returns a dictionary with node name as key and a (x, y) tuple as value.
     """
 
