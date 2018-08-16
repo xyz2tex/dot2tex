@@ -2849,7 +2849,7 @@ def _runtests():
 
 
 def print_version_info():
-    print "Dot2tex version % s" % __version__
+    print("Dot2tex version % s" % __version__)
 
 
 def load_dot_file(filename):
@@ -3061,8 +3061,8 @@ def main(run_as_module=False, dotdata=None, options=None):
             f.close()
         else:
             if not run_as_module:
-                print s
-    except dotparsing.ParseException, err:
+                print(s)
+    except dotparsing.ParseException as err:
         errmsg = "Parse error:\n%s\n" % err.line + " " * (err.column - 1) + "^\n" + str(err)
         log.error(errmsg)
         if options.debug:
