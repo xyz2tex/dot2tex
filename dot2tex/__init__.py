@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Convert graphviz graphs to LaTeX-friendly formats
 
@@ -31,7 +32,7 @@ Copyright (c) 2006-2014, Kjell Magne Fauske
 __author__ = 'Kjell Magne Fauske'
 __license__ = 'MIT'
 
-import dot2tex as d2t
+from . import dot2tex as d2t
 
 __version__ = d2t.__version__
 

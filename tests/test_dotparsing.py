@@ -1,16 +1,18 @@
+#!/usr/bin/env python
 import unittest
 
+import dot2tex
 import dot2tex.dotparsing as dotp
 
 class DotNodeTest(unittest.TestCase):
     def test_create(self):
         node = dotp.DotNode("a")
-        self.failUnless(node.name == "a")
+        self.assertEqual(node.name, "a")
         self.assertEqual(len(node.attr), 0)
 
     def test_createwithattributes(self):
         node = dotp.DotNode("a", label='a_1', style='filled')
-        self.failUnless(node.name == "a")
+        self.assertEqual(node.name, "a")
         self.assertEqual(len(node.attr), 2)
         self.assertEqual(node.attr['label'], 'a_1')
         self.assertEqual(node.attr['style'], 'filled')
@@ -32,14 +34,14 @@ class DotNodeTest(unittest.TestCase):
 
     def test_cmp(self):
         node = dotp.DotNode("a")
-        self.failUnless(node.name == "a")
+        self.assertEqual(node.name, "a")
         self.assertEqual(node, 'a')
 
 
 class DotGraphTest(unittest.TestCase):
     def test_create(self):
         g = dotp.DotGraph('mygraph', strict=False, directed=True)
-        self.failUnless(g.name == "mygraph")
+        self.assertEqual(g.name, "mygraph")
         self.assertEqual(g.strict, False)
         self.assertEqual(g.directed, True)
 
@@ -117,13 +119,13 @@ class DotDefaultAttrTest(unittest.TestCase):
         g = dotp.DotGraph()
         g.add_default_node_attr(color="red")
         n = g.add_node('a')
-        self.failUnless('color' in n.attr)
+        self.assertTrue('color' in n.attr)
         self.assertEqual(n.attr['color'], "red")
         g.add_default_node_attr(color="blue", label="b")
         n = g.add_node(2)
-        self.failUnless('color' in n.attr)
+        self.assertTrue('color' in n.attr)
         self.assertEqual(n.attr['color'], "blue")
-        self.failUnless('label' in n.attr)
+        self.assertTrue('label' in n.attr)
         self.assertEqual(n.attr['label'], "b")
 
     def test_add_default_node_subgraph(self):
@@ -133,11 +135,11 @@ class DotDefaultAttrTest(unittest.TestCase):
         s = g.add_subgraph('S')
         s.add_default_node_attr(style='test')
         n = s.add_node('b')
-        self.failUnless('color' in n.attr)
+        self.assertTrue('color' in n.attr)
         self.assertEqual(n.attr['color'], "red")
-        self.failUnless('style' in n.attr)
+        self.assertTrue('style' in n.attr)
         nn = g.add_node(2)
-        self.failIf('style' in nn.attr)
+        self.assertFalse('style' in nn.attr)
 
 
 ##
