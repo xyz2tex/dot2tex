@@ -751,7 +751,7 @@ class DotGraph(object):
         pass
 
     def __len__(self):
-        return len(self._nodes)
+        return len(self._nodes) + sum(len(s) for s in self.subgraphs)
 
     def __getattr__(self, name):
         try:
