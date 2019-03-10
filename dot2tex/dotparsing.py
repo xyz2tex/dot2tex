@@ -559,6 +559,7 @@ class DotDataParser(object):
                 graph.add_default_graph_attr(**element[1])
                 defattr = DotDefaultAttr('graph', **element[1])
                 graph.allitems.append(defattr)
+                graph.attr.update(**element[1])
             elif cmd == ADD_SUBGRAPH:
                 cmd, name, elements = element
                 # print "Adding subgraph"
@@ -950,6 +951,7 @@ class DotGraph(object):
         subgraphcls.add_default_node_attr(**self.default_node_attr)
         subgraphcls.add_default_edge_attr(**self.default_edge_attr)
         subgraphcls.add_default_graph_attr(**self.attr)
+        subgraphcls.attr.update(self.default_graph_attr)
         subgraphcls.padding += self.padding
         self.subgraphs.append(subgraphcls)
         self._allgraphs.append(subgraphcls)
