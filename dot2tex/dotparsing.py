@@ -858,7 +858,7 @@ class DotGraph(object):
         self.default_edge_attr.update(kwds)
 
     def add_default_graph_attr(self, **kwds):
-        self.attr.update(kwds)
+        self.default_graph_attr.update(kwds)
 
     ##            #nodecls = self._allnodes[name]
     ##            #nodeparent = nodecls.parent
