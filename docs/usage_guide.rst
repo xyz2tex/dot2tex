@@ -261,7 +261,7 @@ Label examples
 
 Consider the following graph:
 
-.. sourcecode:: dot
+::
 
     digraph G {
         a_1-> a_2 -> a_3 -> a_1;
@@ -278,7 +278,7 @@ gives the result shown in the left hand side of the figure below. The default re
 
 Example of using ``texlbl``:
 
-.. sourcecode:: dot
+::
 
     digraph G {
         a_1 [texlbl="$\frac{\gamma}{x^2}$"];
@@ -290,7 +290,7 @@ Example of using ``texlbl``:
 
 Example of using the ``texmode`` attribute:
 
-.. sourcecode:: dot
+::
 
     digraph G {
         a_1 [texlbl="$\frac{\gamma}{2x^2+y^3}$"];
@@ -331,7 +331,7 @@ Dot2tex relies on the xdot format for drawing nodes and placing node labels. The
 
 Here is an example graph where it is necessary to use the ``valignmode`` option:
 
-.. sourcecode:: dot
+::
 
     digraph G {
         node0 [label="{left|right}", shape=record];
@@ -367,7 +367,7 @@ PSTricks users have to use the ``--alingstr`` option::
 
 The result is better, but to get even better alignment you have to change the node font size. Graphviz' default font size is 14pt, which is larger than the typical 10pt or 11pt used in LaTeX documents. By changing the node font size to 10pt we can trick Graphviz to give us a better alignment:
 
-.. sourcecode:: dot
+::
 
     digraph G {
         node [fontsize=10];
@@ -415,7 +415,7 @@ Examples
 
 Consider the following graph:
 
-.. sourcecode:: dot
+::
 
     digraph G {
         node [shape=circle];
@@ -453,7 +453,7 @@ The resulting graph now has correctly sized nodes and edge labels:
 
 Modifying node sizes using the ``widht/height`` and ``margin`` attributes can be a bit counterintuitive. A few examples will hopefully make it clearer:
 
-.. sourcecode:: dot
+::
 
     digraph G {
         node [shape=rectangle];

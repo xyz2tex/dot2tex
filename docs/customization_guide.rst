@@ -14,7 +14,7 @@ The dot language defines the ``style`` attribute that can be used to modify the 
 
 The following example shows how interesting visual results can be achieved with the PGF/TikZ output format. The styles are PGF/TikZ specific. See the user guide for details:
 
-.. sourcecode:: dot
+::
 
     graph G {
         node [shape=circle, fixedsize=True, width="0.2",
@@ -44,7 +44,7 @@ Changing arrow types
 
 The style attribute can be used to change arrow types. A PGF/TikZ example:
 
-.. sourcecode:: dot
+::
 
     digraph G {
         graph [mindist=0.5];
@@ -77,7 +77,7 @@ You can also set the default arrow style by using the ``--graphstyle`` option or
 
 A PSTricks example:
 
-.. sourcecode:: dot
+::
 
     digraph G {
         d2tdocpreamble="\usepackage{pstricks-add}";
@@ -124,7 +124,7 @@ When you specify a ``lblstyle`` attribute, the style will be given as a paramete
 
 Example:
 
-.. sourcecode:: dot
+::
 
     digraph G {
         node [shape=circle];
@@ -175,7 +175,7 @@ With the ``--tikzedgelabel`` option you can bypass the XDOT edge label placement
 
 Example:
 
-.. sourcecode:: dot
+::
 
     graph G {
         mindist = 0.5;
@@ -225,7 +225,7 @@ The ``topath`` edge attribute offers a way to override the edges drawn by Graphv
 
 Example:
 
-.. sourcecode:: dot
+::
 
     digraph G {
         mindist = 0.5;
@@ -258,7 +258,7 @@ The generated edge drawing code is:
 
 Here is a larger example that uses the ``automata`` library:
 
-.. sourcecode:: dot
+::
 
     digraph G {
         d2tdocpreamble = "\usetikzlibrary{automata}";

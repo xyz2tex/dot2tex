@@ -60,7 +60,7 @@ So instead of typing::
 
 each time, use ``d2toptions`` like this:
 
-.. sourcecode:: dot
+::
 
     digraph G {
         d2toptions ="-tikz -tmath --tikzedgelabels";
@@ -76,7 +76,7 @@ Use the tikz output format for maximum flexibility
 
 The difference between the ``pgf`` and ``tikz`` output formats is best shown with an example. Consider the following graph:
 
-.. sourcecode:: dot
+::
 
     graph G {
         mindist = 0.5;
