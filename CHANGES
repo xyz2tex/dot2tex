@@ -3,10 +3,13 @@ dot2tex change log
 
 Here you can see the full list of changes between each dot2tex release.
 
-2.11.dev
---------
+2.11.0
+------
 
-- Add support for Python 3! Thanks Travis Scrimshaw!
+Released 2019-03-15
+
+- Added support for Python 3! Thanks Travis Scrimshaw!
+- Various bug fixes.
 
 2.10.dev
 --------
@@ -15,7 +18,7 @@ Not released
 
 - Convert input file to output file only if latter is outdated. Can be overridden by the new
   --force command line option.
-- Replace deprecated opt parse with argparse.
+- Replaced deprecated opt parse with argparse.
 - Python 2.7.x is now a requirement (due to the use of the argparse module)
 
 2.9.1
