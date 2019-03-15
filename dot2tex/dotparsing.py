@@ -8,7 +8,7 @@ Michael Krause <michael AT krause-software.de>
 Ero Carrera <ero AT dkbza.org>
 """
 
-__version__ = '2.9.0'
+__version__ = '2.11.dev'
 __author__ = ['Michael Krause', 'Ero Carrera', 'Kjell Magne Fauske']
 __license__ = 'MIT'
 
@@ -16,15 +16,15 @@ import re
 import itertools
 import os
 import logging
-from itertools import izip
 import string
-from exceptions import KeyError, AttributeError
 
 import pyparsing
 from pyparsing import __version__ as pyparsing_version
 from pyparsing import (Literal, CaselessLiteral, Word, OneOrMore, Forward, Group, Optional, Combine, restOfLine,
                        cStyleComment, nums, alphanums,
                        ParseException, CharsNotIn, Suppress, Regex, removeQuotes)
+
+from collections import OrderedDict
 
 dot_keywords = ['graph', 'subgraph', 'digraph', 'node', 'edge', 'strict']
 
@@ -72,7 +72,7 @@ def needs_quotes(s):
 
 
 def quote_if_necessary(s):
-    if not isinstance(s, basestring):
+    if not isinstance(s, str):
         return s
     tmp = s
     if needs_quotes(tmp):
@@ -121,7 +121,7 @@ def nsplit(seq, n=2):
     >>> nsplit('aabbcc',n=4)
     [('a', 'a', 'b', 'b')]
     """
-    return [xy for xy in izip(*[iter(seq)] * n)]
+    return [xy for xy in zip(*[iter(seq)] * n)]
 
 
 # The following function is from the pydot project
@@ -146,7 +146,7 @@ def __find_executables(path):
         was_quoted = True
 
     if os.path.isdir(path):
-        for prg in progs.keys():
+        for prg in progs:
             if progs[prg]:
                 continue
 
@@ -218,7 +218,7 @@ def find_graphviz():
             path = os.path.join(path, "bin")
             progs = __find_executables(path)
             if progs is not None:
-                # print "Used Windows registry"
+                # print("Used Windows registry")
                 return progs
 
         except ImportError:
@@ -231,7 +231,7 @@ def find_graphviz():
 
     # Method 2 (Linux, Windows etc)
     #
-    if os.environ.has_key('PATH'):
+    if 'PATH' in os.environ:
         for path in os.environ['PATH'].split(os.pathsep):
             progs = __find_executables(path)
             if progs is not None:
@@ -243,7 +243,7 @@ def find_graphviz():
         # Try and work out the equivalent of "C:\Program Files" on this
         # machine (might be on drive D:, or in a different language)
         #
-        if os.environ.has_key('PROGRAMFILES'):
+        if 'PROGRAMFILES' in os.environ:
             # Note, we could also use the win32api to get this
             # information, but win32api may not be installed.
 
@@ -256,7 +256,7 @@ def find_graphviz():
         progs = __find_executables(path)
 
         if progs is not None:
-            # print "Used default install location"
+            # print("Used default install location")
             return progs
 
     for path in (
@@ -266,7 +266,7 @@ def find_graphviz():
             '/Applications/Graphviz.app/Contents/MacOS/'):
         progs = __find_executables(path)
         if progs is not None:
-            # print "Used path"
+            # print("Used path")
             return progs
 
     # Failed to find GraphViz
@@ -562,7 +562,7 @@ class DotDataParser(object):
                 graph.attr.update(**element[1])
             elif cmd == ADD_SUBGRAPH:
                 cmd, name, elements = element
-                # print "Adding subgraph"
+                # print("Adding subgraph")
                 if subgraph:
                     prev_subgraph = subgraph
                 subgraph = graph.add_subgraph(name)
@@ -589,6 +589,8 @@ class DotDataParser(object):
                 self.dotparser.parseWithTabs()
             except:
                 log.warning('Old version of pyparsing. Parser may not work correctly')
+            if os.sys.version_info[0] >= 3 and isinstance(data, bytes):
+                data = data.decode()
             ndata = data.replace('\\\n', '')
             # lines = data.splitlines()
             # lines = [l.rstrip('\\') for l in lines]
@@ -596,10 +598,10 @@ class DotDataParser(object):
             self.build_top_graph(tokens[0])
             return self.graph
 
-        except ParseException, err:
-            # print err.line
-            # print " "*(err.column-1) + "^"
-            # print err
+        except ParseException as err:
+            # print(err.line)
+            # print(" "*(err.column-1) + "^")
+            # print(err)
             # return None
             raise
 
@@ -616,45 +618,11 @@ class DotDataParser(object):
 
             return tokens[0]
 
-        except ParseException, err:
-            print err.line
-            print " " * (err.column - 1) + "^"
-            print err
+        except ParseException as err:
+            print(err.line)
+            print(" " * (err.column - 1) + "^")
+            print(err)
             return None
-
-
-from UserDict import DictMixin
-
-
-class OrderedDict(DictMixin):
-    def __init__(self):
-        self._keys = []
-        self._data = {}
-
-    def __setitem__(self, key, value):
-        if key not in self._data:
-            self._keys.append(key)
-        self._data[key] = value
-
-    def __getitem__(self, key):
-        return self._data[key]
-
-    def __delitem__(self, key):
-        del self._data[key]
-        self._keys.remove(key)
-
-    def __iter__(self):
-        for key in self._keys:
-            yield key
-
-    def keys(self):
-        return list(self._keys)
-
-    def copy(self):
-        ordered_dict_copy = OrderedDict()
-        ordered_dict_copy._data = self._data.copy()
-        ordered_dict_copy._keys = self._keys[:]
-        return ordered_dict_copy
 
 
 class DotDefaultAttr(object):
@@ -704,13 +672,17 @@ class DotNode(object):
     def __hash__(self):
         return hash(self.name)
 
-    def __cmp__(self, other):
+    def __eq__(self, other):
         try:
-            if self.name == other:
-                return 0
+            return self.name == other
         except:
-            pass
-        return -1
+            return False
+
+    def __ne__(self, other):
+        try:
+            return self.name != other
+        except:
+            return False
 
     def __getattr__(self, name):
         try:
@@ -779,15 +751,15 @@ class DotGraph(object):
             node.attr.update(self.default_node_attr)
             node.attr.update(kwds)
             self._allnodes[n] = node
-        if not n in self._nodes:
+        if n not in self._nodes:
             self._nodes[n] = node
 
             # Todo: Adding a node to a subgraph should insert it in parent graphs
         ##        parent = self.parent
         ##        if parent:
-        ##            print "Parent %s " % parent.name
+        ##            print("Parent %s " % parent.name)
         ##        while parent:
-        ##            print "Parent %s " % parent.name
+        ##            print("Parent %s " % parent.name)
         ##            if n not in parent._nodes:
         ##                parent._nodes[n] = node
         ##                parent = parent.parent
@@ -896,7 +868,7 @@ class DotGraph(object):
             del self._nodes[name]
             del self._allnodes[name]
         except:
-            raise DotParsingException, "Node %s does not exists" % name
+            raise DotParsingException("Node %s does not exists" % name)
 
     def get_node(self, nodename):
         """Return node with name=nodename
@@ -975,10 +947,10 @@ class DotGraph(object):
         self.attr.update(kwds)
         # self.set_default_graph_attr(kwds)
 
-    nodes = property(lambda self: self._nodes.itervalues())
-    allnodes = property(lambda self: self._allnodes.itervalues())
+    nodes = property(lambda self: self._nodes.values())
+    allnodes = property(lambda self: self._allnodes.values())
     allgraphs = property(lambda self: self._allgraphs.__iter__())
-    alledges = property(lambda self: flatten(self._alledges.itervalues()))
+    alledges = property(lambda self: flatten(self._alledges.values()))
     edges = property(get_edges)
 
     def __str__(self):
@@ -1005,13 +977,13 @@ class DotGraph(object):
 
         subgraphstr = "\n".join(["%s%s" % (padding, n) for n in map(str, self.subgraphs)])
 
-        nodestr = "".join(["%s%s" % (padding, n) for n in \
-                           map(str, self._nodes.itervalues())])
-        edgestr = "".join(["%s%s" % (padding, n) for n in \
-                           map(str, flatten(self.edges.itervalues()))])
+        nodestr = "".join(["%s%s" % (padding, n)
+                           for n in map(str, self._nodes.values())])
+        edgestr = "".join(["%s%s" % (padding, n)
+                           for n in map(str, flatten(self.edges.values()))])
 
-        attrstr = ",".join(["%s=%s" % \
-                            (quote_if_necessary(key), quote_if_necessary(val)) \
+        attrstr = ",".join(["%s=%s" %
+                            (quote_if_necessary(key), quote_if_necessary(val))
                             for key, val in self.attr.items()])
         if attrstr:
             attrstr = "%sgraph [%s];" % (padding, attrstr)
@@ -1088,9 +1060,9 @@ digraph G {
 if __name__ == '__main__':
     import pprint
 
-    print "Creating parser"
+    print("Creating parser")
     gp = DotDataParser()
     tok = gp.parse_dot_data_debug(testgraph)
     # dg = parse_dot_data(testgraph)
     pprint.pprint(tok)
-    print gp.graph
+    print(gp.graph)
