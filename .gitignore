@@ -29,4 +29,6 @@ tests/tmp/*
 tests/exrender/*
 build/*
 dist/*
+venv/*
+.idea/*
 
