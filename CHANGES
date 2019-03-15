@@ -3,6 +3,11 @@ dot2tex change log
 
 Here you can see the full list of changes between each dot2tex release.
 
+2.11.dev
+--------
+
+- Added support for the circle node shape. Thanks to Alexander Hagen for the pull request.
+
 2.11.1
 ------
 
