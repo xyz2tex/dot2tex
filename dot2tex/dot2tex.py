@@ -198,7 +198,7 @@ def create_xdot(dotdata, prog='dot', options=''):
     progpath = '"%s"' % progs[prog].strip()
     cmd = progpath + ' -T' + output_format + ' ' + options + ' ' + tmp_name
     log.debug('Creating xdot data with: %s', cmd)
-    p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE, close_fds=True)
+    p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE, close_fds=(sys.platform != 'win32'))
     (stdout, stderr) = (p.stdout, p.stderr) 
     try:
         data = stdout.read()
