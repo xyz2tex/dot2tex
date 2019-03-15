@@ -29,7 +29,7 @@ Copyright (c) 2006-2019, Kjell Magne Fauske
 # IN THE SOFTWARE.
 
 __author__ = 'Kjell Magne Fauske'
-__version__ = '2.11.0'
+__version__ = '2.11.1'
 __license__ = 'MIT'
 
 import argparse

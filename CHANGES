@@ -3,6 +3,13 @@ dot2tex change log
 
 Here you can see the full list of changes between each dot2tex release.
 
+2.11.1
+------
+
+Released 2019-03-15
+
+- Fix bug in setup.py entry_points.
+
 2.11.0
 ------
 
