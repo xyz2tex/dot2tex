@@ -29,7 +29,7 @@ Copyright (c) 2006-2019, Kjell Magne Fauske
 # IN THE SOFTWARE.
 
 __author__ = 'Kjell Magne Fauske'
-__version__ = '2.11.1'
+__version__ = '2.11.2'
 __license__ = 'MIT'
 
 import argparse
@@ -2650,12 +2650,24 @@ class TeXDimProc:
         else:
             command = 'latex -interaction=nonstopmode %s' % self.tempfilename
         log.debug('Running command: %s' % command)
-        proc = Popen(command, shell=True, stdout=PIPE)
-        proc.wait()  # Is this necessary?
-        sres = proc.stdout
 
-        errcode = sres.close()
-        log.debug('errcode: %s' % errcode)
+        p = Popen(command, shell=True, stdout=PIPE, stderr=PIPE, close_fds=(sys.platform != 'win32'))
+        (stdout, stderr) = (p.stdout, p.stderr)
+        try:
+            data = stdout.read()
+            log.debug("stdout from latex\n %s", data)
+        finally:
+            stdout.close()
+
+        try:
+            error_data = stderr.read()
+            if error_data:
+                log.debug('latex STDERR %s', error_data)
+        finally:
+            stderr.close()
+        p.kill()
+        p.wait()
+
         with open(logfilename, 'r') as f:
             logdata = f.read()
         log.debug('Logfile from LaTeX run: \n' + logdata)

@@ -3,10 +3,11 @@ dot2tex change log
 
 Here you can see the full list of changes between each dot2tex release.
 
-2.11.dev
---------
+2.11.2
+------
 
 - Added support for the circle node shape. Thanks to Alexander Hagen for the pull request.
+- Fix Popen issue on windows 10 when calling latex. The --autosize option is now working again.
 
 2.11.1
 ------
