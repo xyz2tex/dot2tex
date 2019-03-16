@@ -313,7 +313,7 @@ def parse_drawstring(drawstring):
     cmdlist = []
     stat = {}
     idx = 0
-    s = drawstring.strip()
+    s = drawstring.strip().replace('\\', '')
     while idx < len(s) - 1:
         didx = 1
         c = s[idx]
@@ -334,9 +334,8 @@ def parse_drawstring(drawstring):
             elif c == 'T':
                 didx, cmd = doText(c, s[idx + 1:])
                 cmdlist.append(cmd)
-
-        except:
-            pass
+        except Exception as err:
+            log.debug("Failed to parse drawstring %s\n%s", s, err.message)
 
         idx += didx
     return cmdlist, stat

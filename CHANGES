@@ -3,6 +3,11 @@ dot2tex change log
 
 Here you can see the full list of changes between each dot2tex release.
 
+2.11.dev
+--------
+
+- Fixed issue #64.
+
 2.11.2
 ------
 

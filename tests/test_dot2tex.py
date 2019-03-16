@@ -541,5 +541,21 @@ class Issue23Tests(unittest.TestCase):
         self.assertTrue(r"\usetikzlibrary{arrows, automata}" in code)
 
 
+class RoundedStyleIssue64Tests(unittest.TestCase):
+    # https://github.com/kjellmf/dot2tex/issues/64
+
+    def test_draw_statements(self):
+        """There should be at least two \\draw statements"""
+        test_graph = r"""
+        digraph {
+            start[shape="box", style=rounded];
+        }
+        """
+        code = dot2tex.dot2tex(test_graph, codeonly=True)
+        self.assertGreaterEqual(code.count("\\draw"), 2)
+        self.assertTrue("controls" in code)
+
+
+
 if __name__ == '__main__':
     unittest.main()
