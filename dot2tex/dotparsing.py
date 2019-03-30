@@ -8,7 +8,7 @@ Michael Krause <michael AT krause-software.de>
 Ero Carrera <ero AT dkbza.org>
 """
 
-__version__ = '2.11.2'
+__version__ = '2.11.dev'
 __author__ = ['Michael Krause', 'Ero Carrera', 'Kjell Magne Fauske']
 __license__ = 'MIT'
 
@@ -436,12 +436,14 @@ class DotDataParser(object):
                         'work properly.')
             html_text = Combine(Literal("<<") + OneOrMore(CharsNotIn(",]")))
 
-        ID = (alphastring_ | html_text |
+        float_number = Combine(Optional(minus) +
+                               OneOrMore(Word(nums + "."))).setName("float_number")
+
+        ID = (alphastring_ | html_text | float_number |
               quoted_string |  # .setParseAction(strip_quotes) |
               identifier).setName("ID")
 
-        float_number = Combine(Optional(minus) +
-                               OneOrMore(Word(nums + "."))).setName("float_number")
+
 
         righthand_id = (float_number | ID).setName("righthand_id")
 

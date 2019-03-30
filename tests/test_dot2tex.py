@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 import unittest
 
+from pyparsing import ParseException
+
 import dot2tex
 import re
 from dot2tex.dot2tex import smart_float
@@ -219,7 +221,6 @@ class GraphvizInterfaceTests(unittest.TestCase):
         self.assertEqual(xdot_data, xdot_data2)
         xdot_data2 = create_xdot(testgraph, options='-y')
         self.assertNotEqual(xdot_data, xdot_data2, 'No options were passed to dot')
-
 
     def test_invalid_program(self):
         """Invoking create_xdot with an invalid prog parameter should raise an exception"""
@@ -555,6 +556,35 @@ class RoundedStyleIssue64Tests(unittest.TestCase):
         self.assertGreaterEqual(code.count("\\draw"), 2)
         self.assertTrue("controls" in code)
 
+
+class NodeNameIssue41Tests(unittest.TestCase):
+    # https://github.com/kjellmf/dot2tex/issues/41
+
+    def test_parsing1(self):
+        """Should not throw a ParseException"""
+        test_graph = r"""
+        digraph G {
+            node [shape="circle"];
+            "a" -> "b" -> "3" -> "-4" -> "a";
+        }
+        """
+        try:
+            code = dot2tex.dot2tex(test_graph, codeonly=True, format="tikz")
+        except ParseException:
+            self.fail("Failed to parse graph")
+
+    def test_parsing2(self):
+        """Should not throw a ParseException"""
+        test_graph = r"""
+        digraph G {
+            node [shape="circle"];
+            a -> b -> 3 -> -4 -> a;
+        }
+        """
+        try:
+            code = dot2tex.dot2tex(test_graph, codeonly=True, format="tikz")
+        except ParseException:
+            self.fail("Failed to parse graph")
 
 
 if __name__ == '__main__':

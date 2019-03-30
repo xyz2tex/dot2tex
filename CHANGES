@@ -6,7 +6,8 @@ Here you can see the full list of changes between each dot2tex release.
 2.11.dev
 --------
 
-- Fixed issue #64.
+- Fixed parsing of DOT IDs. Numerals can now be used as node IDs.
+- Fixed issue #64. Remove \ characters from drawsting.
 
 2.11.2
 ------
