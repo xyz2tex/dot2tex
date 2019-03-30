@@ -6,13 +6,18 @@ from pyparsing import ParseException
 
 import dot2tex
 import re
-from dot2tex.dot2tex import smart_float
+from dot2tex.dot2tex import smart_float, is_multiline_label
 
 testgraph = """
 digraph G {
     a_1-> a_2 -> a_3 -> a_1;
 }
 """
+
+
+class mobj(object):
+    def __init__(self, d):
+        self.__dict__ = d
 
 
 class InterfaceTest(unittest.TestCase):
@@ -585,6 +590,37 @@ class NodeNameIssue41Tests(unittest.TestCase):
             code = dot2tex.dot2tex(test_graph, codeonly=True, format="tikz")
         except ParseException:
             self.fail("Failed to parse graph")
+
+
+class MultilineTests(unittest.TestCase):
+    # https://github.com/kjellmf/dot2tex/issues/27
+
+    def test_multiline(self):
+        """There should be three lines"""
+        test_graph = r"""
+        digraph {
+            a -> b [label="line1\nline2\nline3"]
+        }
+        """
+        code = dot2tex.dot2tex(test_graph, codeonly=True, format="tikz")
+        self.assertGreaterEqual(code.count("node {line"), 3)
+
+    def test_multiline_autosize(self):
+        """There should be three lines"""
+        test_graph = r"""
+        digraph {
+            a -> b [label="line1\nline2\nline3"]
+        }
+        """
+        code = dot2tex.dot2tex(test_graph, codeonly=True, format="tikz", autosize=True)
+        self.assertGreaterEqual(code.count("node {line"), 3)
+
+    def test_is_multiline_function(self):
+        self.assertTrue(is_multiline_label(mobj({"label": r"line1\nline2\nline3"})))
+        self.assertTrue(is_multiline_label(mobj({"label": r"line1\lline2\lline3"})))
+        self.assertTrue(is_multiline_label(mobj({"label": r"line1\rline2\nline3"})))
+        self.assertFalse(is_multiline_label(mobj({"texlbl": "something", "label": r"line1\nlin2\line3"})))
+        self.assertFalse(is_multiline_label(mobj({"label": "line1\nlin2\nline3"})))
 
 
 if __name__ == '__main__':

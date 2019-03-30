@@ -173,6 +173,15 @@ def smart_float(number):
         return number_as_string
 
 
+def is_multiline_label(drawobject):
+    # https://graphviz.gitlab.io/_pages/doc/info/attrs.html#k:escString
+    if getattr(drawobject, "texlbl", None):
+        return False
+
+    label = getattr(drawobject, "label", "")
+    return any(x in label for x in [r"\n", r"\l", r"\r"])
+
+
 def create_xdot(dotdata, prog='dot', options=''):
     """Run a graph through Graphviz and return an xdot-version of the graph"""
     # The following code is from the pydot module written by Ero Carrera
@@ -199,7 +208,7 @@ def create_xdot(dotdata, prog='dot', options=''):
     cmd = progpath + ' -T' + output_format + ' ' + options + ' ' + tmp_name
     log.debug('Creating xdot data with: %s', cmd)
     p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE, close_fds=(sys.platform != 'win32'))
-    (stdout, stderr) = (p.stdout, p.stderr) 
+    (stdout, stderr) = (p.stdout, p.stderr)
     try:
         data = stdout.read()
     finally:
@@ -582,7 +591,7 @@ class DotConvBase(object):
                 if self.options.get('alignstr', ''):
                     drawop.append(self.options.get('alignstr'))
                 if stat['T'] == 1 and \
-                                self.options.get('valignmode', 'center') == 'center':
+                        self.options.get('valignmode', 'center') == 'center':
                     # do this for single line only
                     # force centered alignment
                     drawop[3] = '0'
@@ -1002,6 +1011,8 @@ class DotConvBase(object):
                 continue
             # Ensure that the edge name is unique.
             name = edge.src.name + edge.dst.name + str(counter)
+            if is_multiline_label(edge):
+                continue
             label = self.get_label(edge)
             headlabel = self.get_label(edge, "headlabel", "headtexlbl")
             taillabel = self.get_label(edge, "taillabel", "tailtexlbl")
@@ -1191,11 +1202,11 @@ class Dot2PSTricksConv(DotConvBase):
         if not self.template:
             self.template = PSTRICKS_TEMPLATE
         self.styles = dict(
-                dotted="linestyle=dotted",
-                dashed="linestyle=dashed",
-                bold="linewidth=2pt",
-                solid="",
-                filled="",
+            dotted="linestyle=dotted",
+            dashed="linestyle=dashed",
+            bold="linewidth=2pt",
+            solid="",
+            filled="",
         )
 
     def do_graphtmp(self):
@@ -1575,9 +1586,9 @@ class Dot2PGFConv(DotConvBase):
                            bold='very thick', filled='fill', invis="",
                            rounded='rounded corners', )
         self.dashstyles = dict(
-                dashed='\pgfsetdash{{3pt}{3pt}}{0pt}',
-                dotted='\pgfsetdash{{\pgflinewidth}{2pt}}{0pt}',
-                bold='\pgfsetlinewidth{1.2pt}')
+            dashed='\pgfsetdash{{3pt}{3pt}}{0pt}',
+            dotted='\pgfsetdash{{\pgflinewidth}{2pt}}{0pt}',
+            bold='\pgfsetlinewidth{1.2pt}')
 
     def start_node(self, node):
         # Todo: Should find a more elegant solution
@@ -2096,9 +2107,9 @@ class Dot2TikZConv(Dot2PGFConv):
                            bold='very thick', filled='fill', invis="", invisible="",
                            rounded='rounded corners', )
         self.dashstyles = dict(
-                dashed='\pgfsetdash{{3pt}{3pt}}{0pt}',
-                dotted='\pgfsetdash{{\pgflinewidth}{2pt}}{0pt}',
-                bold='\pgfsetlinewidth{1.2pt}')
+            dashed='\pgfsetdash{{3pt}{3pt}}{0pt}',
+            dotted='\pgfsetdash{{\pgflinewidth}{2pt}}{0pt}',
+            bold='\pgfsetlinewidth{1.2pt}')
 
     def set_options(self):
         Dot2PGFConv.set_options(self)
@@ -2693,155 +2704,155 @@ def create_options_parser():
     parser = argparse.ArgumentParser(prog='dot2tex', description=description)
 
     parser.add_argument(
-            '-f', '--format', action='store', dest='format',
-            choices=('pstricks', 'pgf', 'pst', 'tikz', 'psn'),
-            help="Set output format to 'v' (pstricks, pgf, pst, tikz, psn) ",
-            metavar="v"
+        '-f', '--format', action='store', dest='format',
+        choices=('pstricks', 'pgf', 'pst', 'tikz', 'psn'),
+        help="Set output format to 'v' (pstricks, pgf, pst, tikz, psn) ",
+        metavar="v"
     )
     parser.add_argument(
-            '-t', '--texmode', dest='texmode', default='verbatim',
-            choices=('math', 'verbatim', 'raw'),
-            help='Set text mode (verbatim, math, raw).'
+        '-t', '--texmode', dest='texmode', default='verbatim',
+        choices=('math', 'verbatim', 'raw'),
+        help='Set text mode (verbatim, math, raw).'
     )
     parser.add_argument(
-            '-d', '--duplicate', dest='duplicate', action='store_true',
-            default=False, help='Try to duplicate Graphviz graphics'
+        '-d', '--duplicate', dest='duplicate', action='store_true',
+        default=False, help='Try to duplicate Graphviz graphics'
     )
     parser.add_argument(
-            '-s', '--straightedges', dest='straightedges', action='store_true',
-            default=False, help='Force straight edges'
+        '-s', '--straightedges', dest='straightedges', action='store_true',
+        default=False, help='Force straight edges'
     )
     parser.add_argument(
-            '--template', dest='templatefile', action='store',
-            metavar='FILE'
+        '--template', dest='templatefile', action='store',
+        metavar='FILE'
     )
     parser.add_argument(
-            '-o', '--output', dest='outputfile', action='store',
-            metavar='FILE', default=None, help='Write output to FILE'
+        '-o', '--output', dest='outputfile', action='store',
+        metavar='FILE', default=None, help='Write output to FILE'
     )
     parser.add_argument(
-            '--force', dest='force', action='store_true', default=False,
-            help='Force recompilation, even if output file is newer than input file'
+        '--force', dest='force', action='store_true', default=False,
+        help='Force recompilation, even if output file is newer than input file'
     )
     parser.add_argument(
-            '-e', '--encoding', dest='encoding', action='store',
-            choices=('utf8', 'latin1'), default=DEFAULT_TEXTENCODING,
-            help='Set text encoding to utf8 or latin1'
+        '-e', '--encoding', dest='encoding', action='store',
+        choices=('utf8', 'latin1'), default=DEFAULT_TEXTENCODING,
+        help='Set text encoding to utf8 or latin1'
     )
     parser.add_argument(
-            '-V', '--version', dest='printversion', action='store_true',
-            help='Print version information and exit', default=False
+        '-V', '--version', dest='printversion', action='store_true',
+        help='Print version information and exit', default=False
     )
     parser.add_argument(
-            '-w', '--switchdraworder', dest='switchdraworder',
-            action='store_true', help='Switch draw order', default=False
+        '-w', '--switchdraworder', dest='switchdraworder',
+        action='store_true', help='Switch draw order', default=False
     ),
     parser.add_argument(
-            '-p', '-c', '--preview', '--crop', dest='crop', action='store_true',
-            help='Use preview.sty to crop graph', default=False
+        '-p', '-c', '--preview', '--crop', dest='crop', action='store_true',
+        help='Use preview.sty to crop graph', default=False
     )
     parser.add_argument(
-            '--margin', dest='margin', action='store',
-            help='Set preview margin', default='0pt'
+        '--margin', dest='margin', action='store',
+        help='Set preview margin', default='0pt'
     )
     parser.add_argument(
-            '--docpreamble', dest='docpreamble', action='store',
-            help='Insert TeX code in document preamble', metavar='TEXCODE'
+        '--docpreamble', dest='docpreamble', action='store',
+        help='Insert TeX code in document preamble', metavar='TEXCODE'
     )
     parser.add_argument(
-            '--figpreamble', dest='figpreamble', action='store',
-            help='Insert TeX code in figure preamble', metavar='TEXCODE'
+        '--figpreamble', dest='figpreamble', action='store',
+        help='Insert TeX code in figure preamble', metavar='TEXCODE'
     )
     parser.add_argument(
-            '--figpostamble', dest='figpostamble', action='store',
-            help='Insert TeX code in figure postamble', metavar='TEXCODE'
+        '--figpostamble', dest='figpostamble', action='store',
+        help='Insert TeX code in figure postamble', metavar='TEXCODE'
     )
     parser.add_argument(
-            '--graphstyle', dest='graphstyle', action='store',
-            help='Insert graph style', metavar='STYLE'
+        '--graphstyle', dest='graphstyle', action='store',
+        help='Insert graph style', metavar='STYLE'
     )
     parser.add_argument(
-            '--gvcols', dest='gvcols', action='store_true',
-            default=False, help='Include gvcols.tex'
+        '--gvcols', dest='gvcols', action='store_true',
+        default=False, help='Include gvcols.tex'
     )
     parser.add_argument(
-            '--figonly', dest='figonly', action='store_true',
-            help='Output graph with no preamble', default=False
+        '--figonly', dest='figonly', action='store_true',
+        help='Output graph with no preamble', default=False
     )
     parser.add_argument(
-            '--codeonly', dest='codeonly', action='store_true',
-            help='Output only drawing commands', default=False
+        '--codeonly', dest='codeonly', action='store_true',
+        help='Output only drawing commands', default=False
     )
     parser.add_argument(
-            '--styleonly', dest='styleonly', action='store_true',
-            help='Use style parameter only', default=False)
+        '--styleonly', dest='styleonly', action='store_true',
+        help='Use style parameter only', default=False)
     parser.add_argument(
-            '--debug', dest='debug', action='store_true',
-            help='Show additional debugging information', default=False
+        '--debug', dest='debug', action='store_true',
+        help='Show additional debugging information', default=False
     )
     parser.add_argument(
-            '--preproc', dest='texpreproc', action='store_true',
-            help='Preprocess graph through TeX', default=False
+        '--preproc', dest='texpreproc', action='store_true',
+        help='Preprocess graph through TeX', default=False
     )
     parser.add_argument('--alignstr', dest='alignstr', action='store')
     parser.add_argument(
-            '--valignmode', dest='valignmode', default='center',
-            choices=('center', 'dot'),
-            help='Set vertical alginment mode  (center, dot).'
+        '--valignmode', dest='valignmode', default='center',
+        choices=('center', 'dot'),
+        help='Set vertical alginment mode  (center, dot).'
     )
     parser.add_argument(
-            '--nominsize', dest='nominsize', action='store_true',
-            help='No minimum node sizes', default=False
+        '--nominsize', dest='nominsize', action='store_true',
+        help='No minimum node sizes', default=False
     )
     parser.add_argument(
-            '--usepdflatex', dest='usepdflatex', action='store_true',
-            help='Use PDFLaTeX for preprocessing', default=False
+        '--usepdflatex', dest='usepdflatex', action='store_true',
+        help='Use PDFLaTeX for preprocessing', default=False
     )
     parser.add_argument(
-            '--tikzedgelabels', dest='tikzedgelabels', action='store_true',
-            help='Let TikZ place edge labels', default=False
+        '--tikzedgelabels', dest='tikzedgelabels', action='store_true',
+        help='Let TikZ place edge labels', default=False
     )
     parser.add_argument(
-            '--nodeoptions', dest='nodeoptions', action='store',
-            help='Set options for nodes', metavar='OPTIONS'
+        '--nodeoptions', dest='nodeoptions', action='store',
+        help='Set options for nodes', metavar='OPTIONS'
     )
     parser.add_argument(
-            '--edgeoptions', dest='edgeoptions', action='store',
-            help='Set options for edges', metavar='OPTIONS'
+        '--edgeoptions', dest='edgeoptions', action='store',
+        help='Set options for edges', metavar='OPTIONS'
     )
     parser.add_argument(
-            '--runtests', dest='runtests',
-            help="Run tests", action="store_true", default=False
+        '--runtests', dest='runtests',
+        help="Run tests", action="store_true", default=False
     )
     parser.add_argument(
-            "--prog", action="store", dest="prog", default='dot',
-            choices=('dot', 'neato', 'circo', 'fdp', 'twopi'),
-            help='Use v to process the graph', metavar='v'
+        "--prog", action="store", dest="prog", default='dot',
+        choices=('dot', 'neato', 'circo', 'fdp', 'twopi'),
+        help='Use v to process the graph', metavar='v'
     )
     parser.add_argument(
-            '--progoptions', action='store', dest='progoptions',
-            default='', help='Pass options to graph layout engine',
-            metavar='OPTIONS'
+        '--progoptions', action='store', dest='progoptions',
+        default='', help='Pass options to graph layout engine',
+        metavar='OPTIONS'
     )
     parser.add_argument(
-            '--autosize', dest='autosize',
-            help='Preprocess graph and then run Graphviz',
-            action='store_true', default=False
+        '--autosize', dest='autosize',
+        help='Preprocess graph and then run Graphviz',
+        action='store_true', default=False
     )
     parser.add_argument(
-            '--cache', dest='cache', action='store_true', default=False
+        '--cache', dest='cache', action='store_true', default=False
     )
     parser.add_argument(
-            '--pgf118', dest='pgf118', action='store_true',
-            help='Generate code compatible with PGF 1.18', default=False
+        '--pgf118', dest='pgf118', action='store_true',
+        help='Generate code compatible with PGF 1.18', default=False
     )
     parser.add_argument(
-            '--pgf210', dest='pgf210', action='store_true',
-            help='Generate code compatible with PGF 2.10', default=False
+        '--pgf210', dest='pgf210', action='store_true',
+        help='Generate code compatible with PGF 2.10', default=False
     )
     parser.add_argument(
-            'inputfile', action='store',
-            nargs='?', default=None, help='Input dot file'
+        'inputfile', action='store',
+        nargs='?', default=None, help='Input dot file'
     )
     return parser
 

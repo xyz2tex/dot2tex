@@ -6,6 +6,7 @@ Here you can see the full list of changes between each dot2tex release.
 2.11.dev
 --------
 
+- Ignore multiline edge labels during preprocessing (issue #27)
 - Fixed parsing of DOT IDs. Numerals can now be used as node IDs.
 - Fixed issue #64. Remove \ characters from drawsting.
 
