@@ -54,8 +54,7 @@ def nsplit(seq, n=2):
 
 
 def chunks(s, cl):
-    """Split a string or sequence into pieces of length cl and return an iterator
-    """
+    """Split a string or sequence into pieces of length cl and return an iterator"""
     for i in range(0, len(s), cl):
         yield s[i:i + cl]
 

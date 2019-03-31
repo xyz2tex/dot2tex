@@ -66,15 +66,14 @@ Try to input xdot data directly. Example:
 
 If this does not work, check that you have an updated version of PyParsing and
 Graphviz. Users have reported problems with old versions. You can also run
-dot2tex in debug mode sing the --debug option:
+dot2tex in debug mode using the --debug option:
     dot2tex --debug file.dot
 A file dot2tex.log will be written to the current directory with detailed
 information useful for debugging."""
 
 
 def create_options_parser():
-    """Create and and return an options parser.
-    """
+    """Create and and return an options parser."""
     description = 'Convert dot files to PGF/TikZ graphics' + \
                   ' for inclusion in LaTeX.'
     parser = argparse.ArgumentParser(prog='dot2tex', description=description)
@@ -258,8 +257,6 @@ def load_dot_file(filename):
     log.info('Data read from %s' % filename)
     return dotdata
 
-
-# # Program interface
 
 def main(run_as_module=False, dotdata=None, options=None):
     """Run dot2tex and convert graph
