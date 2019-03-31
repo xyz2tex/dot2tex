@@ -3,6 +3,11 @@ dot2tex change log
 
 Here you can see the full list of changes between each dot2tex release.
 
+2.12.dev
+--------
+
+- Major code refactoring
+
 2.11.3
 ------
 

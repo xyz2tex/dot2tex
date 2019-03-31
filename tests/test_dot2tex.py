@@ -6,7 +6,7 @@ from pyparsing import ParseException
 
 import dot2tex
 import re
-from dot2tex.dot2tex import smart_float, is_multiline_label
+from dot2tex.utils import smart_float, is_multiline_label
 
 testgraph = """
 digraph G {
@@ -219,7 +219,7 @@ class EdgeLabelsTests(unittest.TestCase):
 
 class GraphvizInterfaceTests(unittest.TestCase):
     def test_prog_options(self):
-        from dot2tex.dot2tex import create_xdot
+        from dot2tex.base import create_xdot
 
         xdot_data = create_xdot(testgraph)
         xdot_data2 = create_xdot(testgraph)
@@ -229,7 +229,7 @@ class GraphvizInterfaceTests(unittest.TestCase):
 
     def test_invalid_program(self):
         """Invoking create_xdot with an invalid prog parameter should raise an exception"""
-        from dot2tex.dot2tex import create_xdot
+        from dot2tex.base import create_xdot
         # xdot_data = create_xdot(testgraph, prog="dummy")
         self.assertRaises(NameError, create_xdot, testgraph, prog="dummy")
 
@@ -237,7 +237,7 @@ class GraphvizInterfaceTests(unittest.TestCase):
 class AutosizeTests(unittest.TestCase):
     def test__dim_extraction(self):
         """Failed to extract dimension data from logfile"""
-        from dot2tex.dot2tex import dimext
+        from dot2tex.base import dimext
 
         logdata = r"""
 ABD: EveryShipout initializing macros
@@ -296,7 +296,7 @@ Here is how much of TeX's memory you used:
     def test__dim_extraction_cygwin(self):
         """Failed to extract dimension data from logfile generated under Cygwin"""
         # issue [14] http://code.google.com/p/dot2tex/issues/detail?id=14
-        from dot2tex.dot2tex import dimext
+        from dot2tex.base import dimext
 
         logdata = r"""
 Preview: Fontsize 10pt

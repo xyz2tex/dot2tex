@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 import unittest
 
-import dot2tex
 import dot2tex.dotparsing as dotp
+
 
 class DotNodeTest(unittest.TestCase):
     def test_create(self):

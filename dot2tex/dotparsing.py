@@ -8,7 +8,7 @@ Michael Krause <michael AT krause-software.de>
 Ero Carrera <ero AT dkbza.org>
 """
 
-__version__ = '2.11.3'
+__version__ = '2.12.dev'
 __author__ = ['Michael Krause', 'Ero Carrera', 'Kjell Magne Fauske']
 __license__ = 'MIT'
 
