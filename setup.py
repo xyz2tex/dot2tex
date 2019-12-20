@@ -20,7 +20,7 @@ Graphviz_, a more LaTeX friendly look and feel. This is accomplished by:
       author='Kjell Magne Fauske',
       author_email='kjellmf@gmail.com',
       url="https://github.com/kjellmf/dot2tex",
-      py_modules=['dot2tex.dot2tex', 'dot2tex.dotparsing'],
+      packages=['dot2tex'],
       scripts=['dot2tex/dot2tex'],
       classifiers=[
           'Development Status :: 4 - Beta',

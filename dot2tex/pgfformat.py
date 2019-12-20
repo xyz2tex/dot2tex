@@ -229,7 +229,7 @@ class Dot2PGFConv(DotConvBase):
                 self.fillcolor = color
                 if ccolor.startswith('{'):
                     # rgb or hsb
-                    s += "  \definecolor{newcol}%s;\n" % ccolor
+                    s += "  \definecolor{newcol}%s\n" % ccolor
                     ccolor = 'newcol'
                 s += "  \pgfsetcolor{%s}\n" % ccolor
         elif c == 'c':
@@ -239,7 +239,7 @@ class Dot2PGFConv(DotConvBase):
                 self.color = ''
                 if ccolor.startswith('{'):
                     # rgb or hsb
-                    s += "  \definecolor{strokecol}%s;\n" % ccolor
+                    s += "  \definecolor{strokecol}%s\n" % ccolor
                     ccolor = 'strokecol'
                 s += "  \pgfsetstrokecolor{%s}\n" % ccolor
             else:
@@ -251,14 +251,14 @@ class Dot2PGFConv(DotConvBase):
                 self.color = ''
                 if ccolor.startswith('{'):
                     # rgb
-                    s += "  \definecolor{fillcol}%s;\n" % ccolor
+                    s += "  \definecolor{fillcol}%s\n" % ccolor
                     ccolor = 'fillcol'
                 s += "  \pgfsetfillcolor{%s}\n" % ccolor
                 if not opacity is None:
                     self.opacity = opacity
                     # Todo: The opacity should probably be set directly when drawing
                     # The \pgfsetfillcopacity cmd affects text as well
-                    # s += "  \pgfsetfillopacity{%s};\n" % opacity
+                    # s += "  \pgfsetfillopacity{%s}\n" % opacity
                 else:
                     self.opacity = None
             else:
