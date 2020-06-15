@@ -182,7 +182,7 @@ def parse_drawstring(drawstring):
                 didx, cmd = doText(c, s[idx + 1:])
                 cmdlist.append(cmd)
         except Exception as err:
-            log.debug("Failed to parse drawstring %s\n%s", s, err.message)
+            log.debug("Failed to parse drawstring %s\n%s", s, str(err))
 
         idx += didx
     return cmdlist, stat
