@@ -242,7 +242,7 @@ def confirm(prompt=None, resp=False):
         if not ans:
             return resp
         if ans not in ['y', 'Y', 'n', 'N']:
-            print 'please enter y or n.'
+            print('please enter y or n.')
             continue
         if ans == 'y' or ans == 'Y':
             return True
@@ -251,7 +251,7 @@ def confirm(prompt=None, resp=False):
 
 
 def run_rendertest(dotfile):
-    print "Processing %s" % dotfile
+    print("Processing %s" % dotfile)
     err = compare_output(normpath(join(TESTFILES_PATH, dotfile)))
     if err:
         return False
@@ -315,7 +315,7 @@ class RenderTest(unittest.TestCase):
         if sys.platform == 'win32':
             syscmd = "start %s" % 'testrenders.pdf'
             err = runcmd(syscmd)
-        print "Check testrenders.pdf manually"
+        print("Check testrenders.pdf manually")
 
 
 testdotfile2 = normpath(join(TESTFILES_PATH, 'compassports.dot'))

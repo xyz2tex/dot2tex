@@ -119,7 +119,7 @@ def make_img(c, filenm, name):
     if (c.find('--crop') > -1):
         #os.system('del %s.png %s.jpg' % (name,name))
         err = create_pdf(filename)
-        #print "using mppdf"
+        #print("using mppdf")
     else:
         err = meps(filename)
 
@@ -145,7 +145,7 @@ def build_gallery(filelist):
             c = command.replace("dot2tex.py", "dot2tex")
         else:
             c = "dot2tex %s > %s.tex" % (file, name)
-        print c
+        print(c)
 
         err = make_img(c, filename, '')
         if err:
@@ -170,7 +170,7 @@ if __name__ == "__main__":
         log.warning('Failed files: %s', failedfiles);
         sys.exit(1)
     else:
-        print "All tests passed!"
+        print("All tests passed!")
         sys.exit(0)
 
         #filelist=['distances.dot','tikzshapes.dot']
