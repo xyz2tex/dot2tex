@@ -33,7 +33,7 @@ Load ``test.dot``, convert it to xdot format and output the resulting graph usin
 
 The same as above, but use neato for graph layout::
 
-    $ dot2tex --prog=neato -ftikz test.dot > testtikz.tex
+    $ dot2tex --prog=neato -ftikz test.dot > testneato.tex
 
 
 .. admonition:: Invoking dot2tex
