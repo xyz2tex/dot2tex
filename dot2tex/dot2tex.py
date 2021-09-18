@@ -498,6 +498,3 @@ def convert_graph(dotsource, **kwargs):
     tex = main(True, dotsource, options)
     return tex
 
-
-if __name__ == '__main__':
-    main()
