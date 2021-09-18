@@ -386,6 +386,7 @@ class DotConvBase(object):
                 text = drawop[5]
                 # head and tail label
                 texmode = self.options.get('texmode', 'verbatim')
+                label = text = drawobj.attr.get('label', '')
                 if drawobj.attr.get('texmode', ''):
                     texmode = drawobj.attr['texmode']
                 if texlbl_name in drawobj.attr:
@@ -398,6 +399,8 @@ class DotConvBase(object):
                 elif texmode == 'math':
                     # math mode
                     text = "$%s$" % text
+                elif label and len(drawoperations) == 1:
+                    text = label
 
                 drawop[5] = text
                 if self.options.get('alignstr', ''):
