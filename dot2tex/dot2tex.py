@@ -368,14 +368,14 @@ def main(run_as_module=False, dotdata=None, options=None):
     dotdata = "".join(lines)
 
     if options.cache and not run_as_module:
-        import hashlib, cPickle
+        import hashlib, pickle
 
         if options.inputfile is not None and options.outputfile:
             log.info('Caching enabled')
             inputfilename = options.inputfile
             # calculate hash from command line options and dotdata
             m = hashlib.md5()
-            m.update(dotdata + "".join(sys.argv))
+            m.update((dotdata + "".join(sys.argv)).encode('utf-8'))
             inputhash = m.digest()
             log.debug('Hash for %s and command line : %s', inputfilename, inputhash)
             # now look for a hash file
@@ -384,9 +384,9 @@ def main(run_as_module=False, dotdata=None, options=None):
             hashes = {}
             if path.exists(hashfilename):
                 log.info('Loading hash file %s', hashfilename)
-                with open(hashfilename, 'r') as f:
+                with open(hashfilename, 'rb') as f:
                     try:
-                        hashes = cPickle.load(f)
+                        hashes = pickle.load(f)
                     except:
                         log.exception('Failed to load hashfile')
             if hashes.get(key) == inputhash and path.exists(options.outputfile):
@@ -395,9 +395,9 @@ def main(run_as_module=False, dotdata=None, options=None):
             else:
                 log.info('Hash or output file not found. Converting file')
                 hashes[key] = inputhash
-                with open(hashfilename, 'w') as f:
+                with open(hashfilename, 'wb') as f:
                     try:
-                        cPickle.dump(hashes, f)
+                        pickle.dump(hashes, f)
                     except:
                         log.warning('Failed to write hashfile')
         else:
