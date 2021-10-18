@@ -251,7 +251,7 @@ def find_graphviz():
 
         else:
             # Just in case, try the default...
-            path = r"C:\Program Files\att\Graphviz\bin"
+            path = r"C:\Program Files\Graphviz\bin"
 
         progs = __find_executables(path)
 
