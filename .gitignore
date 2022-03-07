@@ -32,3 +32,4 @@ dist/*
 venv/*
 .idea/*
 
+!*.py

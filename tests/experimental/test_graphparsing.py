@@ -2,7 +2,7 @@
 
 import re, os, shutil, glob, sys, time
 
-import ImageChops, Image
+from PIL import ImageChops, Image
 
 from os.path import join, basename, splitext, normpath
 from dot2tex import dotparsing
