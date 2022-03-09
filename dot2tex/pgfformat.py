@@ -673,6 +673,7 @@ class Dot2TikZConv(Dot2PGFConv):
                  'trapezium': 'trapezium',
                  'star': 'star',
                  'circle': 'circle',
+                 'parallelogram': 'trapezium, trapezium left angle = 120, trapezium right angle = 60',
                  }
 
     compass_map = {'n': 'north', 'ne': 'north east', 'e': 'east',
