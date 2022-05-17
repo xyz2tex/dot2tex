@@ -21,7 +21,7 @@ Before you install dot2tex you have to have a working Python environment
 installed on your system. Dot2tex works with Python 2.7 and Python 3. In addition
 you'll need the following modules:
 
-* [pyparsing](http://pyparsing.wikispaces.com/). A recent version is required.
+* [pyparsing](https://github.com/pyparsing/pyparsing). A recent version is required.
       Older version like for instance 1.3.2 does not work with dot2tex.
 * [preview](http://www.ctan.org/tex-archive/help/Catalogue/entries/preview.html)
       A stand-alone part of the preview-latex/AUCTeX bundle.
