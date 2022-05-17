@@ -801,6 +801,26 @@ class Dot2TikZConv(Dot2PGFConv):
             sn = ""
             sn += self.output_node_comment(node)
             sn += self.start_node(node)
+
+            # Quick and dirty introduction of handling for xlabel
+            # xlabel = self.get_label(node, label_attribute="xlabel")
+            xlabel = None
+            if 'xlabel' in node.attr:
+                #node.attr['texlbl'] = node.attr['xlabel']
+                node.attr['texlbl'] = None
+                xlabel = self.get_label(node,label_attribute="xlabel")
+            #xlabel = node.attr['xlabel'] if 'xlabel' in node.attr else None
+            if xlabel is not None:
+                #xlpos = "%sbp,%sbp" % (smart_float(str(float(x)+len(xlabel)*5)), smart_float(y))
+                xlp = getattr(node, 'xlp', None)
+                if not xlp:
+                    continue
+                xlpx, xlpy = xlp.split(',')
+                xlpx = str(abs(float(x)-float(xlpx))+float(x))
+                xlpy = y
+                xlpos = "%sbp,%sbp" % (smart_float(xlpx), smart_float(xlpy))
+                sn += "  \\node (%s) at (%s) [%s] {%s};\n" % \
+                      (tikzify(node.name+"xl"), xlpos, "", xlabel)
             if shape == "coordinate":
                 sn += "  \\coordinate (%s) at (%s);\n" % (tikzify(node.name), pos)
             elif self.options.get('styleonly'):
