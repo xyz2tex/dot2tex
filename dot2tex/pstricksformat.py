@@ -5,7 +5,7 @@ from .utils import smart_float, tikzify
 
 log = logging.getLogger("dot2tex")
 
-PSTRICKS_TEMPLATE = r"""\documentclass{article}
+PSTRICKS_TEMPLATE = r"""\documentclass{standalone}
 % <<bbox>>
 \usepackage[x11names,svgnames]{xcolor}
 \usepackage[<<textencoding>>]{inputenc}
@@ -20,12 +20,10 @@ PSTRICKS_TEMPLATE = r"""\documentclass{article}
 
 
 \begin{document}
-\pagestyle{empty}
 <<startpreprocsection>>%
 <<preproccode>>%
 <<endpreprocsection>>%
 <<startoutputsection>>%
-\enlargethispage{100cm}
 
 % Start of code
 \begin{pspicture}[linewidth=1bp<<graphstyle>>]<<bbox>>
@@ -271,7 +269,7 @@ class Dot2PSTricksConv(DotConvBase):
                 self.templatevars['<<graphstyle>>'] = graphstyle
 
 
-PSTRICKSN_TEMPLATE = r"""\documentclass{article}
+PSTRICKSN_TEMPLATE = r"""\documentclass{standalone}
 % <<bbox>>
 \usepackage[x11names, svgnames]{xcolor}
 \usepackage[<<textencoding>>]{inputenc}
@@ -287,12 +285,10 @@ PSTRICKSN_TEMPLATE = r"""\documentclass{article}
 
 
 \begin{document}
-\pagestyle{empty}
 <<startpreprocsection>>%
 <<preproccode>>%
 <<endpreprocsection>>%
 <<startoutputsection>>%
-\enlargethispage{100cm}
 
 % Start of code
 \begin{pspicture}[linewidth=1bp<<graphstyle>>]<<bbox>>
