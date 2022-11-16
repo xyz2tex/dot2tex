@@ -203,6 +203,19 @@ def get_graphlist(gg, l=None):
         return l
 
 
+def get_drawobj_lblstyle(drawobj, extra_styles=None):
+    try:
+        textcolor = f'text={drawobj.attr["fontcolor"]}'
+    except KeyError:
+        textcolor = None
+
+    return ', '.join(filter(None, [
+        drawobj.attr.get('lblstyle'),
+        textcolor,
+        extra_styles,
+    ])) or None
+
+
 class DotConvBase(object):
     """Dot2TeX converter base"""
 
@@ -427,13 +440,8 @@ class DotConvBase(object):
                                 drawop[1] = coord[0]
                                 drawop[2] = coord[1]
                             pass
-                lblstyle = drawobj.attr.get('lblstyle')
-                exstyle = drawobj.attr.get('exstyle', '')
-                if exstyle:
-                    if lblstyle:
-                        lblstyle += ',' + exstyle
-                    else:
-                        lblstyle = exstyle
+
+                lblstyle = get_drawobj_lblstyle(drawobj, extra_styles=drawobj.attr.get('exstyle'))
                 s += self.draw_text(drawop, lblstyle)
         return s
 

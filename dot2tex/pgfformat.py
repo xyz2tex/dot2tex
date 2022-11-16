@@ -1,6 +1,6 @@
 import logging
 
-from .base import DotConvBase, parse_drawstring
+from .base import DotConvBase, parse_drawstring, get_drawobj_lblstyle
 from .utils import smart_float, nsplit, getboolattr, tikzify
 
 log = logging.getLogger("dot2tex")
@@ -437,7 +437,8 @@ class Dot2PGFConv(DotConvBase):
             if self.options.get('tikzedgelabels') or topath:
                 edgelabel = self.get_label(edge)
                 # log.warning('label: %s', edgelabel)
-                lblstyle = getattr(edge, 'lblstyle', '')
+
+                lblstyle = get_drawobj_lblstyle(edge)
                 if lblstyle:
                     lblstyle = '[' + lblstyle + ']'
                 else:
@@ -482,7 +483,7 @@ class Dot2PGFConv(DotConvBase):
         self.templatevars.update(variables)
 
     def get_node_preproc_code(self, node):
-        lblstyle = node.attr.get('lblstyle', '')
+        lblstyle = get_drawobj_lblstyle(node)
         text = node.attr.get('texlbl', '')
         if lblstyle:
             return "  \\tikz \\node[%s] {%s};\n" % (lblstyle, text)
@@ -737,13 +738,12 @@ class Dot2TikZConv(Dot2PGFConv):
         return s, cname
 
     def get_node_preproc_code(self, node):
-        lblstyle = node.attr.get('lblstyle', '')
-
         shape = node.attr.get('shape', 'ellipse')
         shape = self.shape_map.get(shape, shape)
         # s += "%% %s\n" % (shape)
         label = node.attr.get('texlbl', '')
         style = node.attr.get('style', " ") or " "
+        lblstyle = get_drawobj_lblstyle(node)
         if lblstyle:
             if style.strip():
                 style += ',' + lblstyle
@@ -788,16 +788,12 @@ class Dot2TikZConv(Dot2PGFConv):
 
             pos = "%sbp,%sbp" % (smart_float(x), smart_float(y))
             style = node.attr.get('style') or ""
-            if node.attr.get('lblstyle'):
+            lblstyle = get_drawobj_lblstyle(node, extra_styles=node.attr.get('exstyle'))
+            if lblstyle:
                 if style:
-                    style += ',' + node.attr['lblstyle']
+                    style += ',' + lblstyle
                 else:
-                    style = node.attr['lblstyle']
-            if node.attr.get('exstyle'):
-                if style:
-                    style += ',' + node.attr['exstyle']
-                else:
-                    style = node.attr['exstyle']
+                    style = lblstyle
             sn = ""
             sn += self.output_node_comment(node)
             sn += self.start_node(node)
@@ -942,13 +938,7 @@ class Dot2TikZConv(Dot2PGFConv):
             if self.options.get('tikzedgelabels') or topath:
                 edgelabel = self.get_label(edge)
                 # log.warning('label: %s', edgelabel)
-                lblstyle = getattr(edge, 'lblstyle', '')
-                exstyle = getattr(edge, 'exstyle', '')
-                if exstyle:
-                    if lblstyle:
-                        lblstyle += ',' + exstyle
-                    else:
-                        lblstyle = exstyle
+                lblstyle = get_drawobj_lblstyle(edge, extra_styles=edge.attr.get('exstyle'))
                 if lblstyle:
                     lblstyle = '[' + lblstyle + ']'
                 else:
