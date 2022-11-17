@@ -5,7 +5,7 @@ from .utils import smart_float, nsplit, getboolattr, tikzify
 
 log = logging.getLogger("dot2tex")
 
-PGF_TEMPLATE = r"""\documentclass{article}
+PGF_TEMPLATE = r"""\documentclass{standalone}
 \usepackage[x11names, svgnames, rgb]{xcolor}
 \usepackage[<<textencoding>>]{inputenc}
 \usepackage{tikz}
@@ -21,14 +21,12 @@ PGF_TEMPLATE = r"""\documentclass{article}
 <<docpreamble>>%
 
 \begin{document}
-\pagestyle{empty}
 %
 <<startpreprocsection>>%
 <<preproccode>>
 <<endpreprocsection>>%
 %
 <<startoutputsection>>
-\enlargethispage{100cm}
 % Start of code
 % \begin{tikzpicture}[anchor=mid,>=latex',line join=bevel,<<graphstyle>>]
 \begin{tikzpicture}[>=latex',line join=bevel,<<graphstyle>>]
@@ -56,7 +54,7 @@ PGF_TEMPLATE = r"""\documentclass{article}
 <<figpostamble>>%
 <<endcodeonlysection>>
 """
-PGF210_TEMPLATE = r"""\documentclass{article}
+PGF210_TEMPLATE = r"""\documentclass{standalone}
 % dot2tex template for PGF 2.10
 \usepackage[x11names, svgnames, rgb]{xcolor}
 \usepackage[<<textencoding>>]{inputenc}
@@ -73,14 +71,12 @@ PGF210_TEMPLATE = r"""\documentclass{article}
 <<docpreamble>>%
 
 \begin{document}
-\pagestyle{empty}
 %
 <<startpreprocsection>>%
 <<preproccode>>
 <<endpreprocsection>>%
 %
 <<startoutputsection>>
-\enlargethispage{100cm}
 % Start of code
 % \begin{tikzpicture}[anchor=mid,>=latex',line join=bevel,<<graphstyle>>]
 \begin{tikzpicture}[>=latex',line join=bevel,<<graphstyle>>]
@@ -108,7 +104,7 @@ PGF210_TEMPLATE = r"""\documentclass{article}
 <<figpostamble>>%
 <<endcodeonlysection>>
 """
-PGF118_TEMPLATE = r"""\documentclass{article}
+PGF118_TEMPLATE = r"""\documentclass{standalone}
 \usepackage[x11names, rgb]{xcolor}
 \usepackage[<<textencoding>>]{inputenc}
 \usepackage{tikz}
@@ -123,14 +119,12 @@ PGF118_TEMPLATE = r"""\documentclass{article}
 <<docpreamble>>%
 
 \begin{document}
-\pagestyle{empty}
 %
 <<startpreprocsection>>%
 <<preproccode>>
 <<endpreprocsection>>%
 %
 <<startoutputsection>>
-\enlargethispage{100cm}
 % Start of code
 \begin{tikzpicture}[>=latex',join=bevel,<<graphstyle>>]
   \pgfsetlinewidth{1bp}
@@ -506,7 +500,7 @@ class Dot2PGFConv(DotConvBase):
             return r"\tikz \node {" + text + "};"
 
 
-TIKZ_TEMPLATE = r"""\documentclass{article}
+TIKZ_TEMPLATE = r"""\documentclass{standalone}
 \usepackage[x11names, svgnames, rgb]{xcolor}
 \usepackage[<<textencoding>>]{inputenc}
 \usepackage{tikz}
@@ -522,14 +516,12 @@ TIKZ_TEMPLATE = r"""\documentclass{article}
 <<docpreamble>>%
 
 \begin{document}
-\pagestyle{empty}
 %
 <<startpreprocsection>>%
 <<preproccode>>
 <<endpreprocsection>>%
 %
 <<startoutputsection>>
-\enlargethispage{100cm}
 % Start of code
 \begin{tikzpicture}[>=latex',line join=bevel,<<graphstyle>>]
 <<figpreamble>>%
@@ -554,7 +546,7 @@ TIKZ_TEMPLATE = r"""\documentclass{article}
 <<figpostamble>>%
 <<endcodeonlysection>>
 """
-TIKZ210_TEMPLATE = r"""\documentclass{article}
+TIKZ210_TEMPLATE = r"""\documentclass{standalone}
 % dot2tex template for PGF 2.10
 \usepackage[x11names, svgnames, rgb]{xcolor}
 \usepackage[<<textencoding>>]{inputenc}
@@ -571,14 +563,12 @@ TIKZ210_TEMPLATE = r"""\documentclass{article}
 <<docpreamble>>%
 
 \begin{document}
-\pagestyle{empty}
 %
 <<startpreprocsection>>%
 <<preproccode>>
 <<endpreprocsection>>%
 %
 <<startoutputsection>>
-\enlargethispage{100cm}
 % Start of code
 \begin{tikzpicture}[>=latex',line join=bevel,<<graphstyle>>]
 <<figpreamble>>%
@@ -603,7 +593,7 @@ TIKZ210_TEMPLATE = r"""\documentclass{article}
 <<figpostamble>>%
 <<endcodeonlysection>>
 """
-TIKZ118_TEMPLATE = r"""\documentclass{article}
+TIKZ118_TEMPLATE = r"""\documentclass{standalone}
 \usepackage[x11names, svgnames, rgb]{xcolor}
 \usepackage[<<textencoding>>]{inputenc}
 \usepackage{tikz}
@@ -618,14 +608,12 @@ TIKZ118_TEMPLATE = r"""\documentclass{article}
 <<docpreamble>>%
 
 \begin{document}
-\pagestyle{empty}
 %
 <<startpreprocsection>>%
 <<preproccode>>
 <<endpreprocsection>>%
 %
 <<startoutputsection>>
-\enlargethispage{100cm}
 % Start of code
 \begin{tikzpicture}[>=latex',join=bevel,<<graphstyle>>]
 <<figpreamble>>%
