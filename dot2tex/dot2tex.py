@@ -48,7 +48,6 @@ log = logging.getLogger("dot2tex")
 # label margins in inches
 
 # Todo: set papersize based on bb
-# Todo: Fontcolor
 
 # Todo: Support linewidth in draw string
 # Todo: Support linestyle in draw string
