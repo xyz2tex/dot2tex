@@ -83,6 +83,8 @@ def getboolattr(item, key, default):
 
 
 def smart_float(number):
+    if isinstance(number, str):
+        number = number.replace("\\", "").replace("\r", "").replace("\n", "");
     number_as_string = "%s" % float(number)
     if 'e' in number_as_string:
         return "%.4f" % float(number)
