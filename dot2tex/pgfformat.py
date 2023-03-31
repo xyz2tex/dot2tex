@@ -718,7 +718,7 @@ class Dot2TikZConv(Dot2PGFConv):
         s = ""
         if ccolor.startswith('{'):
             # rgb or hsb
-            s += "  \definecolor{%s}%s;\n" % (colorname, ccolor)
+            s += "  \definecolor{%s}%s\n" % (colorname, ccolor)
             cname = colorname
         else:
             cname = color
