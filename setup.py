@@ -39,7 +39,7 @@ Graphviz_, a more LaTeX friendly look and feel. This is accomplished by:
           'Topic :: Text Processing :: Markup :: LaTeX',
           'Topic :: Utilities',
       ],
-      install_requires=['pyparsing'],
+      install_requires=['pyparsing', 'setuptools'],
       entry_points={
           'console_scripts': [
               'dot2tex = dot2tex.dot2tex:main',
