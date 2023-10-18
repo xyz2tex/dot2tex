@@ -720,7 +720,7 @@ class DotConvBase(object):
         variables['<<startpreprocsection>>'] = variables['<<endpreprocsection>>'] = ''
         variables['<<startoutputsection>>'] = variables['<<endoutputsection>>'] = ''
         if self.options.get('gvcols'):
-            variables['<<gvcols>>'] = "\input{gvcols.tex}"
+            variables['<<gvcols>>'] = r"\input{gvcols.tex}"
         else:
             variables['<<gvcols>>'] = ""
         self.templatevars = variables
