@@ -1,13 +1,14 @@
 dot2tex - A Graphviz to LaTeX converter
 =======================================
 
-Copyright (C) 2006-2019 Kjell Magne Fauske
+**WARNING: This project is no longer being maintained.** I have tried to find a new maintainer for the project with no luck. 
+If you are interested, feel free to reach out. See https://github.com/xyz2tex/dot2tex/issues/58 for details.
 
 License: MIT (See LICENSE for details.)
 
 Version: 2.12.dev
 
-URL: https://github.com/kjellmf/dot2tex
+URL: https://github.com/xyz2tex/dot2tex
 
 Documentation: http://dot2tex.readthedocs.org/
 
