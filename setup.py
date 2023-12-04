@@ -21,7 +21,6 @@ Graphviz_, a more LaTeX friendly look and feel. This is accomplished by:
       author_email='kjellmf@gmail.com',
       url="https://github.com/kjellmf/dot2tex",
       packages=['dot2tex'],
-      scripts=['dot2tex/dot2tex'],
       classifiers=[
           'Development Status :: 4 - Beta',
           'Environment :: Console',
